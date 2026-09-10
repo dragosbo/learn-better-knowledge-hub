@@ -1,0 +1,6 @@
+{
+  "name": "Learn Better Knowledge Hub",
+  "description": "Personal YouTube playlist manager, video knowledge extraction hub, and multi-AI vibe coding tutorial platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
