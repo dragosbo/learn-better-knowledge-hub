@@ -15,6 +15,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { YouTubeClip, SummaryData } from '../types';
+import { AudioLessonPlayer } from './AudioLessonPlayer';
 
 interface KnowledgeHubProps {
   clips: YouTubeClip[];
@@ -428,6 +429,15 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
                           </span>
                         )}
                       </div>
+                      
+                      {/* Audio playback for Video Summary */}
+                      <AudioLessonPlayer
+                        title={`Summary: ${currentClip.title}`}
+                        series={currentClip.channel}
+                        content={matchingSummary.content}
+                        compact={true}
+                      />
+
                       <pre className="whitespace-pre-wrap font-sans text-slate-300 text-xs leading-relaxed max-h-[500px] overflow-y-auto p-3 bg-slate-900 rounded-lg border border-slate-800">
                         {matchingSummary.content}
                       </pre>

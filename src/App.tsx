@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Playlist, YouTubeClip, SummaryData, LessonItem, ActiveTab } from './types';
 import { INITIAL_PLAYLISTS } from './data/initialData';
-import { fetchHealth, fetchSummaries, fetchLessons, fetchLogs } from './services/api';
+import { fetchHealth, fetchSummaries, fetchLessons, fetchLogs, fetchPlaylists, syncYouTubePlaylists, savePlaylists } from './services/api';
 import { Navbar } from './components/Navbar';
 import { PlaylistManager } from './components/PlaylistManager';
 import { KnowledgeHub } from './components/KnowledgeHub';
 import { GeminiStudio } from './components/GeminiStudio';
 import { AILearningAcademy } from './components/AILearningAcademy';
 import { GitHubSyncGuide } from './components/GitHubSyncGuide';
+import { LegacyAppsHub } from './components/LegacyAppsHub';
+import { UserGuideViewer } from './components/UserGuideViewer';
+import { PythonCodeViewer } from './components/PythonCodeViewer';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('playlists');
+  const [isSyncingPlaylists, setIsSyncingPlaylists] = useState<boolean>(false);
 
   // Core App State (Persisted in localStorage)
   const [playlists, setPlaylists] = useState<Playlist[]>(() => {
     try {
-      const saved = localStorage.getItem('learn_better_playlists_v2');
-      if (saved) return JSON.parse(saved);
+      const saved = localStorage.getItem('learn_better_playlists_v3');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 10) return parsed;
+      }
     } catch (e) {
       console.error(e);
     }
@@ -29,16 +36,20 @@ export default function App() {
   const [kiroLessons, setKiroLessons] = useState<LessonItem[]>([]);
   const [promptsLog, setPromptsLog] = useState<string>('');
   const [feedbackLog, setFeedbackLog] = useState<string>('');
+  const [suggestionsLog, setSuggestionsLog] = useState<string>('');
+  const [userGuideLog, setUserGuideLog] = useState<string>('');
   const [hasGeminiKey, setHasGeminiKey] = useState<boolean>(false);
 
   // Cross-Tab Selected Context
   const [selectedClip, setSelectedClip] = useState<YouTubeClip | null>(null);
   const [geminiInitialContent, setGeminiInitialContent] = useState<string>('');
 
-  // Persist playlists to localStorage
+  // Persist playlists to localStorage and backend
   useEffect(() => {
     try {
-      localStorage.setItem('learn_better_playlists_v2', JSON.stringify(playlists));
+      localStorage.setItem('learn_better_playlists_v3', JSON.stringify(playlists));
+      // Save in background to server if needed
+      savePlaylists(playlists).catch(() => {});
     } catch (e) {
       console.error(e);
     }
@@ -60,6 +71,21 @@ export default function App() {
       const logs = await fetchLogs();
       setPromptsLog(logs.prompts);
       setFeedbackLog(logs.feedback);
+      setSuggestionsLog(logs.suggestions || '');
+      setUserGuideLog(logs.userGuide || '');
+
+      // Load all 70 playlists from backend if local copy was stale or small
+      try {
+        const plRes = await fetchPlaylists();
+        if (plRes && plRes.playlists && plRes.playlists.length >= 10) {
+          setPlaylists((prev) => {
+            if (prev.length < 10) return plRes.playlists;
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.warn('Failed to load server playlists', err);
+      }
     }
     loadData();
   }, []);
@@ -68,6 +94,29 @@ export default function App() {
     const logs = await fetchLogs();
     setPromptsLog(logs.prompts);
     setFeedbackLog(logs.feedback);
+    setSuggestionsLog(logs.suggestions || '');
+    setUserGuideLog(logs.userGuide || '');
+  };
+
+  const handleSyncYouTube = async () => {
+    setIsSyncingPlaylists(true);
+    try {
+      const res = await syncYouTubePlaylists('@dragosborosgpt');
+      if (res && res.playlists && res.playlists.length > 0) {
+        setPlaylists(res.playlists);
+        localStorage.setItem('learn_better_playlists_v3', JSON.stringify(res.playlists));
+      }
+    } catch (err: any) {
+      console.error('YouTube sync failed:', err);
+      throw err;
+    } finally {
+      setIsSyncingPlaylists(false);
+    }
+  };
+
+  const handleResetToAllPlaylists = () => {
+    setPlaylists(INITIAL_PLAYLISTS);
+    localStorage.setItem('learn_better_playlists_v3', JSON.stringify(INITIAL_PLAYLISTS));
   };
 
   // Helper counters
@@ -294,7 +343,7 @@ export default function App() {
       />
 
       {/* Main Tab Views */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 w-full max-w-[1850px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'playlists' && (
           <PlaylistManager
             playlists={playlists}
@@ -303,6 +352,9 @@ export default function App() {
             onAddClip={handleAddClip}
             onCreatePlaylist={handleCreatePlaylist}
             onUpdateClipStatus={handleUpdateClipStatus}
+            onSyncYouTube={handleSyncYouTube}
+            isSyncing={isSyncingPlaylists}
+            onResetToAllPlaylists={handleResetToAllPlaylists}
           />
         )}
 
@@ -337,24 +389,48 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'legacy-apps' && (
+          <LegacyAppsHub onNavigateToPython={() => setActiveTab('python-code')} />
+        )}
+
+        {activeTab === 'python-code' && (
+          <PythonCodeViewer />
+        )}
+
         {activeTab === 'github-sync' && (
           <GitHubSyncGuide
             promptsLog={promptsLog}
             feedbackLog={feedbackLog}
+            suggestionsLog={suggestionsLog}
             onRefreshLogs={refreshLogs}
+          />
+        )}
+
+        {activeTab === 'guide' && (
+          <UserGuideViewer
+            guideContent={userGuideLog}
           />
         )}
       </main>
 
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="w-full max-w-[1850px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span>
             learn-better &bull; Personal Knowledge Hub &amp; Multi-AI Vibe Coding Platform
           </span>
-          <span>
-            All new files safely isolated in dedicated web modules &bull; Verified build
-          </span>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setActiveTab('guide')}
+              className="text-emerald-400 hover:text-emerald-300 underline font-medium cursor-pointer flex items-center gap-1"
+            >
+              <span>📖 Open Complete User Guide &amp; Audio Manual</span>
+            </button>
+            <span className="text-slate-600 hidden md:inline">&bull;</span>
+            <span className="hidden md:inline">
+              All new files safely isolated in dedicated web modules
+            </span>
+          </div>
         </div>
       </footer>
     </div>

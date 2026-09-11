@@ -59,4 +59,39 @@ export interface VibePromptResult {
   suggestedNextSteps: string[];
 }
 
-export type ActiveTab = 'playlists' | 'knowledge' | 'gemini' | 'academy' | 'github-sync';
+export interface LegacyApp {
+  id: string;
+  title: string;
+  file: string;
+  url: string;
+  category: string;
+  description: string;
+  badge: string;
+}
+
+export interface PythonFileInfo {
+  id: string;
+  path: string;
+  category: string;
+  name: string;
+  lineCount: number;
+  size: number;
+  docstring: string;
+  functions: string[];
+  classes: string[];
+  purpose: string;
+  inputsOutputs: {
+    inputs: string[];
+    outputs: string[];
+    configs?: string[];
+  };
+  dependencies: {
+    internal: string[];
+    external: string[];
+  };
+  usageExample: string;
+  vibeCodingNotes: string;
+  content: string;
+}
+
+export type ActiveTab = 'playlists' | 'knowledge' | 'python-code' | 'academy' | 'gemini' | 'legacy-apps' | 'github-sync' | 'guide';

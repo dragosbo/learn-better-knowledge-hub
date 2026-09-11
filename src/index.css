@@ -1,1 +1,92 @@
 @import "tailwindcss";
+
+@media print {
+  /* Hide application shell elements when printing to PDF */
+  nav,
+  footer,
+  header,
+  .no-print,
+  .print-hidden,
+  [data-print-hide="true"] {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Make sure container doesn't overflow or clip */
+  .printable-card {
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Clean print columns */
+  .print-two-column {
+    display: grid !important;
+    grid-template-columns: 55% 45% !important;
+    gap: 16px !important;
+    page-break-inside: auto !important;
+  }
+
+  .print-code-block {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    font-size: 8pt !important;
+    line-height: 1.35 !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .print-code-block span {
+    color: #0f172a !important;
+  }
+
+  .print-code-block .token-keyword {
+    color: #1e40af !important;
+    font-weight: bold !important;
+  }
+
+  .print-code-block .token-string {
+    color: #047857 !important;
+  }
+
+  .print-code-block .token-comment {
+    color: #64748b !important;
+    font-style: italic !important;
+  }
+
+  .print-code-block .token-function {
+    color: #7c3aed !important;
+    font-weight: 600 !important;
+  }
+
+  .print-doc-block {
+    color: #0f172a !important;
+    font-size: 9pt !important;
+    line-height: 1.4 !important;
+  }
+
+  .print-doc-block h1,
+  .print-doc-block h2,
+  .print-doc-block h3,
+  .print-doc-block h4 {
+    color: #0f172a !important;
+    page-break-after: avoid !important;
+  }
+}

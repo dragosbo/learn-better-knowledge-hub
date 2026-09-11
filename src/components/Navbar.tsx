@@ -6,7 +6,10 @@ import {
   GraduationCap, 
   GitBranch, 
   Zap, 
-  ShieldCheck 
+  ShieldCheck,
+  Compass,
+  HelpCircle,
+  FileCode2
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -39,16 +42,28 @@ export const Navbar: React.FC<NavbarProps> = ({
       badge: `${totalNotes} notes`,
     },
     {
+      id: 'academy',
+      label: 'AI Coding Academy',
+      icon: <GraduationCap className="w-4 h-4" />,
+      badge: '19 Lessons',
+    },
+    {
       id: 'gemini',
       label: 'Gemini AI Studio',
       icon: <Sparkles className="w-4 h-4 text-amber-500" />,
       badge: hasGeminiKey ? 'Active' : 'Offline Mode',
     },
     {
-      id: 'academy',
-      label: 'AI Coding Academy',
-      icon: <GraduationCap className="w-4 h-4" />,
-      badge: '19 Lessons',
+      id: 'legacy-apps',
+      label: 'Legacy Tools',
+      icon: <Compass className="w-4 h-4 text-sky-400" />,
+      badge: 'HTML Apps',
+    },
+    {
+      id: 'python-code',
+      label: 'Python Code',
+      icon: <FileCode2 className="w-4 h-4 text-emerald-400" />,
+      badge: '2-Col View',
     },
     {
       id: 'github-sync',
@@ -56,11 +71,17 @@ export const Navbar: React.FC<NavbarProps> = ({
       icon: <GitBranch className="w-4 h-4" />,
       badge: 'Safe Push',
     },
+    {
+      id: 'guide',
+      label: 'User Guide',
+      icon: <HelpCircle className="w-4 h-4 text-emerald-400" />,
+      badge: 'Audio Manual',
+    },
   ];
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 text-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-[1850px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
@@ -80,9 +101,27 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Right Status */}
-          <div className="flex items-center gap-2.5">
-            <div className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border ${
+          {/* Right Actions & Status */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Quick Access User Guide Button - Always visible regardless of screen width */}
+            <button
+              id="header-user-guide-btn"
+              onClick={() => setActiveTab('guide')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all shadow-sm ${
+                activeTab === 'guide'
+                  ? 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-950/60'
+                  : 'bg-emerald-950/70 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80 hover:text-white'
+              }`}
+              title="Open the complete Learn Better User Guide & Audio Manual"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-emerald-400" />
+              <span>User Guide</span>
+              <span className="hidden md:inline text-[10px] px-1 py-0.2 bg-emerald-900/90 text-emerald-200 rounded">
+                Manual
+              </span>
+            </button>
+
+            <div className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full border ${
               hasGeminiKey 
                 ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/80' 
                 : 'bg-amber-950/40 text-amber-300 border-amber-800/60'
@@ -90,20 +129,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               {hasGeminiKey ? (
                 <>
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>Gemini 2.5/Flash Connected</span>
+                  <span className="hidden sm:inline">Gemini 2.5/Flash Connected</span>
+                  <span className="sm:hidden">Gemini</span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Free-Quota Friendly Mode</span>
+                  <span className="hidden sm:inline">Free-Quota Friendly Mode</span>
+                  <span className="sm:hidden">Offline</span>
                 </>
               )}
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex space-x-1 overflow-x-auto py-2 border-t border-slate-800/70 scrollbar-none">
+        {/* Tab Navigation with horizontal scroll support */}
+        <div className="flex space-x-1 overflow-x-auto py-2 border-t border-slate-800/70 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -113,7 +154,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 className={`flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    ? item.id === 'guide'
+                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-700 shadow-sm'
+                      : 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    : item.id === 'guide'
+                    ? 'text-emerald-400/90 hover:text-emerald-200 hover:bg-emerald-950/40 border border-emerald-900/50'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                 }`}
               >
@@ -121,7 +166,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>{item.label}</span>
                 {item.badge && (
                   <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${
-                    isActive ? 'bg-sky-950 text-sky-300 border border-sky-800' : 'bg-slate-800 text-slate-400'
+                    isActive 
+                      ? item.id === 'guide' ? 'bg-emerald-900 text-emerald-200 border border-emerald-700' : 'bg-sky-950 text-sky-300 border border-sky-800' 
+                      : item.id === 'guide' ? 'bg-emerald-950 text-emerald-300 border border-emerald-900' : 'bg-slate-800 text-slate-400'
                   }`}>
                     {item.badge}
                   </span>

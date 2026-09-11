@@ -14,6 +14,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { LessonItem } from '../types';
+import { AudioLessonPlayer } from './AudioLessonPlayer';
 
 interface AILearningAcademyProps {
   claudeLessons: LessonItem[];
@@ -274,6 +275,9 @@ git commit -m "Add Gemini Knowledge Hub webapp and AI vibe coding guide"`,
                     {completedLessons[activeLesson.id] ? 'Completed' : 'Mark Complete'}
                   </button>
                 </div>
+
+                {/* Audio Playback Controls for AirPods & Speakers */}
+                <AudioLessonPlayer lesson={activeLesson} />
 
                 {/* Lesson Markdown Reader */}
                 <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 max-h-[580px] overflow-y-auto">
