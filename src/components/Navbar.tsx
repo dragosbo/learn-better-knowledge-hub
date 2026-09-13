@@ -12,7 +12,8 @@ import {
   FileCode2,
   Network,
   FolderTree,
-  MessageSquareCode
+  MessageSquareCode,
+  Milestone
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -72,7 +73,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'gemini-chat',
       label: 'Gemini_development_chat',
       icon: <MessageSquareCode className="w-4 h-4 text-amber-400" />,
-      badge: '15 Prompts • 100%',
+      badge: '17 Prompts • 100%',
     },
     {
       id: 'legacy-apps',
@@ -97,6 +98,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       label: 'User Guide',
       icon: <HelpCircle className="w-4 h-4 text-emerald-400" />,
       badge: 'Audio Manual',
+    },
+    {
+      id: 'roadmap',
+      label: 'Roadmap & Multi-AI',
+      icon: <Milestone className="w-4 h-4 text-emerald-400" />,
+      badge: 'Architecture',
     },
   ];
 

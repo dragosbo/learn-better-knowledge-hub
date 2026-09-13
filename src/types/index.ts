@@ -51,12 +51,17 @@ export interface GeminiInsightResult {
   mindMap?: Array<{ node: string; children: string[] }>;
   suggestedPrompts?: string[];
   note?: string;
+  warning?: string;
+  error?: string;
 }
 
 export interface VibePromptResult {
+  source?: string;
   optimizedPrompt: string;
   antiPatternWarning: string;
   suggestedNextSteps: string[];
+  warning?: string;
+  error?: string;
 }
 
 export interface LegacyApp {
@@ -139,7 +144,8 @@ export type ActiveTab =
   | 'gemini-chat'
   | 'legacy-apps' 
   | 'github-sync' 
-  | 'guide';
+  | 'guide'
+  | 'roadmap';
 
 export interface VideoAllocationItem {
   index: number;

@@ -42,6 +42,7 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
   const [videoTitle, setVideoTitle] = useState(initialClip?.title || '');
   const [customGoal, setCustomGoal] = useState('Extract actionable principles and research questions');
   const [isDistilling, setIsDistilling] = useState(false);
+  const [distillError, setDistillError] = useState<string | null>(null);
   const [distillResult, setDistillResult] = useState<GeminiInsightResult | null>(null);
   const [appliedNotification, setAppliedNotification] = useState(false);
 
@@ -50,6 +51,7 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
   const [targetAssistant, setTargetAssistant] = useState('Claude & Gemini Multi-Agent');
   const [projectStage, setProjectStage] = useState('Feature Implementation');
   const [isPiloting, setIsPiloting] = useState(false);
+  const [pilotError, setPilotError] = useState<string | null>(null);
   const [pilotResult, setPilotResult] = useState<VibePromptResult | null>(null);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
@@ -59,11 +61,12 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
     if (initialClip) setVideoTitle(initialClip.title);
   }, [initialContent, initialClip?.id]);
 
-  const handleRunDistill = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRunDistill = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!inputText.trim()) return;
 
     setIsDistilling(true);
+    setDistillError(null);
     try {
       const result = await extractInsightsWithGemini(inputText, videoTitle, customGoal);
       setDistillResult(result);
@@ -73,18 +76,20 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
         `Gemini Distill Request:\nTitle: ${videoTitle}\nGoal: ${customGoal}\nContent Snippet: ${inputText.slice(0, 300)}...`,
         'Knowledge Distillation'
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setDistillError(err?.message || 'Failed to distill insights');
     } finally {
       setIsDistilling(false);
     }
   };
 
-  const handleRunVibePilot = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRunVibePilot = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!featureIdea.trim()) return;
 
     setIsPiloting(true);
+    setPilotError(null);
     try {
       const result = await getVibePilotAdvice(featureIdea, targetAssistant, projectStage);
       setPilotResult(result);
@@ -94,8 +99,9 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
         `Vibe Coding Co-Pilot Request:\nIdea: ${featureIdea}\nTarget Assistant: ${targetAssistant}\nStage: ${projectStage}`,
         'Vibe Pilot Optimization'
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setPilotError(err?.message || 'Failed to optimize vibe prompt');
     } finally {
       setIsPiloting(false);
     }
@@ -128,12 +134,12 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-400" />
             <h1 className="text-xl font-bold text-white">Gemini AI Intelligence Studio</h1>
-            <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
-              gemini-3.8-flash
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800" title="Resilient model cascade: gemini-3.8-flash → gemini-flash-latest → gemini-2.5-flash">
+              gemini-3.8-flash + Multi-Model Cascade
             </span>
           </div>
           <p className="text-sm text-slate-400 mt-1">
-            Turn dense video transcripts into high-retention takeaways, formulate self-test questions, and craft anti-pattern-free prompts for multi-AI coding.
+            Turn dense video transcripts into high-retention takeaways, formulate self-test questions, and craft anti-pattern-free prompts for multi-AI coding with automatic 503 failover resilience.
           </p>
         </div>
 
@@ -209,6 +215,22 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
                 ></textarea>
               </div>
 
+              {distillError && (
+                <div className="p-3 rounded-lg bg-rose-950/50 border border-rose-800 text-rose-300 text-xs flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                    {distillError}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRunDistill()}
+                    className="px-2.5 py-1 bg-rose-900 hover:bg-rose-800 text-white rounded text-[11px] font-medium transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-2 border-t border-slate-800">
                 <span className="text-[11px] text-slate-400 flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -261,7 +283,30 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
 
             {distillResult ? (
               <div className="space-y-4 text-xs overflow-y-auto max-h-[560px] pr-1">
-                {distillResult.note && (
+                {distillResult.warning && (
+                  <div className="p-3 rounded-lg bg-amber-950/50 border border-amber-800/80 text-amber-200 text-[11px] space-y-2">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <span className="font-semibold text-amber-300">Resilient Fallback Mode Engaged</span>
+                        <p className="text-amber-300/90 leading-relaxed">{distillResult.warning}</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleRunDistill()}
+                        disabled={isDistilling}
+                        className="px-2.5 py-1 bg-amber-800/60 hover:bg-amber-700/60 text-amber-100 rounded text-[11px] font-medium transition-colors border border-amber-700 flex items-center gap-1.5"
+                      >
+                        <Sparkles className="w-3 h-3 text-amber-300" />
+                        Retry Live Gemini Query
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {distillResult.note && !distillResult.warning && (
                   <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-900/60 text-amber-300 text-[11px]">
                     {distillResult.note}
                   </div>
@@ -399,6 +444,22 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
                 </div>
               </div>
 
+              {pilotError && (
+                <div className="p-3 rounded-lg bg-rose-950/50 border border-rose-800 text-rose-300 text-xs flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                    {pilotError}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleRunVibePilot()}
+                    className="px-2.5 py-1 bg-rose-900 hover:bg-rose-800 text-white rounded text-[11px] font-medium transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+
               <div className="pt-2 border-t border-slate-800 flex justify-end">
                 <button
                   type="submit"
@@ -420,6 +481,29 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
 
             {pilotResult ? (
               <div className="space-y-4 text-xs">
+                {pilotResult.warning && (
+                  <div className="p-3 rounded-lg bg-amber-950/50 border border-amber-800/80 text-amber-200 text-[11px] space-y-2">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <span className="font-semibold text-amber-300">Resilient Fallback Mode Engaged</span>
+                        <p className="text-amber-300/90 leading-relaxed">{pilotResult.warning}</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleRunVibePilot()}
+                        disabled={isPiloting}
+                        className="px-2.5 py-1 bg-amber-800/60 hover:bg-amber-700/60 text-amber-100 rounded text-[11px] font-medium transition-colors border border-amber-700 flex items-center gap-1.5"
+                      >
+                        <Sparkles className="w-3 h-3 text-amber-300" />
+                        Retry Live Model Query
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Anti Pattern Warning */}
                 <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-900/60 text-rose-300 space-y-1">
                   <h4 className="font-semibold flex items-center gap-1.5 text-rose-200">

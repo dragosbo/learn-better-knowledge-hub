@@ -158,6 +158,10 @@ export async function extractInsightsWithGemini(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content, title, userGoal, customPrompt }),
     });
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.error || `Service returned status ${res.status}`);
+    }
     return await res.json();
   } catch (err) {
     console.error('Failed to extract insights', err);
@@ -176,6 +180,10 @@ export async function getVibePilotAdvice(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idea, currentAssistant, stage }),
     });
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.error || `Service returned status ${res.status}`);
+    }
     return await res.json();
   } catch (err) {
     console.error('Failed to get vibe pilot advice', err);

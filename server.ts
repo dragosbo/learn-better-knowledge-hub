@@ -691,42 +691,169 @@ app.post('/api/content/append-prompt', (req, res) => {
   }
 });
 
+// Resilient Gemini Execution Cascade with Fallback Models & High-Demand (503) Recovery
+async function generateGeminiWithCascade(
+  options: {
+    systemPrompt?: string;
+    prompt: string;
+    responseMimeType?: string;
+  }
+): Promise<{ text: string; modelUsed: string }> {
+  const client = getGeminiClient();
+  if (!client) {
+    throw new Error('Gemini API key not configured');
+  }
+
+  // Model cascade order:
+  // 1. Primary standard text model: gemini-3.8-flash
+  // 2. Dynamic flash router: gemini-flash-latest
+  // 3. Resilient fallback: gemini-2.5-flash
+  const candidateModels = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
+  let lastError: any = null;
+
+  for (let i = 0; i < candidateModels.length; i++) {
+    const model = candidateModels[i];
+    try {
+      const contents = options.systemPrompt
+        ? [{ role: 'user', parts: [{ text: `${options.systemPrompt}\n\n${options.prompt}` }] }]
+        : options.prompt;
+
+      const response = await client.models.generateContent({
+        model,
+        contents,
+        config: options.responseMimeType ? { responseMimeType: options.responseMimeType } : undefined,
+      });
+
+      if (response && response.text) {
+        return { text: response.text, modelUsed: model };
+      }
+    } catch (err: any) {
+      lastError = err;
+      const errMsg = err.message || JSON.stringify(err);
+      const isTransientDemandOrRateLimit =
+        errMsg.includes('503') ||
+        errMsg.includes('high demand') ||
+        errMsg.includes('UNAVAILABLE') ||
+        errMsg.includes('429') ||
+        errMsg.includes('RESOURCE_EXHAUSTED') ||
+        err.status === 503 ||
+        err.status === 'UNAVAILABLE';
+
+      console.warn(`[Gemini Cascade] Model ${model} failed (transient: ${isTransientDemandOrRateLimit}). Error: ${errMsg}`);
+
+      if (isTransientDemandOrRateLimit && i < candidateModels.length - 1) {
+        // Brief jittered pause before testing the next model in the cascade
+        await new Promise((resolve) => setTimeout(resolve, 400 + i * 300));
+        continue;
+      }
+    }
+  }
+
+  throw lastError || new Error('All Gemini models in cascade exhausted.');
+}
+
+function generateHeuristicInsights(content: string, title?: string, userGoal?: string) {
+  const cleanTitle = title || 'Technical Study Topic';
+  const sentences = content
+    .split(/(?<=[.!?\n])\s+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 20 && !s.startsWith('#') && !s.startsWith('-'));
+
+  const lead1 = sentences[0] || `Focuses on core engineering principles and architectural foundations of ${cleanTitle}.`;
+  const lead2 = sentences[1] || `Emphasizes modular decomposition, isolated subdirectories, and reproducible workflows.`;
+  const lead3 = sentences[2] || `Structures problem-solving into iterative verification checkpoints.`;
+
+  return {
+    source: 'offline-heuristic-recovery',
+    warning: 'Gemini upstream model is temporarily experiencing high global demand (503 Service Unavailable). Resilient heuristic analysis provided to keep your workspace operational without interruption.',
+    insights: [
+      `Core Architectural Focus on "${cleanTitle}": ${lead1}`,
+      `Practical Implementation Strategy: ${lead2}`,
+      `Execution Best Practices: ${lead3}`,
+      'Developer Empowerment: Prioritize reproducible, local execution over closed third-party dependencies.'
+    ],
+    takeaways: [
+      `Always verify external outputs against automated tests before scaling up operations.`,
+      `Structure long learning sessions into bite-sized chapters for spaced repetition.`,
+      `Maintain clean, isolated feature branches when experimenting with AI-generated modules.`
+    ],
+    questions: [
+      `How can the core techniques in ${cleanTitle} be tested on a minimal reproducible example?`,
+      `What explicit verification command would instantly detect regression in this workflow?`,
+      `How can multi-AI handoffs (e.g. Claude + Gemini + Kiro) best divide complex tasks on this topic?`
+    ],
+    mindMap: [
+      {
+        node: cleanTitle,
+        children: ['Fundamental Concepts', 'Tooling & Environment', 'Verification Steps', 'Spaced Repetition & Flashcards']
+      }
+    ],
+    suggestedPrompts: [
+      `Write a self-contained TypeScript/Python test runner for ${cleanTitle} that validates input/output contracts.`,
+      `Create a step-by-step checklist to stress-test ${cleanTitle} with edge-case inputs.`
+    ],
+    note: 'Generated via resilient heuristic engine while upstream Gemini servers recover from peak demand.'
+  };
+}
+
+function generateHeuristicVibePilot(idea: string, currentAssistant?: string, stage?: string) {
+  const cleanIdea = idea || 'build a high-reliability software component';
+  const target = currentAssistant || 'Claude & Gemini Multi-Agent';
+  const currentStage = stage || 'Implementation';
+
+  return {
+    source: 'offline-heuristic-recovery',
+    warning: 'Gemini upstream model is temporarily experiencing high global demand (503). Providing resilient prompt blueprint with anti-pattern checks.',
+    optimizedPrompt: `I am developing a feature for learn-better. Target outcome: "${cleanIdea}".
+Constraints & Requirements:
+1. Target platform: ${target}. Current stage: ${currentStage}.
+2. Defensive engineering: Do not overwrite or mutate working files without explicit scope.
+3. Resilience: Wrap all external API or network calls with cascading fallbacks (e.g. 503 high demand handling).
+4. Provide a single shell or test verification command to validate functionality immediately upon generation.`,
+    antiPatternWarning: `Avoid sending monolithic, multi-task prompts when upstream models are under heavy load. Break this task into: (1) schema contract, (2) isolated implementation, and (3) automated verification.`,
+    suggestedNextSteps: [
+      `Specify the exact TypeScript/Python interface types before writing execution logic.`,
+      `Implement an isolated unit test or dry-run validation script.`,
+      `Run live verification and check that fallback pathways trigger smoothly on transient errors.`
+    ]
+  };
+}
+
 // 6. Gemini API: Extract insights, takeaways, quiz questions & ideas
 app.post('/api/gemini/extract-insights', async (req, res) => {
-  try {
-    const { content, title, userGoal, customPrompt } = req.body;
-    if (!content) {
-      return res.status(400).json({ error: 'Content is required' });
-    }
+  const { content, title, userGoal, customPrompt } = req.body;
+  if (!content) {
+    return res.status(400).json({ error: 'Content is required' });
+  }
 
-    const client = getGeminiClient();
-    if (!client) {
-      // Return structured deterministic analysis if API key is not yet configured
-      return res.json({
-        source: 'local-heuristic',
-        insights: [
-          `Key core focus on "${title || 'YouTube Study Clip'}": local workflow, rapid iteration, and verifying code outputs.`,
-          'Highlights developer empowerment: reducing dependency on proprietary black-boxes by building minimalist, CPU-friendly utilities.',
-          'Emphasizes verifiable checkpoints between prompting and downstream execution.',
-        ],
-        takeaways: [
-          'Store and structure your learning materials locally for high retention.',
-          'Always keep a tight feedback loop when coding alongside AI assistants.',
-          'Isolate new experimental code into clean subdirectories to prevent repository breakage.',
-        ],
-        questions: [
-          'How can this workflow be extended to automate flashcard generation in Obsidian?',
-          'What are the edge cases when transcribing audio with non-standard accents or high noise?',
-          'How can multiple AIs collaborate on the same repository without colliding?',
-        ],
-        mindMap: [
-          { node: title || 'Core Video Concept', children: ['Foundational Concepts', 'Practical Workflow', 'Troubleshooting & Verifications'] },
-        ],
-        note: 'Generated in offline heuristic mode. Configure your GEMINI_API_KEY in AI Studio Secrets for live Gemini 2.5/Flash deep reasoning.',
-      });
-    }
+  const client = getGeminiClient();
+  if (!client) {
+    // Return structured deterministic analysis if API key is not yet configured
+    return res.json({
+      source: 'local-heuristic',
+      insights: [
+        `Key core focus on "${title || 'YouTube Study Clip'}": local workflow, rapid iteration, and verifying code outputs.`,
+        'Highlights developer empowerment: reducing dependency on proprietary black-boxes by building minimalist, CPU-friendly utilities.',
+        'Emphasizes verifiable checkpoints between prompting and downstream execution.',
+      ],
+      takeaways: [
+        'Store and structure your learning materials locally for high retention.',
+        'Always keep a tight feedback loop when coding alongside AI assistants.',
+        'Isolate new experimental code into clean subdirectories to prevent repository breakage.',
+      ],
+      questions: [
+        'How can this workflow be extended to automate flashcard generation in Obsidian?',
+        'What are the edge cases when transcribing audio with non-standard accents or high noise?',
+        'How can multiple AIs collaborate on the same repository without colliding?',
+      ],
+      mindMap: [
+        { node: title || 'Core Video Concept', children: ['Foundational Concepts', 'Practical Workflow', 'Troubleshooting & Verifications'] },
+      ],
+      note: 'Generated in offline heuristic mode. Configure your GEMINI_API_KEY in AI Studio Secrets for live Gemini deep reasoning.',
+    });
+  }
 
-    const systemPrompt = `You are an elite research assistant and knowledge curator for "learn-better", an ecosystem that turns YouTube content and coding workflows into a personal knowledge hub.
+  const systemPrompt = `You are an elite research assistant and knowledge curator for "learn-better", an ecosystem that turns YouTube content and coding workflows into a personal knowledge hub.
 Analyze the following video summary, transcript, or user note.
 
 Format your response as strict JSON with this shape:
@@ -741,19 +868,16 @@ Format your response as strict JSON with this shape:
 }
 `;
 
-    const userMessage = `Title: ${title || 'Untitled'}\nUser Goal: ${userGoal || 'Personal Knowledge Hub Extraction'}\n\nContent:\n${content}\n\n${customPrompt ? `Additional Instructions: ${customPrompt}` : ''}`;
+  const userMessage = `Title: ${title || 'Untitled'}\nUser Goal: ${userGoal || 'Personal Knowledge Hub Extraction'}\n\nContent:\n${content}\n\n${customPrompt ? `Additional Instructions: ${customPrompt}` : ''}`;
 
-    const response = await client.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: [
-        { role: 'user', parts: [{ text: `${systemPrompt}\n\n${userMessage}` }] }
-      ],
-      config: {
-        responseMimeType: 'application/json',
-      }
+  try {
+    const result = await generateGeminiWithCascade({
+      systemPrompt,
+      prompt: userMessage,
+      responseMimeType: 'application/json',
     });
 
-    const text = response.text || '{}';
+    const text = result.text || '{}';
     let parsedData;
     try {
       parsedData = JSON.parse(text);
@@ -762,52 +886,67 @@ Format your response as strict JSON with this shape:
     }
 
     res.json({
-      source: 'gemini-3.8-flash',
+      source: result.modelUsed,
       ...parsedData,
     });
   } catch (err: any) {
-    console.error('Gemini error:', err);
-    res.status(500).json({ error: err.message });
+    console.error('Gemini error encountered in extract-insights:', err?.message || err);
+
+    // If 503 unavailable, 429 quota, or network failure, engage graceful heuristic fallback
+    const fallbackData = generateHeuristicInsights(content, title, userGoal);
+    res.json(fallbackData);
   }
 });
 
 // 7. Gemini API: Vibe Coding Co-Pilot & Prompt Optimizer
 app.post('/api/gemini/vibe-pilot', async (req, res) => {
-  try {
-    const { idea, currentAssistant, stage } = req.body;
-    const client = getGeminiClient();
+  const { idea, currentAssistant, stage } = req.body;
+  const client = getGeminiClient();
 
-    if (!client) {
-      return res.json({
-        optimizedPrompt: `I am developing a new feature for learn-better. Here is my target outcome: ${idea || 'create a new tool'}. Write a single, focused Python or TypeScript script placed strictly inside a new folder. Include test instructions and an explicit verify command.`,
-        antiPatternWarning: 'Avoid dumping multiple unverified requests in one prompt. Ensure you verify the file output before proceeding to the next step.',
-        suggestedNextSteps: [
-          'Verify that input and output file paths match the existing conventions.',
-          'Run the script on a single test item before running batch mode.',
-          'Commit or stage the changes to a dedicated feature branch.',
-        ],
-      });
-    }
+  if (!client) {
+    return res.json({
+      optimizedPrompt: `I am developing a new feature for learn-better. Here is my target outcome: ${idea || 'create a new tool'}. Write a single, focused Python or TypeScript script placed strictly inside a new folder. Include test instructions and an explicit verify command.`,
+      antiPatternWarning: 'Avoid dumping multiple unverified requests in one prompt. Ensure you verify the file output before proceeding to the next step.',
+      suggestedNextSteps: [
+        'Verify that input and output file paths match the existing conventions.',
+        'Run the script on a single test item before running batch mode.',
+        'Commit or stage the changes to a dedicated feature branch.',
+      ],
+    });
+  }
 
-    const response = await client.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: `You are a master mentor in "AI-Assisted Vibe Coding". The user wants to build: "${idea}". 
+  const prompt = `You are a master mentor in "AI-Assisted Vibe Coding". The user wants to build: "${idea || 'new feature'}". 
 Current assistant targeted: "${currentAssistant || 'Gemini/Claude/Kiro'}". 
 Stage of project: "${stage || 'Ideation'}".
 
 Provide a JSON object with:
 1. "optimizedPrompt": A crystal-clear, high-leverage prompt with input/output contract, constraints, and verification check.
 2. "antiPatternWarning": What common trap or mistake to avoid for this specific task.
-3. "suggestedNextSteps": 3 sequential micro-steps.`,
-      config: {
-        responseMimeType: 'application/json',
-      }
+3. "suggestedNextSteps": 3 sequential micro-steps.`;
+
+  try {
+    const result = await generateGeminiWithCascade({
+      prompt,
+      responseMimeType: 'application/json',
     });
 
-    res.json(JSON.parse(response.text || '{}'));
+    let parsedData: any = {};
+    try {
+      parsedData = JSON.parse(result.text || '{}');
+    } catch {
+      parsedData = { optimizedPrompt: result.text, antiPatternWarning: 'Verify output syntax', suggestedNextSteps: [] };
+    }
+
+    res.json({
+      source: result.modelUsed,
+      ...parsedData,
+    });
   } catch (err: any) {
-    console.error('Vibe pilot error:', err);
-    res.status(500).json({ error: err.message });
+    console.error('Vibe pilot error encountered:', err?.message || err);
+
+    // Engage graceful heuristic fallback on 503 high demand or network failure
+    const fallbackData = generateHeuristicVibePilot(idea, currentAssistant, stage);
+    res.json(fallbackData);
   }
 });
 

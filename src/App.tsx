@@ -14,6 +14,7 @@ import { PythonCodeViewer } from './components/PythonCodeViewer';
 import { PlaylistWordCloudMindMap } from './components/PlaylistWordCloudMindMap';
 import { PlaylistRestructureHub } from './components/PlaylistRestructureHub';
 import { GeminiDevelopmentChat } from './components/GeminiDevelopmentChat';
+import { RoadmapHub } from './components/RoadmapHub';
 import { buildRestructuredPlaylists } from './data/playlistRestructureData';
 
 export default function App() {
@@ -498,6 +499,10 @@ export default function App() {
             guideContent={userGuideLog}
           />
         )}
+
+        {activeTab === 'roadmap' && (
+          <RoadmapHub />
+        )}
       </main>
 
       {/* Footer */}
@@ -508,17 +513,24 @@ export default function App() {
           </span>
           <div className="flex items-center gap-4 flex-wrap">
             <button
+              onClick={() => setActiveTab('roadmap')}
+              className="text-emerald-400 hover:text-emerald-300 underline font-medium cursor-pointer flex items-center gap-1"
+            >
+              <span>🧭 Ecosystem Roadmap &amp; Multi-AI Guide</span>
+            </button>
+            <span className="text-slate-600 hidden sm:inline">&bull;</span>
+            <button
               onClick={() => setActiveTab('gemini-chat')}
               className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer flex items-center gap-1"
             >
-              <span>💬 Gemini_development_chat (15 Prompts &bull; 100%)</span>
+              <span>💬 Gemini_development_chat</span>
             </button>
             <span className="text-slate-600 hidden sm:inline">&bull;</span>
             <button
               onClick={() => setActiveTab('guide')}
-              className="text-emerald-400 hover:text-emerald-300 underline font-medium cursor-pointer flex items-center gap-1"
+              className="text-sky-400 hover:text-sky-300 underline font-medium cursor-pointer flex items-center gap-1"
             >
-              <span>📖 Complete User Guide &amp; Audio Manual</span>
+              <span>📖 Complete User Guide</span>
             </button>
             <span className="text-slate-600 hidden md:inline">&bull;</span>
             <span className="hidden md:inline">
