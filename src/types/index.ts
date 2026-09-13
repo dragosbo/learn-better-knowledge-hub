@@ -94,4 +94,75 @@ export interface PythonFileInfo {
   content: string;
 }
 
-export type ActiveTab = 'playlists' | 'knowledge' | 'python-code' | 'academy' | 'gemini' | 'legacy-apps' | 'github-sync' | 'guide';
+export interface WordCloudWord {
+  text: string;
+  weight: number;
+  category?: string;
+  context?: string;
+  clipCount?: number;
+}
+
+export interface PlaylistWordCloudData {
+  source: string;
+  playlistId: string;
+  playlistTitle: string;
+  totalTokens: number;
+  uniqueWords: number;
+  clipCount: number;
+  generatedAt: string;
+  words: WordCloudWord[];
+}
+
+export interface MindMapNode {
+  id: string;
+  label: string;
+  level: 1 | 2 | 3;
+  description?: string;
+  clipId?: string;
+  clipTitle?: string;
+  channel?: string;
+  duration?: string;
+  keyTakeaway?: string;
+  keywords?: string[];
+  children?: MindMapNode[];
+  color?: string;
+}
+
+export type ActiveTab = 
+  | 'playlists' 
+  | 'restructure'
+  | 'wordcloud-mindmap' 
+  | 'knowledge' 
+  | 'python-code' 
+  | 'academy' 
+  | 'gemini' 
+  | 'gemini-chat'
+  | 'legacy-apps' 
+  | 'github-sync' 
+  | 'guide';
+
+export interface VideoAllocationItem {
+  index: number;
+  videoId: string;
+  videoTitle: string;
+  channel: string;
+  duration: string;
+  originalPlaylistId: string;
+  originalPlaylistTitle: string;
+  proposedClusterId: string;
+  proposedClusterTitle: string;
+  category: string;
+  status: 'to-watch' | 'in-progress' | 'synthesized' | 'mastered';
+  transcriptAvailable: boolean;
+  notes?: string;
+  tags: string[];
+}
+
+export interface RestructureCluster {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  rationale: string;
+  sourcePlaylistTitles: string[];
+}

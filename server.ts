@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import https from 'https';
 import http from 'http';
+import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
@@ -174,6 +175,42 @@ legacyHtmlFiles.forEach((file) => {
 app.use('/lessons_Claude', express.static(path.join(legacyDir, 'lessons_Claude')));
 app.use('/lessons_Kiro', express.static(path.join(legacyDir, 'lessons_Kiro')));
 
+// 4b-2. Gemini Development Chat static serving & dedicated routes
+const geminiChatDir = path.resolve(process.cwd(), 'gemini_chat');
+app.use('/gemini_chat', express.static(geminiChatDir, {
+  extensions: ['html', 'htm'],
+  setHeaders: (res) => {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
+  }
+}));
+
+app.get(['/gemini_development_chat', '/gemini-development-chat', '/chat_history.html'], (req, res) => {
+  const target = path.join(geminiChatDir, 'chat_history.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Gemini chat history not generated yet.');
+  }
+});
+
+app.get('/api/chat/history', (req, res) => {
+  try {
+    const chatHtmlExists = fs.existsSync(path.join(geminiChatDir, 'chat_history.html'));
+    res.json({
+      success: true,
+      htmlExists: chatHtmlExists,
+      htmlUrl: '/gemini_chat/chat_history.html',
+      totalPrompts: 15,
+      latestPromptNumber: 15,
+      sessionsCount: 5
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/content/legacy-apps', (req, res) => {
   res.json({
     apps: [
@@ -343,6 +380,79 @@ app.post('/api/content/save-playlists', (req, res) => {
   }
 });
 
+// 4d-2. Get word cloud for any playlist (aggregating all clips into top 50 words)
+app.get('/api/playlists/wordcloud/:playlistId', (req, res) => {
+  try {
+    const { playlistId } = req.params;
+    const isIntel = playlistId === 'PL_intelligence_proof_of_concept' || playlistId.toLowerCase() === 'intelligence';
+
+    const intelWordCloudPath = path.resolve(__dirname, 'imported_repo', 'data', 'wordclouds', 'intelligence.word_cloud.json');
+    if (isIntel && fs.existsSync(intelWordCloudPath)) {
+      const data = JSON.parse(fs.readFileSync(intelWordCloudPath, 'utf-8'));
+      return res.json(data);
+    }
+
+    // Otherwise load playlist from channelPlaylists.json
+    const playlistsPath = path.resolve(__dirname, 'src', 'data', 'channelPlaylists.json');
+    if (!fs.existsSync(playlistsPath)) {
+      return res.status(404).json({ error: 'Playlists file not found' });
+    }
+
+    const playlists = JSON.parse(fs.readFileSync(playlistsPath, 'utf-8'));
+    const target = playlists.find((p: any) => p.id === playlistId || p.title.toLowerCase() === playlistId.toLowerCase()) || playlists[0];
+
+    if (!target) {
+      return res.status(404).json({ error: 'Playlist not found' });
+    }
+
+    // Dynamic extraction logic
+    const corpus = [
+      target.title,
+      target.description || '',
+      ...target.clips.map((c: any) => `${c.title} ${(c.tags || []).join(' ')} ${c.notes || ''}`)
+    ].join(' ').toLowerCase();
+
+    const stopWords = new Set(['the', 'and', 'for', 'with', 'that', 'this', 'from', 'you', 'your', 'are', 'was', 'have', 'has', 'how', 'what', 'why', 'can', 'not', 'all', 'into', 'using', 'make', 'get', 'use', 'new', 'one', 'two', 'video', 'watch', 'part', 'tutorial', 'clip', 'learn', 'guide']);
+    const tokens = corpus.match(/[a-zA-Z]{3,}/g) || [];
+    const counts: Record<string, number> = {};
+    for (const token of tokens) {
+      if (!stopWords.has(token)) {
+        counts[token] = (counts[token] || 0) + 1;
+      }
+    }
+
+    const words = Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 50)
+      .map(([text, count]) => {
+        const clipCount = target.clips.filter((c: any) => (c.title + ' ' + (c.notes || '') + ' ' + (c.tags || []).join(' ')).toLowerCase().includes(text)).length || 1;
+        return {
+          text,
+          weight: Math.max(12, Math.min(220, count * 8 + clipCount * 5)),
+          category: 'Keyword',
+          context: `Found across ${clipCount} clip(s) in "${target.title}"`,
+          clipCount
+        };
+      });
+
+    res.json({
+      source: `playlist:${target.id} (${target.clips.length} clips merged)`,
+      playlist_id: target.id,
+      title: `Playlist Word Cloud: ${target.title}`,
+      language: 'en',
+      total_tokens: tokens.length,
+      unique_words: Object.keys(counts).length,
+      clip_count: target.clips.length,
+      generated_at: new Date().toISOString(),
+      params: { min_length: 3, max_words: 50, lowercase: true, merge: true, playlist: target.title },
+      words
+    });
+  } catch (err: any) {
+    console.error('Word cloud error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 4e. Live sync with YouTube channel (@dragosborosgpt)
 app.post('/api/content/sync-youtube', async (req, res) => {
   try {
@@ -493,6 +603,71 @@ app.post('/api/content/sync-youtube', async (req, res) => {
     });
   } catch (err: any) {
     console.error('Error syncing YouTube channel:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4f. Run CLI Sync Script directly from app
+app.post('/api/cli/execute-sync', async (req, res) => {
+  try {
+    const { mode, channel } = req.body;
+    const targetChannel = (channel || '@dragosborosgpt').trim();
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'sync-youtube.mjs');
+
+    if (!fs.existsSync(scriptPath)) {
+      return res.status(404).json({ error: 'CLI script scripts/sync-youtube.mjs not found' });
+    }
+
+    const args = [scriptPath];
+    if (mode === 'offline') {
+      args.push('--offline');
+    } else {
+      args.push(`--channel=${targetChannel}`);
+    }
+
+    const child = spawn('node', args, {
+      cwd: process.cwd(),
+      env: { ...process.env, PATH: process.env.PATH }
+    });
+
+    let output = '';
+    let errorOutput = '';
+
+    child.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+
+    child.stderr.on('data', (data) => {
+      errorOutput += data.toString();
+    });
+
+    child.on('close', (code) => {
+      // Re-read current count after execution
+      const plPath = path.resolve(process.cwd(), 'src', 'data', 'channelPlaylists.json');
+      let currentStats = { count: 0, clips: 0 };
+      if (fs.existsSync(plPath)) {
+        try {
+          const list = JSON.parse(fs.readFileSync(plPath, 'utf-8'));
+          currentStats = {
+            count: list.length,
+            clips: list.reduce((acc: number, p: any) => acc + (p.clips ? p.clips.length : 0), 0)
+          };
+        } catch {}
+      }
+
+      res.json({
+        success: code === 0,
+        exitCode: code,
+        output: output || 'Process completed with no output.',
+        errorOutput,
+        timestamp: new Date().toISOString(),
+        channel: targetChannel,
+        mode: mode || 'live',
+        stats: currentStats
+      });
+    });
+  } catch (err: any) {
+    console.error('CLI Execution error:', err);
     res.status(500).json({ error: err.message });
   }
 });

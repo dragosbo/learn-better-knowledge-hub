@@ -16,7 +16,8 @@ import {
   Layers,
   Youtube,
   RotateCcw,
-  Check
+  Check,
+  Network
 } from 'lucide-react';
 import { Playlist, YouTubeClip, SummaryData } from '../types';
 
@@ -30,6 +31,10 @@ interface PlaylistManagerProps {
   onSyncYouTube?: () => Promise<void>;
   isSyncing?: boolean;
   onResetToAllPlaylists?: () => void;
+  onNavigateToWordCloud?: (playlistId?: string) => void;
+  isRestructuredActive?: boolean;
+  onNavigateToRestructure?: () => void;
+  onToggleRestructure?: () => void;
 }
 
 export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
@@ -42,6 +47,10 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
   onSyncYouTube,
   isSyncing = false,
   onResetToAllPlaylists,
+  onNavigateToWordCloud,
+  isRestructuredActive = false,
+  onNavigateToRestructure,
+  onToggleRestructure,
 }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all');
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string>('all');
@@ -283,6 +292,66 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
         </div>
       </div>
 
+      {/* Restructuring Status & Proposal Callout Banner */}
+      <div className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
+        isRestructuredActive 
+          ? 'bg-indigo-950/40 border-indigo-700/60 text-indigo-100' 
+          : 'bg-slate-900 border-indigo-900/60 text-slate-200'
+      }`}>
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shrink-0">
+            <Layers className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-xs text-white">
+                {isRestructuredActive 
+                  ? 'Active Mode: 28 Consolidated Topic Playlists' 
+                  : 'Library Optimization Proposal: 71 ➔ 28 Thematic Clusters'}
+              </span>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                isRestructuredActive 
+                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' 
+                  : 'bg-indigo-950 text-indigo-300 border border-indigo-800'
+              }`}>
+                {isRestructuredActive ? 'ACTIVE' : 'READY TO MIGRATE'}
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400 mt-0.5">
+              {isRestructuredActive 
+                ? `Organized into 28 high-density collections with 0 orphan clips. Downloadable PDF allocation report available.` 
+                : `Your library contains 71 fragmented playlists (34 have ≤ 2 clips). We have generated a 28-topic regrouping plan downloadable as PDF.`}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 shrink-0">
+          {onToggleRestructure && (
+            <button
+              onClick={onToggleRestructure}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                isRestructuredActive 
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700' 
+                  : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              {isRestructuredActive ? 'Switch to Original 71' : 'Auto-Regroup to 28'}
+            </button>
+          )}
+
+          {onNavigateToRestructure && (
+            <button
+              onClick={onNavigateToRestructure}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-300 hover:text-white border border-slate-700 text-xs font-medium transition-colors flex items-center gap-1.5"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              View Allocation &amp; PDF Exports &rarr;
+            </button>
+          )}
+        </div>
+      </div>
+
       {syncMessage && (
         <div className="bg-sky-950/80 border border-sky-800 text-sky-200 text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 animate-in fade-in">
           <Sparkles className="w-4 h-4 text-sky-400 shrink-0" />
@@ -483,6 +552,15 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
+              {onNavigateToWordCloud && (
+                <button
+                  onClick={() => onNavigateToWordCloud(activePlaylist.id)}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/50 transition-colors font-medium shadow-xs"
+                >
+                  <Network className="w-3.5 h-3.5 text-indigo-300" />
+                  Word Cloud & Mindmap
+                </button>
+              )}
               <a
                 href={`https://www.youtube.com/playlist?list=${activePlaylist.id}`}
                 target="_blank"
@@ -525,13 +603,13 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
 
       {/* Video Clips Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {displayedClips.map((clip) => {
+        {displayedClips.map((clip, idx) => {
           const matchingSummary = summaries.find(s => s.videoId === clip.id);
           const parentPlaylist = playlists.find(p => p.id === clip.playlistId);
 
           return (
             <div
-              key={`${clip.playlistId}-${clip.id}`}
+              key={`${clip.playlistId || 'pl'}-${clip.id}-${idx}`}
               className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
             >
               {/* Card Header & Thumbnail */}

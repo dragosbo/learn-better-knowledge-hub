@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   BrainCircuit, 
   Sparkles, 
@@ -139,10 +139,20 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const filteredClips = clips.filter(c => 
-    c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.channel.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredClips = useMemo(() => {
+    const seen = new Set<string>();
+    const query = searchTerm.toLowerCase();
+    return clips.filter(c => {
+      if (seen.has(c.id)) return false;
+      const matches = c.title.toLowerCase().includes(query) ||
+        c.channel.toLowerCase().includes(query);
+      if (matches) {
+        seen.add(c.id);
+        return true;
+      }
+      return false;
+    });
+  }, [clips, searchTerm]);
 
   return (
     <div className="space-y-6">
@@ -211,7 +221,7 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
               const hasRepoSummary = summaries.some(s => s.videoId === clip.id);
               return (
                 <button
-                  key={clip.id}
+                  key={`${clip.playlistId || 'clip'}-${clip.id}`}
                   onClick={() => onSelectClip(clip)}
                   className={`w-full text-left p-2.5 rounded-lg border text-xs transition-all ${
                     isSelected

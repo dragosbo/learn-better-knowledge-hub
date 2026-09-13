@@ -1,5 +1,296 @@
 [
   {
+    "id": "PL_intelligence_proof_of_concept",
+    "title": "Intelligence",
+    "description": "Curated playlist exploring biological origins, neural computation, cognitive architectures, large language models, compute silicon, and the socio-economics of synthetic intelligence.",
+    "category": "AI & Cognitive Science",
+    "clipCount": 12,
+    "clips": [
+      {
+        "id": "G5sxVf9K-_c",
+        "title": "Chapter 1: When Did Intelligence Begin",
+        "channel": "The Symbiont",
+        "duration": "18:24",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "intelligence",
+          "evolution",
+          "biology",
+          "cognition"
+        ],
+        "status": "synthesized",
+        "transcriptAvailable": true,
+        "notes": "Investigates the phylogenetic dawn of intelligence: from cellular chemotaxis and sensory feedback loops to predictive neural modeling.",
+        "userQuestions": [
+          "At what evolutionary juncture does simple stimulus-response cross into genuine intelligence?"
+        ],
+        "userIdeas": [
+          "Use evolutionary feedback loops as architectural constraints for reinforcement learning agents."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "XSy7ry-x5pA",
+        "title": "The Economics of Artificial Intelligence | Tyler Cowen",
+        "channel": "Conversations with Tyler",
+        "duration": "44:12",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "economics",
+          "productivity",
+          "macroeconomics",
+          "labor"
+        ],
+        "status": "mastered",
+        "transcriptAvailable": true,
+        "notes": "Tyler Cowen dissects capital deepening, productivity paradoxes, and the distributional consequences of synthetic cognitive labor.",
+        "userQuestions": [
+          "Will AI increase or decrease the returns to high-variance talent?"
+        ],
+        "userIdeas": [
+          "Analyze token cost curves in relation to Baumol cost disease in human services."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "X847teCz1pQ",
+        "title": "Does intelligence have a basis in genetics? | Manolis Kellis and Lex Fridman",
+        "channel": "Lex Clips",
+        "duration": "14:35",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "genetics",
+          "neuroscience",
+          "biology",
+          "heritability"
+        ],
+        "status": "synthesized",
+        "transcriptAvailable": true,
+        "notes": "Computational biologist Manolis Kellis explains polygenic score architecture, neural development pathways, and biological plasticity.",
+        "userQuestions": [
+          "How does genetic modularity inform sparse mixture-of-experts in artificial networks?"
+        ],
+        "userIdeas": [
+          "Map polygenic regulatory networks to hyperparameter optimization strategies."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "BwmddtPFWtA",
+        "title": "Recurrent Neural Network - The Math of Intelligence",
+        "channel": "Siraj Raval",
+        "duration": "12:48",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "recurrent",
+          "neural-networks",
+          "math",
+          "backpropagation"
+        ],
+        "status": "synthesized",
+        "transcriptAvailable": true,
+        "notes": "Mathematical derivation of hidden state vector evolution over time, vanishing gradient dynamics, and gating mechanisms (LSTM/GRU).",
+        "userQuestions": [
+          "Why did self-attention supersede recurrence for long temporal sequences?"
+        ],
+        "userIdeas": [
+          "Benchmark linear RNN state spaces against transformer attention for edge deployment."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "0Vg7DWNc694",
+        "title": "The Symbiont: Rise of Living Intelligence",
+        "channel": "The Symbiont",
+        "duration": "22:15",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "symbiosis",
+          "philosophy",
+          "future",
+          "interaction"
+        ],
+        "status": "to-watch",
+        "transcriptAvailable": true,
+        "notes": "Explores human-machine symbiotic intelligence where human intuition and synthetic generative models form an integrated cognitive organ.",
+        "userQuestions": [
+          "How does epistemic agency shift when cognition is co-produced with an AI model?"
+        ],
+        "userIdeas": [
+          "Design continuous dual-loop interfaces rather than turn-based prompt/response."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "a-Lj9moBlqE",
+        "title": "Open Weight AI Models Explained for Everyone",
+        "channel": "AI Explained",
+        "duration": "19:40",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "open-weights",
+          "models",
+          "deepseek",
+          "llama",
+          "safety"
+        ],
+        "status": "mastered",
+        "transcriptAvailable": true,
+        "notes": "Comprehensive taxonomy of open weights vs open source: weight tensors, quantization formats (GGUF/AWQ), licensing, and democratized inference.",
+        "userQuestions": [
+          "What are the marginal security implications of distilled open weight models?"
+        ],
+        "userIdeas": [
+          "Run quantized local weights via llama.cpp alongside cloud reasoning models."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "YmLp8qe87A0",
+        "title": "I Built an LLM From Scratch",
+        "channel": "Andrej Karpathy",
+        "duration": "31:05",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "scratch",
+          "transformer",
+          "python",
+          "code",
+          "gpt"
+        ],
+        "status": "mastered",
+        "transcriptAvailable": true,
+        "notes": "Ground-up PyTorch construction of the nanoGPT transformer architecture: token embeddings, multi-head causal self-attention, and residual blocks.",
+        "userQuestions": [
+          "How do scaling laws govern loss reduction across token counts vs parameter counts?"
+        ],
+        "userIdeas": [
+          "Implement a lightweight character-level attention toy model for interactive inspection."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "AyzOUbkUf3M",
+        "title": "The Next Generation of Neural Networks | Geoffrey Hinton",
+        "channel": "Google Tech Talks",
+        "duration": "58:10",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "hinton",
+          "capsules",
+          "backpropagation",
+          "neuroscience"
+        ],
+        "status": "synthesized",
+        "transcriptAvailable": true,
+        "notes": "Geoffrey Hinton critiques backpropagation biological implausibility and presents vector capsules with coordinate frames and routing-by-agreement.",
+        "userQuestions": [
+          "Can biological forward-forward algorithms eliminate the need for global backprop?"
+        ],
+        "userIdeas": [
+          "Explore routing-by-agreement mechanisms in multimodal vision encoders."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "O5xeyoRL95U",
+        "title": "Deep Learning Basics: Introduction and Overview",
+        "channel": "Lex Fridman",
+        "duration": "68:40",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "deep-learning",
+          "foundations",
+          "gradient-descent",
+          "loss"
+        ],
+        "status": "mastered",
+        "transcriptAvailable": true,
+        "notes": "Foundational masterclass spanning perceptrons, activation functions (ReLU, GELU), computational graphs, SGD momentum, and regularization.",
+        "userQuestions": [
+          "How does overparameterization escape bad local minima in high-dimensional loss landscapes?"
+        ],
+        "userIdeas": [
+          "Visualize 2D loss surface projections during training convergence."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "gE8SvBqMf8o",
+        "title": "AI Chip Wars: LPUs, TPUs & GPUs w/ Jonathan Ross, Founder Groq",
+        "channel": "The AI Breakdown",
+        "duration": "26:15",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "groq",
+          "lpu",
+          "hardware",
+          "silicon",
+          "latency",
+          "tpu"
+        ],
+        "status": "synthesized",
+        "transcriptAvailable": true,
+        "notes": "Architecture breakdown of Groqs deterministic Tensor Streaming Processor (LPU) vs Nvidias H100 SIMD/SIMT architectures and HBM memory bottlenecks.",
+        "userQuestions": [
+          "How does SRAM-based deterministic compiler scheduling eliminate cache miss latency?"
+        ],
+        "userIdeas": [
+          "Calculate real-time conversational latency thresholds for interactive voice synthesis."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "IMLwvK08JVc",
+        "title": "You Can Learn AI Agent Graph Engineering In 21 Min",
+        "channel": "IndyDevDan",
+        "duration": "21:18",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "agents",
+          "graphs",
+          "langgraph",
+          "state-machine",
+          "control-flow"
+        ],
+        "status": "synthesized",
+        "transcriptAvailable": true,
+        "notes": "Transitioning from linear chains to cyclic directed graph architectures: persistent state machines, human-in-the-loop nodes, and deterministic routers.",
+        "userQuestions": [
+          "How to ensure convergence and eliminate infinite loops in self-reflective multi-agent graphs?"
+        ],
+        "userIdeas": [
+          "Model playlist transcript extraction pipeline as an autonomous cyclical graph agent."
+        ],
+        "addedAt": "2026-09-11"
+      },
+      {
+        "id": "up0Bsf3f0Xc",
+        "title": "Claude Skills: I Stopped Installing Them. Here's What I Do Instead",
+        "channel": "Prompt Engineering",
+        "duration": "16:32",
+        "playlistId": "PL_intelligence_proof_of_concept",
+        "tags": [
+          "skills",
+          "claude",
+          "system-prompts",
+          "vibe-coding",
+          "tooling"
+        ],
+        "status": "mastered",
+        "transcriptAvailable": true,
+        "notes": "Modular skill architecture vs monolithic bloated prompts: progressive context loading, concise instruction design, and task-specific sandbox tools.",
+        "userQuestions": [
+          "What is the token overhead vs execution precision trade-off in dynamic tool schemas?"
+        ],
+        "userIdeas": [
+          "Integrate the learn-better repository skills as targeted system-level context modules."
+        ],
+        "addedAt": "2026-09-11"
+      }
+    ]
+  },
+  {
     "id": "PLD1ilzHe_cTs",
     "title": "huggingface",
     "description": "YouTube playlist \"huggingface\" from @dragosborosgpt containing 1 clip(s).",
@@ -159,7 +450,7 @@
     "clips": [
       {
         "id": "9JuIOmLV8lQ",
-        "title": "AI Distillation Explained: Why It’s So Misunderstood!",
+        "title": "AI Distillation Explained: Why It\u2019s So Misunderstood!",
         "channel": "Prompt Engineering",
         "duration": "10:00",
         "playlistId": "PLYdBnoAeVHZc",
@@ -231,7 +522,7 @@
       },
       {
         "id": "rb4jC1AQgcc",
-        "title": "“America Is Screwed Up From Top to Bottom” — The Trump Warning David Brooks Makes | APT",
+        "title": "\u201cAmerica Is Screwed Up From Top to Bottom\u201d \u2014 The Trump Warning David Brooks Makes | APT",
         "channel": "APT",
         "duration": "10:00",
         "playlistId": "PLZEp9I2UHXQY",
@@ -271,7 +562,7 @@
       },
       {
         "id": "f17MHSLKCBw",
-        "title": "Cut a Pineapple the Easy Way! No Digging Out the Eyes, No Waste—Clean & Simple | Tracy Tips",
+        "title": "Cut a Pineapple the Easy Way! No Digging Out the Eyes, No Waste\u2014Clean & Simple | Tracy Tips",
         "channel": "Tracy Tips",
         "duration": "10:00",
         "playlistId": "PLVwKZO6eM0LE",
@@ -303,8 +594,8 @@
       },
       {
         "id": "MaHzfq4OGGI",
-        "title": "How to make a perfect soufflé omelet? | Report | Weather on Demand",
-        "channel": "Météo à la carte - France Télévisions",
+        "title": "How to make a perfect souffl\u00e9 omelet? | Report | Weather on Demand",
+        "channel": "M\u00e9t\u00e9o \u00e0 la carte - France T\u00e9l\u00e9visions",
         "duration": "10:00",
         "playlistId": "PLVwKZO6eM0LE",
         "tags": [
@@ -327,7 +618,7 @@
     "clips": [
       {
         "id": "Tdi5XyNpmWs",
-        "title": "Now We Are Free (Gladiator) – Stunning Live Performance | Tamara Radjenović",
+        "title": "Now We Are Free (Gladiator) \u2013 Stunning Live Performance | Tamara Radjenovi\u0107",
         "channel": "Tamara Radjenovic",
         "duration": "10:00",
         "playlistId": "PLBOHXQsdjZL4",
@@ -496,7 +787,7 @@
       {
         "id": "IMLwvK08JVc",
         "title": "You Can Learn AI Agent Graph Engineering In 21 Min | Loop, Harness, System Design, Waku Agent",
-        "channel": "Sean‘s AI Stories",
+        "channel": "Sean\u2018s AI Stories",
         "duration": "10:00",
         "playlistId": "PLfpEwmlPLN6w",
         "tags": [
@@ -607,7 +898,7 @@
       },
       {
         "id": "n_m0fqp8xwQ",
-        "title": "NVIDIA’s New Voice AI is Absolutely WILD! (PersonaPlex)",
+        "title": "NVIDIA\u2019s New Voice AI is Absolutely WILD! (PersonaPlex)",
         "channel": "Better Stack",
         "duration": "10:00",
         "playlistId": "PLCYYgjqxd8tQ",
@@ -639,7 +930,7 @@
       },
       {
         "id": "yFFcuT1sK_Y",
-        "title": "Attention Explained: What Really Happens in Q × K × V",
+        "title": "Attention Explained: What Really Happens in Q \u00d7 K \u00d7 V",
         "channel": "Projets IA",
         "duration": "10:00",
         "playlistId": "PLCYYgjqxd8tQ",
@@ -719,7 +1010,7 @@
       },
       {
         "id": "mIL4sZa8M0E",
-        "title": "Open-Source Dictation Is Here… Goodbye Subscriptions",
+        "title": "Open-Source Dictation Is Here\u2026 Goodbye Subscriptions",
         "channel": "Better Stack",
         "duration": "10:00",
         "playlistId": "PLb2PabnoUj84",
@@ -783,7 +1074,7 @@
       },
       {
         "id": "CvZuuKkT3Sw",
-        "title": "Someone Built Ollama for Audio… and It Runs Locally",
+        "title": "Someone Built Ollama for Audio\u2026 and It Runs Locally",
         "channel": "Better Stack",
         "duration": "10:00",
         "playlistId": "PLb2PabnoUj84",
@@ -863,7 +1154,7 @@
     "clips": [
       {
         "id": "a1EIi9BM3b0",
-        "title": "KIRO For Dummies: The Complete Beginner's Guide (Install → Build → Powers)",
+        "title": "KIRO For Dummies: The Complete Beginner's Guide (Install \u2192 Build \u2192 Powers)",
         "channel": "Data Science Basics",
         "duration": "10:00",
         "playlistId": "PLNLy38wKs-Sg",
@@ -983,7 +1274,7 @@
       },
       {
         "id": "oUBgqzcV1qw",
-        "title": "Building an AI Agent From Scratch in Python — One Primitive at a Time",
+        "title": "Building an AI Agent From Scratch in Python \u2014 One Primitive at a Time",
         "channel": "The Carbon Layer",
         "duration": "10:00",
         "playlistId": "PLWHz00gC3PQs",
@@ -1143,7 +1434,7 @@
       },
       {
         "id": "9JuIOmLV8lQ",
-        "title": "AI Distillation Explained: Why It’s So Misunderstood!",
+        "title": "AI Distillation Explained: Why It\u2019s So Misunderstood!",
         "channel": "Prompt Engineering",
         "duration": "10:00",
         "playlistId": "PLWHz00gC3PQs",
@@ -1312,7 +1603,7 @@
       {
         "id": "JMYspR42HFM",
         "title": "Claude Code vs Codex vs Cursor (an honest comparison)",
-        "channel": "Theo - t3․gg",
+        "channel": "Theo - t3\u2024gg",
         "duration": "10:00",
         "playlistId": "PLDJr87F4FA3g",
         "tags": [
@@ -1392,7 +1683,7 @@
       {
         "id": "GrNbuWWJYiI",
         "title": "You Can Learn AI Agent Harness & Loop Engineering In 19 Min | LLM Ops, Eval, Tracing, RAG",
-        "channel": "Sean‘s AI Stories and AutoManus",
+        "channel": "Sean\u2018s AI Stories and AutoManus",
         "duration": "10:00",
         "playlistId": "PLDJr87F4FA3g",
         "tags": [
@@ -1471,7 +1762,7 @@
     "clips": [
       {
         "id": "qmUH29SLknE",
-        "title": "The end of expensive SUVs? Geely Starray EM-i 2026 – The nightmare of European brands!",
+        "title": "The end of expensive SUVs? Geely Starray EM-i 2026 \u2013 The nightmare of European brands!",
         "channel": "SDA Dan Cars Romania",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjExrA_Xp23G9r6V5qo6AWkIL",
@@ -1566,7 +1857,7 @@
       },
       {
         "id": "jZ8wPB-KI8g",
-        "title": "Clone ANY Voice for Free — Qwen Just Changed Everything",
+        "title": "Clone ANY Voice for Free \u2014 Qwen Just Changed Everything",
         "channel": "Sam Witteveen",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEwvVJKKMKOAMQl3u5-K9irx",
@@ -1855,7 +2146,7 @@
       {
         "id": "L2CXXmDG-mM",
         "title": "How To Learn AI So Fast It's Almost Unfair",
-        "channel": "Sabrina Ramonov 🍄",
+        "channel": "Sabrina Ramonov \ud83c\udf44",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjExwKVE0usscx7hgbRJIrBxy",
         "tags": [
@@ -1927,7 +2218,7 @@
       {
         "id": "sFEDAkJy9Dc",
         "title": "I can't believe nobody's done this before...",
-        "channel": "Theo - t3․gg",
+        "channel": "Theo - t3\u2024gg",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyDb5Dgk312KlcnhnY3t8gq",
         "tags": [
@@ -1990,7 +2281,7 @@
       },
       {
         "id": "HgjTdwrmHms",
-        "title": "L'odyssée des chiffres (2/3) | À la conquête du monde | ARTE",
+        "title": "L'odyss\u00e9e des chiffres (2/3) | \u00c0 la conqu\u00eate du monde | ARTE",
         "channel": "ARTE",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyDb5Dgk312KlcnhnY3t8gq",
@@ -2039,7 +2330,7 @@
       {
         "id": "gh6aFBnwQj4",
         "title": "Anthropic just burned so much trust...",
-        "channel": "Theo - t3․gg",
+        "channel": "Theo - t3\u2024gg",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEwxDh51IXHxP064YJo9klWR",
         "tags": [
@@ -2055,7 +2346,7 @@
       {
         "id": "Sc5ca-VJdxY",
         "title": "I moved off of Next.js",
-        "channel": "Theo - t3․gg",
+        "channel": "Theo - t3\u2024gg",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEwxDh51IXHxP064YJo9klWR",
         "tags": [
@@ -2342,7 +2633,7 @@
       },
       {
         "id": "lg1u11IHFj8",
-        "title": "The AI Expert: \"Super AI Will Be Unstoppable!\" – What’s Coming NEXT | Stephen Wolfram",
+        "title": "The AI Expert: \"Super AI Will Be Unstoppable!\" \u2013 What\u2019s Coming NEXT | Stephen Wolfram",
         "channel": "Sean Kim",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEwR74ZPqcsm5CEoI519eSPl",
@@ -2358,7 +2649,7 @@
       },
       {
         "id": "prIw_2NiDhw",
-        "title": "√7 is missing – and it took 2000 years to find the real reason why",
+        "title": "\u221a7 is missing \u2013 and it took 2000 years to find the real reason why",
         "channel": "Mathinity",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEwR74ZPqcsm5CEoI519eSPl",
@@ -2470,7 +2761,7 @@
     "clips": [
       {
         "id": "G5jRSQixfgM",
-        "title": "🆚 PYTHON VENV vs VIRTUALENV on WINDOWS (Beginner’s Guide)",
+        "title": "\ud83c\udd9a PYTHON VENV vs VIRTUALENV on WINDOWS (Beginner\u2019s Guide)",
         "channel": "288 views",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEzMN4ApolUuJsfxp3GAZB4Q",
@@ -2630,7 +2921,7 @@
     "clips": [
       {
         "id": "d0fQLgAClnk",
-        "title": "NEW DeepSeek V3.1: Automate ANYTHING! 🤯",
+        "title": "NEW DeepSeek V3.1: Automate ANYTHING! \ud83e\udd2f",
         "channel": "Julian Goldie SEO",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyACnUt4raVSfy9N-YnuOuW",
@@ -2646,7 +2937,7 @@
       },
       {
         "id": "s12fWW6D1-c",
-        "title": "🤯NEW DeepSeek V3.1 Just DESTROYED Claude 3.7??? (INSANE)",
+        "title": "\ud83e\udd2fNEW DeepSeek V3.1 Just DESTROYED Claude 3.7??? (INSANE)",
         "channel": "Income stream surfers",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyACnUt4raVSfy9N-YnuOuW",
@@ -3006,7 +3297,7 @@
       },
       {
         "id": "ySENWFIkL7c",
-        "title": "🔴 How to use OBS for Screen Recording or Streaming - Beginner Tutorial",
+        "title": "\ud83d\udd34 How to use OBS for Screen Recording or Streaming - Beginner Tutorial",
         "channel": "Kevin Stratvert",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEzFdt5AGKJcVnsJImrEZCsr",
@@ -3038,7 +3329,7 @@
       },
       {
         "id": "kxiZoEkOI6Y",
-        "title": "How To Make CIRCLE Webcam In OBS Studio! [2026]✅",
+        "title": "How To Make CIRCLE Webcam In OBS Studio! [2026]\u2705",
         "channel": "Levine Tech Talks",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEzFdt5AGKJcVnsJImrEZCsr",
@@ -3366,7 +3657,7 @@
       },
       {
         "id": "jmgdf343kcw",
-        "title": "How I Built a ONE CLICK Excel Dashboard with ChatGPT 😎",
+        "title": "How I Built a ONE CLICK Excel Dashboard with ChatGPT \ud83d\ude0e",
         "channel": "Website Learners",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyi6ItpzrxwOpC3tw53r5tJ",
@@ -3742,7 +4033,7 @@
       },
       {
         "id": "kUUEMuM-r8Y",
-        "title": "VS Code tips — Using the current date/time in snippets",
+        "title": "VS Code tips \u2014 Using the current date/time in snippets",
         "channel": "Code 2020",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyzmMW3Hi-FQYxlyi5QEMjx",
@@ -3774,7 +4065,7 @@
       },
       {
         "id": "VXlBX8uLE3A",
-        "title": "Customizing VS Code's layout  — An in-depth look at views, managing editors, and more!",
+        "title": "Customizing VS Code's layout  \u2014 An in-depth look at views, managing editors, and more!",
         "channel": "Code 2020",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyzmMW3Hi-FQYxlyi5QEMjx",
@@ -3790,7 +4081,7 @@
       },
       {
         "id": "7DlZHZF7P3U",
-        "title": "Customizing VS Code's appearance — A deep dive on themes, fonts, and more!",
+        "title": "Customizing VS Code's appearance \u2014 A deep dive on themes, fonts, and more!",
         "channel": "Code 2020",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyzmMW3Hi-FQYxlyi5QEMjx",
@@ -3902,7 +4193,7 @@
       },
       {
         "id": "7FltByLPnrg",
-        "title": "Setting up VS Code for Python Beginners 🐍",
+        "title": "Setting up VS Code for Python Beginners \ud83d\udc0d",
         "channel": "Visual Studio Code",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyzmMW3Hi-FQYxlyi5QEMjx",
@@ -4062,7 +4353,7 @@
       },
       {
         "id": "heXQnM99oAI",
-        "title": "VS Code Tutorial – Become More Productive",
+        "title": "VS Code Tutorial \u2013 Become More Productive",
         "channel": "freeCodeCamp.org",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyzmMW3Hi-FQYxlyi5QEMjx",
@@ -4086,7 +4377,7 @@
     "clips": [
       {
         "id": "AR1hs3m4xDk",
-        "title": "Pricing and Valuation of Options (2025 Level I CFA® Exam – Derivatives – Module 8)",
+        "title": "Pricing and Valuation of Options (2025 Level I CFA\u00ae Exam \u2013 Derivatives \u2013 Module 8)",
         "channel": "AnalystPrep",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyTrfVxjI_Mdv6i4UKopOxd",
@@ -4278,7 +4569,7 @@
       },
       {
         "id": "sR5BX_GG2fM",
-        "title": "Markdown Tips — Better linking with references",
+        "title": "Markdown Tips \u2014\u00a0Better linking with references",
         "channel": "Code 2020",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEzRZeMYYP_pJFLYgTso0ta1",
@@ -4383,7 +4674,7 @@
       {
         "id": "htYh-Tq7ZBI",
         "title": "Why can't you multiply vectors?",
-        "channel": "Freya Holmér",
+        "channel": "Freya Holm\u00e9r",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEwx6qscJnsaN_iSxoIrtUcs",
         "tags": [
@@ -4558,7 +4849,7 @@
       },
       {
         "id": "_t6w7gSUndg",
-        "title": "5 Mind-blowing AI Tools 🤯",
+        "title": "5 Mind-blowing AI Tools \ud83e\udd2f",
         "channel": "Kevin Stratvert",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEyskUJ_05hOilkT8lOXCAp-",
@@ -5628,7 +5919,7 @@
       },
       {
         "id": "XTjtPc0uiG8",
-        "title": "YouTube Comments to CSV (✓ Official YouTube API, ✘ scraping) w Python",
+        "title": "YouTube Comments to CSV (\u2713 Official YouTube API, \u2718 scraping) w Python",
         "channel": "Samuel Chan",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEwV8RSSpFJ2ocORAbiCLfzC",
@@ -6037,22 +6328,6 @@
       {
         "id": "0mfIK8zxUds",
         "title": "Complete Guide to Bootstrap Dashboard Apps - Dash Plotly",
-        "channel": "Charming Data",
-        "duration": "10:00",
-        "playlistId": "PLsWyhklHwjEx0_WUY4RsidDdllarwQ7Dd",
-        "tags": [
-          "plotly, gradio, streamlit"
-        ],
-        "status": "to-watch",
-        "transcriptAvailable": true,
-        "notes": "",
-        "userQuestions": [],
-        "userIdeas": [],
-        "addedAt": "2026-09-11"
-      },
-      {
-        "id": "mTsZL-VmRVE",
-        "title": "The Dash Callback -  Input, Output, State, and more",
         "channel": "Charming Data",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjEx0_WUY4RsidDdllarwQ7Dd",
@@ -6532,7 +6807,7 @@
       },
       {
         "id": "kU5cFdXjwOc",
-        "title": "AWS re:Invent 2018: [NEW LAUNCH!] Introducing Amazon Forecast  (AIM344)",
+        "title": "AWS re:Invent 2018: [NEW LAUNCH!] Introducing Amazon Forecast\u00a0 (AIM344)",
         "channel": "Amazon Web Services",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjExlZiBXJ13ltvY4XPpuP-14",
@@ -6612,7 +6887,7 @@
       },
       {
         "id": "W3S1OnDqWl4",
-        "title": "Build with DynamoDB | S1 E1 – Intro to Amazon DynamoDB",
+        "title": "Build with DynamoDB | S1 E1 \u2013 Intro to Amazon DynamoDB",
         "channel": "Amazon Web Services",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjExlZiBXJ13ltvY4XPpuP-14",
@@ -6676,7 +6951,7 @@
       },
       {
         "id": "7elel-asftY",
-        "title": "AWS July Webinar Series – Getting Started with Amazon DynamoDB",
+        "title": "AWS July Webinar Series \u2013 Getting Started with Amazon DynamoDB",
         "channel": "AWS Developers",
         "duration": "10:00",
         "playlistId": "PLsWyhklHwjExlZiBXJ13ltvY4XPpuP-14",
@@ -7693,7 +7968,7 @@
       {
         "id": "25-y_TspBms",
         "title": "Aikido - BUDO seminar highlights in Netherlands - Shirakawa Ryuji shihan",
-        "channel": "Aikido Shinburenseijuku - 合気道神武錬成塾",
+        "channel": "Aikido Shinburenseijuku - \u5408\u6c17\u9053\u795e\u6b66\u932c\u6210\u587e",
         "duration": "10:00",
         "playlistId": "PLC75F733C94A1DD54",
         "tags": [
@@ -7876,7 +8151,7 @@
       },
       {
         "id": "vq2nnJ4g6N0",
-        "title": "Tensorflow and deep learning - without a PhD by Martin Görner",
+        "title": "Tensorflow and deep learning - without a PhD by Martin G\u00f6rner",
         "channel": "Devoxx",
         "duration": "10:00",
         "playlistId": "PLD9FB6E6B05B6485E",
@@ -8012,7 +8287,7 @@
     "clips": [
       {
         "id": "GrQ7nY-vevY",
-        "title": "Yuval Noah Harari. Organisms Are Algorithms. Body Is Calculator. Answer = Sensation~Feeling~Vedanā.",
+        "title": "Yuval Noah Harari. Organisms Are Algorithms. Body Is Calculator. Answer = Sensation~Feeling~Vedan\u0101.",
         "channel": "Rashid Kapadia",
         "duration": "10:00",
         "playlistId": "FLtXMX2QDtGA__BoLNIu4o5w",
@@ -8140,7 +8415,7 @@
       },
       {
         "id": "rX5X449oTmU",
-        "title": "Vama Veche în august",
+        "title": "Vama Veche \u00een august",
         "channel": "eastfloyd",
         "duration": "10:00",
         "playlistId": "FLtXMX2QDtGA__BoLNIu4o5w",

@@ -9,7 +9,10 @@ import {
   ShieldCheck,
   Compass,
   HelpCircle,
-  FileCode2
+  FileCode2,
+  Network,
+  FolderTree,
+  MessageSquareCode
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -36,6 +39,18 @@ export const Navbar: React.FC<NavbarProps> = ({
       badge: `${totalClips}`,
     },
     {
+      id: 'restructure',
+      label: 'Allocation & Restructure',
+      icon: <FolderTree className="w-4 h-4 text-indigo-400" />,
+      badge: '71➔28 Plan • PDF',
+    },
+    {
+      id: 'wordcloud-mindmap',
+      label: 'Word Cloud & Mindmap',
+      icon: <Network className="w-4 h-4 text-indigo-400" />,
+      badge: 'Top 50 • 3-Tier',
+    },
+    {
       id: 'knowledge',
       label: 'Knowledge Hub',
       icon: <BrainCircuit className="w-4 h-4" />,
@@ -52,6 +67,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       label: 'Gemini AI Studio',
       icon: <Sparkles className="w-4 h-4 text-amber-500" />,
       badge: hasGeminiKey ? 'Active' : 'Offline Mode',
+    },
+    {
+      id: 'gemini-chat',
+      label: 'Gemini_development_chat',
+      icon: <MessageSquareCode className="w-4 h-4 text-amber-400" />,
+      badge: '15 Prompts • 100%',
     },
     {
       id: 'legacy-apps',
@@ -103,7 +124,25 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Actions & Status */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick Access User Guide Button - Always visible regardless of screen width */}
+            {/* Gemini Development Chat Button - High priority action */}
+            <button
+              id="header-gemini-chat-btn"
+              onClick={() => setActiveTab('gemini-chat')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all shadow-sm ${
+                activeTab === 'gemini-chat'
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-amber-950/60 ring-2 ring-amber-400/40'
+                  : 'bg-amber-950/70 text-amber-300 border-amber-600/80 hover:bg-amber-900/90 hover:text-white'
+              }`}
+              title="Open the complete Gemini Development Chat history & capability quantification"
+            >
+              <MessageSquareCode className="w-3.5 h-3.5 text-amber-300" />
+              <span>Gemini_development_chat</span>
+              <span className="hidden lg:inline text-[10px] px-1.5 py-0.2 bg-amber-900/90 text-amber-200 rounded font-semibold border border-amber-700/60">
+                P01-P15
+              </span>
+            </button>
+
+            {/* Quick Access User Guide Button */}
             <button
               id="header-user-guide-btn"
               onClick={() => setActiveTab('guide')}
@@ -154,9 +193,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 className={`flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
                   isActive
-                    ? item.id === 'guide'
+                    ? item.id === 'gemini-chat'
+                      ? 'bg-amber-500 text-slate-950 font-bold border border-amber-400 shadow-sm'
+                      : item.id === 'guide'
                       ? 'bg-emerald-950 text-emerald-300 border border-emerald-700 shadow-sm'
                       : 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    : item.id === 'gemini-chat'
+                    ? 'text-amber-300/90 hover:text-amber-100 hover:bg-amber-950/40 border border-amber-900/50'
                     : item.id === 'guide'
                     ? 'text-emerald-400/90 hover:text-emerald-200 hover:bg-emerald-950/40 border border-emerald-900/50'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -167,8 +210,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {item.badge && (
                   <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${
                     isActive 
-                      ? item.id === 'guide' ? 'bg-emerald-900 text-emerald-200 border border-emerald-700' : 'bg-sky-950 text-sky-300 border border-sky-800' 
-                      : item.id === 'guide' ? 'bg-emerald-950 text-emerald-300 border border-emerald-900' : 'bg-slate-800 text-slate-400'
+                      ? item.id === 'gemini-chat' ? 'bg-slate-900 text-amber-300 border border-amber-600' : item.id === 'guide' ? 'bg-emerald-900 text-emerald-200 border border-emerald-700' : 'bg-sky-950 text-sky-300 border border-sky-800' 
+                      : item.id === 'gemini-chat' ? 'bg-amber-950 text-amber-300 border border-amber-900' : item.id === 'guide' ? 'bg-emerald-950 text-emerald-300 border border-emerald-900' : 'bg-slate-800 text-slate-400'
                   }`}>
                     {item.badge}
                   </span>

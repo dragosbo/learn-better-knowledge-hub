@@ -89,4 +89,35 @@
     color: #0f172a !important;
     page-break-after: avoid !important;
   }
+
+  /* Printable tables for Video Allocation and Restructuring Plan */
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8pt !important;
+  }
+
+  .print-table th {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: bold !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 4px 6px !important;
+    text-align: left !important;
+  }
+
+  .print-table td {
+    border: 1px solid #e2e8f0 !important;
+    padding: 4px 6px !important;
+    color: #334155 !important;
+  }
+
+  .print-table tr:nth-child(even) td {
+    background-color: #f8fafc !important;
+  }
+
+  .print-card-break {
+    page-break-inside: avoid !important;
+    margin-bottom: 12px !important;
+  }
 }

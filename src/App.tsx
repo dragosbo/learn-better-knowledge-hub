@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Playlist, YouTubeClip, SummaryData, LessonItem, ActiveTab } from './types';
 import { INITIAL_PLAYLISTS } from './data/initialData';
 import { fetchHealth, fetchSummaries, fetchLessons, fetchLogs, fetchPlaylists, syncYouTubePlaylists, savePlaylists } from './services/api';
@@ -11,10 +11,21 @@ import { GitHubSyncGuide } from './components/GitHubSyncGuide';
 import { LegacyAppsHub } from './components/LegacyAppsHub';
 import { UserGuideViewer } from './components/UserGuideViewer';
 import { PythonCodeViewer } from './components/PythonCodeViewer';
+import { PlaylistWordCloudMindMap } from './components/PlaylistWordCloudMindMap';
+import { PlaylistRestructureHub } from './components/PlaylistRestructureHub';
+import { GeminiDevelopmentChat } from './components/GeminiDevelopmentChat';
+import { buildRestructuredPlaylists } from './data/playlistRestructureData';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('playlists');
   const [isSyncingPlaylists, setIsSyncingPlaylists] = useState<boolean>(false);
+  const [isRestructuredActive, setIsRestructuredActive] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('learn_better_is_restructured') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   // Core App State (Persisted in localStorage)
   const [playlists, setPlaylists] = useState<Playlist[]>(() => {
@@ -22,7 +33,13 @@ export default function App() {
       const saved = localStorage.getItem('learn_better_playlists_v3');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length >= 10) return parsed;
+        if (Array.isArray(parsed) && parsed.length >= 10) {
+          // Verify Intelligence playlist is present
+          const hasIntel = parsed.some((p: any) => p.id === 'PL_intelligence_proof_of_concept' || p.title.toLowerCase() === 'intelligence');
+          if (hasIntel) return parsed;
+          const intel = INITIAL_PLAYLISTS.find(p => p.id === 'PL_intelligence_proof_of_concept');
+          if (intel) return [intel, ...parsed];
+        }
       }
     } catch (e) {
       console.error(e);
@@ -79,7 +96,8 @@ export default function App() {
         const plRes = await fetchPlaylists();
         if (plRes && plRes.playlists && plRes.playlists.length >= 10) {
           setPlaylists((prev) => {
-            if (prev.length < 10) return plRes.playlists;
+            const hasIntel = prev.some(p => p.id === 'PL_intelligence_proof_of_concept' || p.title.toLowerCase() === 'intelligence');
+            if (prev.length < 10 || !hasIntel) return plRes.playlists;
             return prev;
           });
         }
@@ -119,9 +137,25 @@ export default function App() {
     localStorage.setItem('learn_better_playlists_v3', JSON.stringify(INITIAL_PLAYLISTS));
   };
 
-  // Helper counters
-  const allClips = playlists.flatMap((pl) => pl.clips);
-  const totalNotesCount = allClips.filter((c) => c.notes && c.notes.trim().length > 0).length;
+  // Helper counters & deduplicated clips library
+  const allClips = useMemo(() => playlists.flatMap((pl) => pl.clips), [playlists]);
+  const uniqueClips = useMemo(() => {
+    const seen = new Set<string>();
+    const list: YouTubeClip[] = [];
+    for (const pl of playlists) {
+      for (const clip of pl.clips) {
+        if (!seen.has(clip.id)) {
+          seen.add(clip.id);
+          list.push(clip);
+        }
+      }
+    }
+    return list;
+  }, [playlists]);
+
+  const totalNotesCount = useMemo(() => {
+    return uniqueClips.filter((c) => c.notes && c.notes.trim().length > 0).length;
+  }, [uniqueClips]);
 
   // Actions
   const handleSelectClipForStudy = (clip: YouTubeClip) => {
@@ -331,6 +365,28 @@ export default function App() {
     }
   };
 
+  const handleApplyRestructuredPlaylists = (restructured: Playlist[]) => {
+    setIsRestructuredActive(true);
+    setPlaylists(restructured);
+    try {
+      localStorage.setItem('learn_better_is_restructured', 'true');
+      localStorage.setItem('learn_better_playlists_v3', JSON.stringify(restructured));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleRestoreOriginalPlaylists = () => {
+    setIsRestructuredActive(false);
+    setPlaylists(INITIAL_PLAYLISTS);
+    try {
+      localStorage.setItem('learn_better_is_restructured', 'false');
+      localStorage.setItem('learn_better_playlists_v3', JSON.stringify(INITIAL_PLAYLISTS));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
       {/* Top Navigation */}
@@ -355,12 +411,39 @@ export default function App() {
             onSyncYouTube={handleSyncYouTube}
             isSyncing={isSyncingPlaylists}
             onResetToAllPlaylists={handleResetToAllPlaylists}
+            onNavigateToWordCloud={() => setActiveTab('wordcloud-mindmap')}
+            isRestructuredActive={isRestructuredActive}
+            onNavigateToRestructure={() => setActiveTab('restructure')}
+            onToggleRestructure={
+              isRestructuredActive
+                ? handleRestoreOriginalPlaylists
+                : () => handleApplyRestructuredPlaylists(buildRestructuredPlaylists(INITIAL_PLAYLISTS))
+            }
+          />
+        )}
+
+        {activeTab === 'restructure' && (
+          <PlaylistRestructureHub
+            playlists={playlists}
+            onApplyRestructuredPlaylists={handleApplyRestructuredPlaylists}
+            onRestoreOriginalPlaylists={handleRestoreOriginalPlaylists}
+            isRestructuredActive={isRestructuredActive}
+            onSelectClipForStudy={handleSelectClipForStudy}
+            onNavigateToTab={(tab) => setActiveTab(tab)}
+          />
+        )}
+
+        {activeTab === 'wordcloud-mindmap' && (
+          <PlaylistWordCloudMindMap
+            playlists={playlists}
+            onSelectClip={handleSelectClipForStudy}
+            onNavigateTab={(tab) => setActiveTab(tab)}
           />
         )}
 
         {activeTab === 'knowledge' && (
           <KnowledgeHub
-            clips={allClips}
+            clips={uniqueClips}
             summaries={summaries}
             selectedClip={selectedClip}
             onSelectClip={(clip) => setSelectedClip(clip)}
@@ -380,6 +463,10 @@ export default function App() {
             hasGeminiKey={hasGeminiKey}
             onApplyInsightsToClip={handleApplyInsightsToClip}
           />
+        )}
+
+        {activeTab === 'gemini-chat' && (
+          <GeminiDevelopmentChat />
         )}
 
         {activeTab === 'academy' && (
@@ -419,12 +506,19 @@ export default function App() {
           <span>
             learn-better &bull; Personal Knowledge Hub &amp; Multi-AI Vibe Coding Platform
           </span>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            <button
+              onClick={() => setActiveTab('gemini-chat')}
+              className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer flex items-center gap-1"
+            >
+              <span>💬 Gemini_development_chat (15 Prompts &bull; 100%)</span>
+            </button>
+            <span className="text-slate-600 hidden sm:inline">&bull;</span>
             <button
               onClick={() => setActiveTab('guide')}
               className="text-emerald-400 hover:text-emerald-300 underline font-medium cursor-pointer flex items-center gap-1"
             >
-              <span>📖 Open Complete User Guide &amp; Audio Manual</span>
+              <span>📖 Complete User Guide &amp; Audio Manual</span>
             </button>
             <span className="text-slate-600 hidden md:inline">&bull;</span>
             <span className="hidden md:inline">

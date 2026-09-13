@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build:chat": "npx tsx scripts/generate-gemini-chat-html.ts",
+    "build": "npx tsx scripts/generate-gemini-chat-html.ts && vite build && cp -r gemini_chat dist/ 2>/dev/null || true && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "sync:youtube": "node scripts/sync-youtube.mjs",
+    "refresh": "node scripts/sync-youtube.mjs --offline"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -17,6 +20,8 @@
     "@vitejs/plugin-react": "^5.0.4",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "lucide-react": "^0.546.0",
     "marked": "^18.0.12",
     "motion": "^12.23.24",

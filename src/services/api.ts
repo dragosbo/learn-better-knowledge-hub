@@ -262,3 +262,30 @@ export async function fetchPythonFiles(): Promise<PythonFileInfo[]> {
   }
 }
 
+export interface CliSyncResponse {
+  success: boolean;
+  exitCode: number;
+  output: string;
+  errorOutput: string;
+  timestamp: string;
+  channel: string;
+  mode: string;
+  stats: {
+    count: number;
+    clips: number;
+  };
+}
+
+export async function executeCliSync(channel = '@dragosborosgpt', mode: 'live' | 'offline' = 'live'): Promise<CliSyncResponse> {
+  const res = await fetch('/api/cli/execute-sync', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ channel, mode }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'CLI Execution failed' }));
+    throw new Error(err.error || 'Failed to trigger CLI sync process');
+  }
+  return await res.json();
+}
+
