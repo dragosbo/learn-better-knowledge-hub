@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>learn-better • System Architecture & Capability Analysis (Phase 1)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              900: '#0c4a6e',
+              950: '#082f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .gradient-border {
+      border-image: linear-gradient(to right, #38bdf8, #818cf8, #c084fc) 1;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- Top Header Navigation -->
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-sky-950">
+          ⚙️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-lg text-white">learn-better</span>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded bg-sky-950 text-sky-400 border border-sky-800">
+              Phase 1 Analysis Report
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Transitioning Vibe Coding into Engineered Architecture</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <span class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700">
+          Target: Dual-Audience (Human + Agent)
+        </span>
+        <button onclick="window.print()" class="px-3 py-1.5 rounded bg-sky-600 hover:bg-sky-500 text-white font-medium transition-colors shadow-sm">
+          🖨️ Print / Save PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <section class="bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border border-slate-800 p-8 shadow-xl relative overflow-hidden">
+      <div class="absolute -right-20 -top-20 w-96 h-96 bg-sky-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="max-w-3xl space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/80 text-sky-400 border border-sky-800 text-xs font-semibold">
+          <span>🧬 Autonomous System Introspection</span>
+          <span>&bull;</span>
+          <span>Zero-Code-Mutation Baseline</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          System Architecture &amp; Capability Map
+        </h1>
+        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+          This document records the foundational analysis of <strong class="text-white">learn-better</strong>. 
+          Built through the spontaneous exploration of human + AI vibe coding, the system has achieved rich capabilities. 
+          Our current objective is to dissect its components, data flows, and dependencies to engineer a robust, maintainable, and scalable platform that serves both <strong class="text-sky-400">humans</strong> and <strong class="text-amber-400">autonomous AI agents</strong>.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-slate-800/80">
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="text-2xl font-bold text-sky-400">14</div>
+          <div class="text-xs text-slate-400 mt-1">Critical Capabilities</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="text-2xl font-bold text-emerald-400">471+</div>
+          <div class="text-xs text-slate-400 mt-1">Curated Video Clips</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="text-2xl font-bold text-amber-400">71 &rarr; 28</div>
+          <div class="text-xs text-slate-400 mt-1">Playlist Clustering</div>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="text-2xl font-bold text-purple-400">2 Audiences</div>
+          <div class="text-xs text-slate-400 mt-1">Human UX + Agent Schemas</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Dual-Audience Paradigm -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span>🎭</span> The Dual-Audience Architectural Paradigm
+          </h2>
+          <p class="text-sm text-slate-400">How the architecture simultaneously serves human cognitive needs and AI agent operational needs</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Human Audience Card -->
+        <div class="rounded-2xl bg-slate-900/70 border border-sky-900/40 p-6 space-y-4 hover:border-sky-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-sky-400 font-bold">
+              <span class="text-xl">👤</span>
+              <span>Audience A: The Human Learner &amp; Developer</span>
+            </div>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800">Cognitive UX</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Humans require sensory immersion, visual hierarchy, spatial orientation, and low-friction mobile interaction.
+          </p>
+          <ul class="text-xs text-slate-300 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-bold">&check;</span>
+              <span><strong>AirPods Audio Synthesizer:</strong> Seamless background audio study using Web Speech API with stem controls.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-bold">&check;</span>
+              <span><strong>Video Cosmos 2D Graph:</strong> Interactive celestial starfield rendering spatial relationships between clips.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-bold">&check;</span>
+              <span><strong>Executive PDF Reports:</strong> Instant multi-page PDF generation via jsPDF for offline human review.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-bold">&check;</span>
+              <span><strong>Interactive Word Clouds:</strong> Dynamic term frequency exploration for rapid thematic scanning.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Agent Audience Card -->
+        <div class="rounded-2xl bg-slate-900/70 border border-amber-900/40 p-6 space-y-4 hover:border-amber-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-amber-400 font-bold">
+              <span class="text-xl">🤖</span>
+              <span>Audience B: The Autonomous AI Agent</span>
+            </div>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800">Machine Schemas</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Agents require deterministic interfaces, strict schema validation, transparent prompt logs, and headless CLI tooling.
+          </p>
+          <ul class="text-xs text-slate-300 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-amber-400 font-bold">&check;</span>
+              <span><strong>Predictable JSON Storage:</strong> Self-contained datasets in <code>src/data/</code> with typed TypeScript schemas.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-amber-400 font-bold">&check;</span>
+              <span><strong>Prompt Audit Ledger:</strong> Verbatim log in <code>gemini_prompts.md</code> enabling deterministic agent replay.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-amber-400 font-bold">&check;</span>
+              <span><strong>Headless CLI Sync:</strong> Direct node script execution (<code>sync-youtube.mjs</code>) with non-interactive flags.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-amber-400 font-bold">&check;</span>
+              <span><strong>Deterministic Fallbacks:</strong> Resilient heuristic generation when upstream LLM APIs report 503 load.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Topology SVG Diagram -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span>🗺️</span> System Architecture Topology &amp; Runtime Boundaries
+          </h2>
+          <p class="text-sm text-slate-400">Complete communication flow between client components, Express server, file system, and external APIs</p>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 overflow-x-auto">
+        <svg viewBox="0 0 1000 520" class="w-full min-w-[800px] h-auto text-slate-200">
+          <defs>
+            <linearGradient id="gradClient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#0284c7" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.05"/>
+            </linearGradient>
+            <linearGradient id="gradServer" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#818cf8" stop-opacity="0.05"/>
+            </linearGradient>
+            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8"/>
+            </marker>
+            <marker id="arrowAmber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 8 5 L 0 9 z" fill="#f59e0b"/>
+            </marker>
+          </defs>
+
+          <!-- Client Box -->
+          <rect x="40" y="30" width="420" height="460" rx="16" fill="url(#gradClient)" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="60" y="65" font-weight="700" font-size="16" fill="#38bdf8">CLIENT APPLICATION (React 19 + Tailwind)</text>
+          <text x="60" y="85" font-size="12" fill="#94a3b8">Single Page Architecture running in Browser / iPad / Mobile</text>
+
+          <!-- Client Components -->
+          <rect x="60" y="105" width="380" height="70" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="75" y="130" font-weight="600" font-size="13" fill="#f8fafc">App.tsx (Root Controller)</text>
+          <text x="75" y="150" font-size="11" fill="#64748b">Unified state: playlists, summaries, lessons, activeTab, selectedClip</text>
+          <text x="75" y="165" font-size="10" fill="#38bdf8">Dual Sync: LocalStorage cache + Server API fetch</text>
+
+          <rect x="60" y="190" width="180" height="95" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="75" y="215" font-weight="600" font-size="12" fill="#38bdf8">Interactive Views</text>
+          <text x="75" y="235" font-size="10" fill="#cbd5e1">• Video Cosmos (Canvas 2D)</text>
+          <text x="75" y="250" font-size="10" fill="#cbd5e1">• Word Cloud & Mindmap</text>
+          <text x="75" y="265" font-size="10" fill="#cbd5e1">• Restructure Hub & PDF</text>
+
+          <rect x="260" y="190" width="180" height="95" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="275" y="215" font-weight="600" font-size="12" fill="#34d399">Audio & AI Studios</text>
+          <text x="275" y="235" font-size="10" fill="#cbd5e1">• AirPods Speech Player</text>
+          <text x="275" y="250" font-size="10" fill="#cbd5e1">• Gemini Insights & Prompts</text>
+          <text x="275" y="265" font-size="10" fill="#cbd5e1">• Academy Curriculum</text>
+
+          <rect x="60" y="300" width="380" height="75" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="75" y="325" font-weight="600" font-size="12" fill="#a855f7">Client Web APIs</text>
+          <text x="75" y="345" font-size="11" fill="#94a3b8">Web Speech API (TTS) • navigator.mediaSession • Canvas 2D Context • LocalStorage</text>
+          <text x="75" y="362" font-size="10" fill="#e2e8f0">Resilient: zero network needed for core audio/graph navigation</text>
+
+          <rect x="60" y="390" width="380" height="80" rx="8" fill="#082f49" stroke="#0369a1"/>
+          <text x="75" y="415" font-weight="600" font-size="12" fill="#38bdf8">services/api.ts (REST Gateway)</text>
+          <text x="75" y="435" font-size="11" fill="#94a3b8">Wraps all fetch() calls with defensive fallbacks and timeout guards</text>
+          <text x="75" y="452" font-size="10" fill="#38bdf8">Endpoints: /api/content/*, /api/gemini/*, /api/cli/*</text>
+
+          <!-- Connection Arrows -->
+          <line x1="440" y1="430" x2="530" y2="250" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+          <text x="450" y="330" font-size="11" fill="#38bdf8" font-weight="600">REST API</text>
+
+          <!-- Server Box -->
+          <rect x="540" y="30" width="420" height="460" rx="16" fill="url(#gradServer)" stroke="#4f46e5" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="560" y="65" font-weight="700" font-size="16" fill="#818cf8">SERVER ENGINE (Node.js + Express 4.21)</text>
+          <text x="560" y="85" font-size="12" fill="#94a3b8">Binds to 0.0.0.0:3000 • TSX execution in Dev & CJS in Prod</text>
+
+          <!-- Server Modules -->
+          <rect x="560" y="105" width="380" height="85" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="575" y="130" font-weight="600" font-size="13" fill="#f59e0b">Gemini Multi-Model Cascade</text>
+          <text x="575" y="150" font-size="11" fill="#cbd5e1">1. gemini-3.8-flash &rarr; 2. gemini-flash-latest &rarr; 3. gemini-2.5-flash</text>
+          <text x="575" y="167" font-size="10" fill="#f59e0b">Resilient Heuristic Fallback: Generates deterministic takeaways on 503 peak load</text>
+
+          <rect x="560" y="205" width="180" height="110" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="575" y="230" font-weight="600" font-size="12" fill="#38bdf8">YouTube Sync Engine</text>
+          <text x="575" y="250" font-size="10" fill="#94a3b8">• Innertube v1 parser</text>
+          <text x="575" y="265" font-size="10" fill="#94a3b8">• Redirect follow loop</text>
+          <text x="575" y="280" font-size="10" fill="#94a3b8">• Batch clip fetcher</text>
+          <text x="575" y="295" font-size="10" fill="#38bdf8">Writes: channelPlaylists.json</text>
+
+          <rect x="760" y="205" width="180" height="110" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="775" y="230" font-weight="600" font-size="12" fill="#34d399">CLI & Script Runner</text>
+          <text x="775" y="250" font-size="10" fill="#94a3b8">• child_process spawn</text>
+          <text x="775" y="265" font-size="10" fill="#94a3b8">• sync-youtube.mjs</text>
+          <text x="775" y="280" font-size="10" fill="#94a3b8">• python code catalog</text>
+          <text x="775" y="295" font-size="10" fill="#34d399">Logs stdout & stderr</text>
+
+          <rect x="560" y="330" width="380" height="140" rx="8" fill="#0f172a" stroke="#1e293b"/>
+          <text x="575" y="355" font-weight="600" font-size="12" fill="#e2e8f0">Data Persistence & Static Mounts</text>
+          <text x="575" y="375" font-size="11" fill="#94a3b8">• Flat File: src/data/channelPlaylists.json (471 clips, 71 playlists)</text>
+          <text x="575" y="392" font-size="11" fill="#94a3b8">• Markdown Ledger: gemini_prompts.md, gemini_feedback.md</text>
+          <text x="575" y="409" font-size="11" fill="#94a3b8">• Static Legacy Tools: /legacy/* (sandboxed iframes)</text>
+          <text x="575" y="426" font-size="11" fill="#94a3b8">• Static Gemini Chat: /gemini_chat/* (HTML archive)</text>
+          <text x="575" y="445" font-size="10" fill="#38bdf8">• New: /analysis/* (Phase 1 Engineering Introspection)</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Comprehensive Capabilities Catalog -->
+    <section class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span>📦</span> Comprehensive Capability Catalog (14 Modules)
+          </h2>
+          <p class="text-sm text-slate-400">Deep-dive technical breakdown of business logic, code files, and data contracts</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="filterCapabilities('all')" id="btn-filter-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white transition-colors">
+            All (14)
+          </button>
+          <button onclick="filterCapabilities('human')" id="btn-filter-human" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+            Human-Facing
+          </button>
+          <button onclick="filterCapabilities('agent')" id="btn-filter-agent" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+            Agent-Facing
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="capabilities-grid">
+        <!-- Generated Cards with JS -->
+      </div>
+    </section>
+
+    <!-- Fragility & Technical Debt Matrix -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+          <span>⚠️</span> Technical Debt &amp; Fragility Assessment
+        </h2>
+        <p class="text-sm text-slate-400">Critical vulnerabilities inherited from spontaneous vibe coding and recommended mitigations</p>
+      </div>
+
+      <div class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-800">
+            <tr>
+              <th class="p-4">Vulnerability Area</th>
+              <th class="p-4">Current Vibe Code Pattern</th>
+              <th class="p-4">Failure Mode / Risk</th>
+              <th class="p-4">Target Clean Engineering State</th>
+              <th class="p-4">Priority</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/80">
+            <tr class="hover:bg-slate-800/30">
+              <td class="p-4 font-semibold text-white">Monolithic Server (<code>server.ts</code>)</td>
+              <td class="p-4">Single file contains routing, YouTube scraping, child process spawn, and Gemini API cascades (>970 lines).</td>
+              <td class="p-4 text-amber-400">High cognitive friction; syntax error or uncaught exception disrupts entire applet.</td>
+              <td class="p-4 text-emerald-400">Decompose into Express router controllers: <code>/server/routes/youtube.ts</code>, <code>/server/routes/gemini.ts</code>.</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800 font-bold">HIGH</span></td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="p-4 font-semibold text-white">Unatomic Flat-File Persistence</td>
+              <td class="p-4">Writes whole <code>channelPlaylists.json</code> directly via <code>fs.writeFileSync</code>.</td>
+              <td class="p-4 text-amber-400">Process interruption or concurrent writes can truncate file to 0 bytes.</td>
+              <td class="p-4 text-emerald-400">Write to temporary file, then atomic rename; keep automated rolling backups.</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800 font-bold">HIGH</span></td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="p-4 font-semibold text-white">Client Root State Dispersion</td>
+              <td class="p-4"><code>App.tsx</code> holds 15+ states and drills callbacks across 14 tabs.</td>
+              <td class="p-4 text-amber-400">Unnecessary re-renders, state sync divergence between tabs.</td>
+              <td class="p-4 text-emerald-400">Introduce lightweight domain context (<code>PlaylistsContext</code>, <code>AudioContext</code>).</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-bold">MEDIUM</span></td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="p-4 font-semibold text-white">DOM Scraping Fragility</td>
+              <td class="p-4">Regex and DOM parsing against public YouTube HTML for playlist updates.</td>
+              <td class="p-4 text-amber-400">YouTube markup changes will break live synchronization silently.</td>
+              <td class="p-4 text-emerald-400">Encapsulate behind resilient adapter with schema validation and test fixtures.</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-bold">MEDIUM</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Strategic Transition Roadmap -->
+    <section class="space-y-6">
+      <div>
+        <h2 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+          <span>🚀</span> Strategic Transition Roadmap: From Vibe to Engineered
+        </h2>
+        <p class="text-sm text-slate-400">Iterative transformation phases preserving 100% functionality while raising reliability</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 rounded-2xl bg-slate-900 border border-sky-500/50 space-y-3 relative">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800">PHASE 1 (ACTIVE)</span>
+            <span class="text-emerald-400 font-bold text-xs">&check; In Progress</span>
+          </div>
+          <h3 class="font-bold text-white text-sm">System Introspection &amp; Baseline</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Create <code>/analysis/</code> documentation, build in-app review dashboard, catalog all 14 capabilities, and map data flows without mutating existing code.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">PHASE 2</span>
+            <span class="text-slate-500 text-xs">Upcoming</span>
+          </div>
+          <h3 class="font-bold text-white text-sm">Modular Decoupling &amp; Schemas</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Extract <code>server.ts</code> routes into modular controllers; implement atomic file persistence; formalize strict domain schemas.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">PHASE 3</span>
+            <span class="text-slate-500 text-xs">Upcoming</span>
+          </div>
+          <h3 class="font-bold text-white text-sm">Dual-Audience Agent Tooling</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Expose structured programmatic agent endpoints, machine-readable tool contracts (JSON schema), and enhance human audio/canvas ergonomics.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">PHASE 4</span>
+            <span class="text-slate-500 text-xs">Upcoming</span>
+          </div>
+          <h3 class="font-bold text-white text-sm">Verification, Tests &amp; Monorepo</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Implement automated regression test harness (contract validation, API tests), telemetry tracking, and export-ready GitHub monorepo.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pt-8 border-t border-slate-800 text-center text-xs text-slate-500 space-y-2">
+      <p>learn-better Architecture &amp; Capability Introspection &bull; Phase 1 Canonical Report</p>
+      <p>Stored locally in <code>/analysis/01_high_level_system_architecture.html</code> and <code>/analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md</code></p>
+    </footer>
+  </main>
+
+  <script>
+    const capabilities = [
+      {
+        id: '01',
+        title: 'Playlists & Clips Management',
+        badge: 'Core Media',
+        color: 'sky',
+        audience: 'both',
+        desc: 'Catalogs 71 YouTube playlists and 471+ clips with status tracking (to-watch, in-progress, synthesized, mastered), notes, and tags.',
+        files: ['src/components/PlaylistManager.tsx', 'src/data/channelPlaylists.json', 'server.ts (lines 347-381)'],
+        humanImpact: 'Instant visual search, status filters, clip note editing, and one-click study launch.',
+        agentImpact: 'Deterministic JSON schema with id, title, channel, duration, and status attributes.'
+      },
+      {
+        id: '02',
+        title: 'Allocation & Restructure Hub',
+        badge: 'Data Architecture',
+        color: 'indigo',
+        audience: 'both',
+        desc: 'Re-aggregates 71 fragmented micro-playlists into 28 balanced clusters with live side-by-side reallocation and automated multi-page PDF generation.',
+        files: ['src/components/PlaylistRestructureHub.tsx', 'src/data/playlistRestructureData.ts', 'jspdf & autotable'],
+        humanImpact: 'Executive PDF export with color-coded tables; one-click apply/restore toggle in UI.',
+        agentImpact: 'Algorithmic cluster mapping specification (RESTRUCTURE_CLUSTERS) with unambiguous matching rules.'
+      },
+      {
+        id: '03',
+        title: 'Video Cosmos Graph',
+        badge: 'Spatial Exploration',
+        color: 'cyan',
+        audience: 'human',
+        desc: '2D HTML5 Canvas celestial galaxy rendering 471 clips as stars in 5 sectoral quadrants with orbital constellation rings and flight recording.',
+        files: ['src/components/VideoCosmosGraph.tsx', 'src/data/videoCosmosData.ts'],
+        humanImpact: 'High-speed 60fps pan/zoom spatial navigation, star twinkle, constellation lines, and touch gesture support.',
+        agentImpact: 'Topological coordinate assignment algorithms and cluster centroid calculations.'
+      },
+      {
+        id: '04',
+        title: 'Word Cloud & Mind Map Hub',
+        badge: 'Analytics',
+        color: 'purple',
+        audience: 'both',
+        desc: 'D3/Canvas-powered frequency analysis of technical terminology across all playlists with a synchronized 3-tier hierarchical mind map.',
+        files: ['src/components/PlaylistWordCloudMindMap.tsx', 'src/data/wordcloudMindmapData.ts', 'server.ts (lines 384-454)'],
+        humanImpact: 'Interactive term filtering; visual inspection of curriculum vocabulary distributions.',
+        agentImpact: 'Tokenization pipeline, stopword filtering, and term weight calculations.'
+      },
+      {
+        id: '05',
+        title: 'Knowledge Hub & Study Studio',
+        badge: 'Active Recall',
+        color: 'emerald',
+        audience: 'both',
+        desc: 'Focused single-clip study studio combining YouTube video playback, transcripts, personal user notes, questions, and ideas.',
+        files: ['src/components/KnowledgeHub.tsx', 'src/data/initialData.ts', 'App.tsx'],
+        humanImpact: 'Split-screen video watching and note taking; question-and-answer tracking.',
+        agentImpact: 'Array structures for userQuestions and userIdeas ready for automated LLM quiz generation.'
+      },
+      {
+        id: '06',
+        title: 'AI Coding Academy',
+        badge: 'Curriculum',
+        color: 'amber',
+        audience: 'both',
+        desc: '19 structured lessons (Claude prompt engineering + Kiro CLI workflows) rendered from markdown into an interactive course viewer.',
+        files: ['src/components/AILearningAcademy.tsx', 'imported_repo/lessons_*', 'server.ts (lines 85-121)'],
+        humanImpact: 'Formatted lesson reading, completion progress tracking, and chapter jump menu.',
+        agentImpact: 'Raw markdown lesson files accessible for prompt distillation and agent learning.'
+      },
+      {
+        id: '07',
+        title: 'AirPods Audio Player',
+        badge: 'Hands-Free Audio',
+        color: 'emerald',
+        audience: 'human',
+        desc: 'Zero-cost client-side speech synthesis with Media Session API remote controls (play, pause, skip on AirPods stem while walking).',
+        files: ['src/components/AudioLessonPlayer.tsx', 'Web Speech API', 'navigator.mediaSession'],
+        humanImpact: 'Learn on walks or commutes without looking at the screen; speed adjustment (0.75x to 1.5x).',
+        agentImpact: 'Text chunking pipeline splitting long markdown articles into speech-safe paragraphs.'
+      },
+      {
+        id: '08',
+        title: 'Gemini AI Studio',
+        badge: 'Generative AI',
+        color: 'amber',
+        audience: 'both',
+        desc: 'Multi-model Gemini cascade (3.8-flash, flash-latest, 2.5-flash) with automatic 503 high-demand heuristic fallback for insights and vibe pilot.',
+        files: ['src/components/GeminiStudio.tsx', 'server.ts (lines 694-951)', '@google/genai'],
+        humanImpact: 'One-click extraction of insights, quiz questions, and prompt optimization directly into notes.',
+        agentImpact: 'Strict JSON schema generation (responseMimeType: application/json) and heuristic fallback resilience.'
+      },
+      {
+        id: '09',
+        title: 'Gemini Development Chat',
+        badge: 'Audit Trail',
+        color: 'amber',
+        audience: 'both',
+        desc: 'Complete audit trail and visual viewer for all project prompts, capability evaluations, and session logs (100% coverage).',
+        files: ['src/components/GeminiDevelopmentChat.tsx', 'src/data/geminiChatData.ts', 'gemini_chat/chat_history.html'],
+        humanImpact: 'Searchable conversational history with capability breakdowns and code changes.',
+        agentImpact: 'Verbatim prompt ledger (gemini_prompts.md) serving as prompt regression baseline.'
+      },
+      {
+        id: '10',
+        title: 'Legacy HTML Tools Hub',
+        badge: 'Backward Compatibility',
+        color: 'sky',
+        audience: 'human',
+        desc: 'Sandboxed iframe runner for original standalone HTML tools (YouTube explorer, standalone Claude reader, Kiro reader, wordcloud).',
+        files: ['src/components/LegacyAppsHub.tsx', 'server.ts (lines 142-177)', 'imported_repo/*.html'],
+        humanImpact: 'Run pre-existing standalone tools without leaving the modern React interface.',
+        agentImpact: 'Clean isolated routes (/legacy/*) ensuring zero code breakage during modernization.'
+      },
+      {
+        id: '11',
+        title: 'Python Code Viewer',
+        badge: 'Engineering',
+        color: 'emerald',
+        audience: 'both',
+        desc: 'Two-column IDE layout with syntax highlighting and I/O specifications for backend Python scripts (transcription, audio re-encoding, speech).',
+        files: ['src/components/PythonCodeViewer.tsx', 'src/data/pythonFiles.ts', 'server.ts (lines 275-309)'],
+        humanImpact: 'Side-by-side code inspection, line counts, function signatures, and vibe-coding rationale.',
+        agentImpact: 'Structured I/O and dependency mapping metadata for each Python file.'
+      },
+      {
+        id: '12',
+        title: 'GitHub Sync & Audit Guide',
+        badge: 'DevOps',
+        color: 'sky',
+        audience: 'both',
+        desc: 'Safe export guides, .bat/.sh synchronization scripts, and branch isolation instructions preventing repository overwrite.',
+        files: ['src/components/GitHubSyncGuide.tsx', 'export_to_github.sh', 'export_to_github.bat'],
+        humanImpact: 'One-click copyable git commands with visual conflict avoidance explanations.',
+        agentImpact: 'Exact CLI arguments and non-destructive git push procedures.'
+      },
+      {
+        id: '13',
+        title: 'Interactive User Guide',
+        badge: 'Documentation',
+        color: 'emerald',
+        audience: 'both',
+        desc: 'Full markdown documentation viewer with built-in voice narration and quick-jump anchor navigation.',
+        files: ['src/components/UserGuideViewer.tsx', 'USER_GUIDE.md', 'src/utils/guideHtmlFormatter.ts'],
+        humanImpact: 'Listen to the manual or jump directly to specific feature workflows.',
+        agentImpact: 'Comprehensive natural-language specification of all application capabilities.'
+      },
+      {
+        id: '14',
+        title: 'Ecosystem Roadmap Hub',
+        badge: 'Architecture',
+        color: 'purple',
+        audience: 'both',
+        desc: 'Strategic architecture guide detailing multi-device sync, blob asset strategies, and multi-model agent collaboration blueprints.',
+        files: ['src/components/RoadmapHub.tsx', 'src/data/roadmapData.ts', 'suggestions.md'],
+        humanImpact: 'Visual milestone cards, technical guides, and multi-AI handoff protocols.',
+        agentImpact: 'Machine-parsable milestone identifiers and implementation roadmaps.'
+      }
+    ];
+
+    function renderCapabilities(filter = 'all') {
+      const grid = document.getElementById('capabilities-grid');
+      grid.innerHTML = '';
+      
+      const filtered = capabilities.filter(c => {
+        if (filter === 'human') return c.audience === 'human' || c.audience === 'both';
+        if (filter === 'agent') return c.audience === 'agent' || c.audience === 'both';
+        return true;
+      });
+
+      filtered.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'p-5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between space-y-4';
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-400">#${c.id}</span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-medium">${c.badge}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full ${c.audience === 'human' ? 'bg-sky-950 text-sky-300 border border-sky-800' : c.audience === 'agent' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-purple-950 text-purple-300 border border-purple-800'} font-medium">
+                  ${c.audience === 'human' ? '👤 Human' : c.audience === 'agent' ? '🤖 Agent' : '👤+🤖 Dual'}
+                </span>
+              </div>
+            </div>
+            <h3 class="font-bold text-white text-base">${c.title}</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">${c.desc}</p>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800/80 space-y-2 text-xs">
+            <div class="text-[11px] text-slate-400">
+              <span class="text-slate-500 font-semibold">Supporting Code:</span>
+              <div class="flex flex-wrap gap-1 mt-1">
+                ${c.files.map(f => `<code class="px-1.5 py-0.5 rounded bg-slate-950 text-sky-300 text-[10px] border border-slate-800">${f}</code>`).join('')}
+              </div>
+            </div>
+            <div class="text-[11px] text-slate-400">
+              <span class="text-sky-400 font-semibold">Human UX:</span> ${c.humanImpact}
+            </div>
+            <div class="text-[11px] text-slate-400">
+              <span class="text-amber-400 font-semibold">Agent Schema:</span> ${c.agentImpact}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterCapabilities(filter) {
+      ['all', 'human', 'agent'].forEach(f => {
+        const btn = document.getElementById('btn-filter-' + f);
+        if (f === filter) {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white transition-colors';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors';
+        }
+      });
+      renderCapabilities(filter);
+    }
+
+    // Initial render
+    renderCapabilities('all');
+  </script>
+</body>
+</html>

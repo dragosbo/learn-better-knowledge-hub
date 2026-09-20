@@ -4,12 +4,10 @@ import fs from 'fs';
 import https from 'https';
 import http from 'http';
 import { spawn } from 'child_process';
-import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const rootDir = process.cwd();
 
 const app = express();
 const PORT = 3000;
@@ -40,7 +38,7 @@ app.get('/api/health', (req, res) => {
 // 2. Fetch imported summaries from data/summaries
 app.get('/api/content/summaries', (req, res) => {
   try {
-    const summariesDir = path.resolve(__dirname, 'imported_repo', 'data', 'summaries');
+    const summariesDir = path.resolve(rootDir, 'imported_repo', 'data', 'summaries');
     if (!fs.existsSync(summariesDir)) {
       return res.json({ summaries: [] });
     }
@@ -84,8 +82,8 @@ app.get('/api/content/summaries', (req, res) => {
 // 3. Fetch lessons from imported_repo (Claude & Kiro series)
 app.get('/api/content/lessons', (req, res) => {
   try {
-    const claudeDir = path.resolve(__dirname, 'imported_repo', 'lessons_Claude');
-    const kiroDir = path.resolve(__dirname, 'imported_repo', 'lessons_Kiro');
+    const claudeDir = path.resolve(rootDir, 'lessons_Claude');
+    const kiroDir = path.resolve(rootDir, 'lessons_Kiro');
 
     const readLessons = (dir: string, seriesName: 'Claude' | 'Kiro') => {
       if (!fs.existsSync(dir)) return [];
@@ -123,10 +121,10 @@ app.get('/api/content/lessons', (req, res) => {
 // 4. Read prompt log & feedback log & suggestions & user guide
 app.get('/api/content/logs', (req, res) => {
   try {
-    const promptsFile = path.resolve(__dirname, 'gemini_prompts.md');
-    const feedbackFile = path.resolve(__dirname, 'gemini_feedback.md');
-    const suggestionsFile = path.resolve(__dirname, 'suggestions.md');
-    const userGuideFile = path.resolve(__dirname, 'USER_GUIDE.md');
+    const promptsFile = path.resolve(rootDir, 'gemini_prompts.md');
+    const feedbackFile = path.resolve(rootDir, 'gemini_feedback.md');
+    const suggestionsFile = path.resolve(rootDir, 'suggestions.md');
+    const userGuideFile = path.resolve(rootDir, 'USER_GUIDE.md');
 
     const prompts = fs.existsSync(promptsFile) ? fs.readFileSync(promptsFile, 'utf-8') : '';
     const feedback = fs.existsSync(feedbackFile) ? fs.readFileSync(feedbackFile, 'utf-8') : '';
@@ -140,9 +138,9 @@ app.get('/api/content/logs', (req, res) => {
 });
 
 // 4b. Legacy apps static serving and catalog
-const legacyDir = fs.existsSync(path.resolve(process.cwd(), 'imported_repo'))
-  ? path.resolve(process.cwd(), 'imported_repo')
-  : path.resolve(__dirname, 'imported_repo');
+const legacyDir = fs.existsSync(path.resolve(rootDir, 'imported_repo'))
+  ? path.resolve(rootDir, 'imported_repo')
+  : rootDir;
 
 app.use('/legacy', express.static(legacyDir, {
   extensions: ['html', 'htm'],
@@ -205,6 +203,48 @@ app.get('/api/chat/history', (req, res) => {
       totalPrompts: 15,
       latestPromptNumber: 15,
       sessionsCount: 5
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4b-3. Analysis folder static serving (Architecture & Transition Documentation)
+const analysisDir = path.resolve(process.cwd(), 'analysis');
+app.use('/analysis', express.static(analysisDir, {
+  extensions: ['html', 'htm', 'md'],
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  }
+}));
+
+app.get(['/analysis', '/architecture'], (req, res) => {
+  const target = path.join(analysisDir, '01_high_level_system_architecture.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Analysis architecture report not found.');
+  }
+});
+
+app.get('/api/analysis/data', (req, res) => {
+  try {
+    const mdFile = path.join(analysisDir, '01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md');
+    const htmlFile = path.join(analysisDir, '01_high_level_system_architecture.html');
+    const markdownContent = fs.existsSync(mdFile) ? fs.readFileSync(mdFile, 'utf-8') : '';
+    const htmlContent = fs.existsSync(htmlFile) ? fs.readFileSync(htmlFile, 'utf-8') : '';
+    res.json({
+      success: true,
+      markdown: markdownContent,
+      htmlUrl: '/analysis/01_high_level_system_architecture.html',
+      htmlContent,
+      files: [
+        { name: '01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md', audience: 'agent', type: 'markdown', path: '/analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md' },
+        { name: '01_high_level_system_architecture.html', audience: 'human', type: 'html', path: '/analysis/01_high_level_system_architecture.html' }
+      ]
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -344,9 +384,9 @@ function getCategoryForPlaylistTitle(title: string): string {
 }
 
 // 4c. Get all playlists (all 70 playlists with 480+ clips)
-app.get('/api/content/playlists', (req, res) => {
+app.get(['/api/content/playlists', '/api/playlists'], (req, res) => {
   try {
-    const playlistsPath = path.resolve(__dirname, 'src', 'data', 'channelPlaylists.json');
+    const playlistsPath = path.resolve(rootDir, 'src', 'data', 'channelPlaylists.json');
     if (!fs.existsSync(playlistsPath)) {
       return res.json({ playlists: [], totalPlaylists: 0, totalClips: 0, channel: '@dragosborosgpt' });
     }
@@ -366,13 +406,13 @@ app.get('/api/content/playlists', (req, res) => {
 });
 
 // 4d. Persist updated playlists (e.g. user notes, status changes, new clips)
-app.post('/api/content/save-playlists', (req, res) => {
+app.post(['/api/content/save-playlists', '/api/save-playlists'], (req, res) => {
   try {
     const { playlists } = req.body;
     if (!Array.isArray(playlists)) {
       return res.status(400).json({ error: 'playlists array is required' });
     }
-    const playlistsPath = path.resolve(__dirname, 'src', 'data', 'channelPlaylists.json');
+    const playlistsPath = path.resolve(rootDir, 'src', 'data', 'channelPlaylists.json');
     fs.writeFileSync(playlistsPath, JSON.stringify(playlists, null, 2), 'utf-8');
     res.json({ success: true, count: playlists.length });
   } catch (err: any) {
@@ -386,14 +426,14 @@ app.get('/api/playlists/wordcloud/:playlistId', (req, res) => {
     const { playlistId } = req.params;
     const isIntel = playlistId === 'PL_intelligence_proof_of_concept' || playlistId.toLowerCase() === 'intelligence';
 
-    const intelWordCloudPath = path.resolve(__dirname, 'imported_repo', 'data', 'wordclouds', 'intelligence.word_cloud.json');
+    const intelWordCloudPath = path.resolve(rootDir, 'imported_repo', 'data', 'wordclouds', 'intelligence.word_cloud.json');
     if (isIntel && fs.existsSync(intelWordCloudPath)) {
       const data = JSON.parse(fs.readFileSync(intelWordCloudPath, 'utf-8'));
       return res.json(data);
     }
 
     // Otherwise load playlist from channelPlaylists.json
-    const playlistsPath = path.resolve(__dirname, 'src', 'data', 'channelPlaylists.json');
+    const playlistsPath = path.resolve(rootDir, 'src', 'data', 'channelPlaylists.json');
     if (!fs.existsSync(playlistsPath)) {
       return res.status(404).json({ error: 'Playlists file not found' });
     }
@@ -590,7 +630,7 @@ app.post('/api/content/sync-youtube', async (req, res) => {
       playlistsResults.push(...chunkResults);
     }
 
-    const playlistsPath = path.resolve(__dirname, 'src', 'data', 'channelPlaylists.json');
+    const playlistsPath = path.resolve(rootDir, 'src', 'data', 'channelPlaylists.json');
     fs.writeFileSync(playlistsPath, JSON.stringify(playlistsResults, null, 2), 'utf-8');
 
     const totalClips = playlistsResults.reduce((acc, p) => acc + (p.clips?.length || 0), 0);
@@ -680,7 +720,7 @@ app.post('/api/content/append-prompt', (req, res) => {
       return res.status(400).json({ error: 'promptText is required' });
     }
 
-    const promptsFile = path.resolve(__dirname, 'gemini_prompts.md');
+    const promptsFile = path.resolve(rootDir, 'gemini_prompts.md');
     const timestamp = new Date().toISOString();
     const entry = `\n---\n\n### User Prompt (${sessionName || 'Interactive Hub'})\n*Timestamp: ${timestamp}*\n\n\`\`\`text\n${promptText.trim()}\n\`\`\`\n`;
 

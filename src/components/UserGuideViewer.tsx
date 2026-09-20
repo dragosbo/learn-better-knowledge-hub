@@ -168,6 +168,20 @@ export const UserGuideViewer: React.FC<UserGuideViewerProps> = ({ guideContent }
         compact={false}
       />
 
+      {/* Quick Topic Badges */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3.5 px-4 flex items-center gap-2 flex-wrap text-xs">
+        <span className="text-slate-400 font-medium">Quick Topics:</span>
+        <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">1. Core Philosophy</span>
+        <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">2. Interface Navigation</span>
+        <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">3. AirPods Audio Gestures</span>
+        <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">4. Module Deep Dives</span>
+        <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">5. GitHub Sync Protocol</span>
+        <span className="px-2.5 py-1 rounded-md bg-amber-950/80 text-amber-300 border border-amber-800 font-semibold flex items-center gap-1.5 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          6. iPadOS &amp; Cross-Site 401 Runbook
+        </span>
+      </div>
+
       {/* Guide Content Display */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 sm:p-7 shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">

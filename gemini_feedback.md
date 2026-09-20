@@ -244,8 +244,29 @@ In the initial prototype, only 6 video clips across 3 static playlists were visi
    - **Responsive Pagination**: Slices rendering to 36 cards per page with a "Load 36 More Clips" and "Show All" toggle to preserve DOM rendering performance.
    - **One-Click Sync**: Added a prominent "Sync with YouTube" button and channel badge linking directly to `@dragosborosgpt`.
 
+---
 
+## 12. Architectural Post-Mortem: iPadOS Updates & The Multi-Browser 401 Unauthorized Issue
 
+### Context & Incident
+Following an iPadOS system update, every applet across the Google AI Studio workspace stopped working simultaneously. Regardless of browser used (Safari, Google Chrome, Brave), every attempt to load or interact with the applet failed with an `HTTP 401 Unauthorized` error.
 
+### Root Cause Breakdown
+1. **System WebKit Engine Monoculture on iPadOS**:
+   On Apple iOS and iPadOS, Apple’s App Store guidelines historically require all web browsers (including Google Chrome, Brave, Opera, and Microsoft Edge) to use Apple's underlying WebKit browser rendering and network stack (`WKWebView`). Therefore, when an iPadOS update modifies WebKit privacy defaults, the change is applied across every browser installed on the iPad.
 
+2. **Intelligent Tracking Prevention (ITP) & Cross-Origin Cookies in `<iframe>`**:
+   The Google AI Studio web IDE hosts the developer workspace at `https://aistudio.google.com`, while the running application container is hosted on a separate Cloud Run domain (`https://*.run.app`). The applet runs embedded inside an HTML `<iframe>`. Major iPadOS updates frequently reset or tighten Safari's "Prevent Cross-Site Tracking" (ITP) feature. Because the iframe origin differs from the parent tab origin, WebKit treats the user's session cookies and bearer tokens as third-party tracking cookies and drops them from outgoing requests.
 
+3. **Edge Gateway Rejection (HTTP 401)**:
+   The Cloud Run reverse proxy/gateway expects an authorized Google session. When the browser strips the authentication cookies before the HTTP request leaves the device, Cloud Run immediately returns `401 Unauthorized` before the request reaches `server.ts` or Vite.
+
+### Recovery & Preventive Architecture
+- **Device-Level Fix**:
+  1. **Settings > Safari > Privacy & Security**: Turn **"Prevent Cross-Site Tracking"** to **OFF**. Ensure **"Block All Cookies"** is **OFF**.
+  2. **Settings > Safari > Advanced > Advanced Tracking & Fingerprinting Protection**: Set to **"Off"** or **"Private Browsing Only"**.
+  3. **Settings > Chrome / Brave**: Turn **"Allow Cross-Website Tracking"** to **ON**. In Brave, drop Shields for `aistudio.google.com`.
+  4. **Re-Authenticate**: Visit `https://accounts.google.com` to refresh expired session cookies.
+- **Application Architectural Countermeasure (Zero-Iframe Workaround)**:
+  - The applet provides direct standalone launch URLs (the "Open in new window" icon in AI Studio).
+  - In a standalone tab, the Cloud Run domain becomes a **first-party context**, allowing authentication cookies to flow freely regardless of ITP cross-site settings.

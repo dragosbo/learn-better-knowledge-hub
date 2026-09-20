@@ -13,7 +13,9 @@ import {
   Network,
   FolderTree,
   MessageSquareCode,
-  Milestone
+  Milestone,
+  Orbit,
+  FileSearch
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -44,6 +46,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       label: 'Allocation & Restructure',
       icon: <FolderTree className="w-4 h-4 text-indigo-400" />,
       badge: '71➔28 Plan • PDF',
+    },
+    {
+      id: 'video-cosmos',
+      label: 'Video Cosmos Graph',
+      icon: <Orbit className="w-4 h-4 text-cyan-400" />,
+      badge: 'Constellations & Trajectories',
     },
     {
       id: 'wordcloud-mindmap',
@@ -105,6 +113,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       icon: <Milestone className="w-4 h-4 text-emerald-400" />,
       badge: 'Architecture',
     },
+    {
+      id: 'analysis',
+      label: 'Analysis',
+      icon: <FileSearch className="w-4 h-4 text-sky-400" />,
+      badge: 'Phase 1 • Deep Scan',
+    },
   ];
 
   return (
@@ -131,6 +145,24 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Actions & Status */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Analysis Button - Prominent for Transition Review */}
+            <button
+              id="header-analysis-btn"
+              onClick={() => setActiveTab('analysis')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all shadow-sm ${
+                activeTab === 'analysis'
+                  ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-sky-950/60 ring-2 ring-sky-400/40'
+                  : 'bg-sky-950/80 text-sky-300 border-sky-600/80 hover:bg-sky-900 hover:text-white'
+              }`}
+              title="Open the System Architecture & Capability Analysis (Phase 1)"
+            >
+              <FileSearch className="w-3.5 h-3.5 text-sky-300" />
+              <span>Analysis</span>
+              <span className="hidden md:inline text-[10px] px-1.5 py-0.2 bg-sky-900/90 text-sky-200 rounded font-semibold border border-sky-700/60">
+                Phase 1
+              </span>
+            </button>
+
             {/* Gemini Development Chat Button - High priority action */}
             <button
               id="header-gemini-chat-btn"
@@ -200,11 +232,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 className={`flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
                   isActive
-                    ? item.id === 'gemini-chat'
+                    ? item.id === 'analysis'
+                      ? 'bg-sky-500 text-slate-950 font-bold border border-sky-400 shadow-sm'
+                      : item.id === 'gemini-chat'
                       ? 'bg-amber-500 text-slate-950 font-bold border border-amber-400 shadow-sm'
                       : item.id === 'guide'
                       ? 'bg-emerald-950 text-emerald-300 border border-emerald-700 shadow-sm'
                       : 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    : item.id === 'analysis'
+                    ? 'text-sky-300/90 hover:text-sky-100 hover:bg-sky-950/40 border border-sky-900/50'
                     : item.id === 'gemini-chat'
                     ? 'text-amber-300/90 hover:text-amber-100 hover:bg-amber-950/40 border border-amber-900/50'
                     : item.id === 'guide'
@@ -217,8 +253,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {item.badge && (
                   <span className={`text-[11px] px-1.5 py-0.5 rounded-full ${
                     isActive 
-                      ? item.id === 'gemini-chat' ? 'bg-slate-900 text-amber-300 border border-amber-600' : item.id === 'guide' ? 'bg-emerald-900 text-emerald-200 border border-emerald-700' : 'bg-sky-950 text-sky-300 border border-sky-800' 
-                      : item.id === 'gemini-chat' ? 'bg-amber-950 text-amber-300 border border-amber-900' : item.id === 'guide' ? 'bg-emerald-950 text-emerald-300 border border-emerald-900' : 'bg-slate-800 text-slate-400'
+                      ? item.id === 'analysis' ? 'bg-slate-900 text-sky-300 border border-sky-600' : item.id === 'gemini-chat' ? 'bg-slate-900 text-amber-300 border border-amber-600' : item.id === 'guide' ? 'bg-emerald-900 text-emerald-200 border border-emerald-700' : 'bg-sky-950 text-sky-300 border border-sky-800' 
+                      : item.id === 'analysis' ? 'bg-sky-950 text-sky-300 border border-sky-900' : item.id === 'gemini-chat' ? 'bg-amber-950 text-amber-300 border border-amber-900' : item.id === 'guide' ? 'bg-emerald-950 text-emerald-300 border border-emerald-900' : 'bg-slate-800 text-slate-400'
                   }`}>
                     {item.badge}
                   </span>

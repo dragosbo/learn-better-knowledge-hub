@@ -15,6 +15,8 @@ import { PlaylistWordCloudMindMap } from './components/PlaylistWordCloudMindMap'
 import { PlaylistRestructureHub } from './components/PlaylistRestructureHub';
 import { GeminiDevelopmentChat } from './components/GeminiDevelopmentChat';
 import { RoadmapHub } from './components/RoadmapHub';
+import { VideoCosmosGraph } from './components/VideoCosmosGraph';
+import { AnalysisHub } from './components/AnalysisHub';
 import { buildRestructuredPlaylists } from './data/playlistRestructureData';
 
 export default function App() {
@@ -400,7 +402,7 @@ export default function App() {
       />
 
       {/* Main Tab Views */}
-      <main className="flex-1 w-full max-w-[1850px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className={activeTab === 'video-cosmos' ? 'flex-1 w-full mx-auto p-0 overflow-hidden' : 'flex-1 w-full max-w-[1850px] mx-auto px-4 sm:px-6 lg:px-8 py-6'}>
         {activeTab === 'playlists' && (
           <PlaylistManager
             playlists={playlists}
@@ -420,6 +422,7 @@ export default function App() {
                 ? handleRestoreOriginalPlaylists
                 : () => handleApplyRestructuredPlaylists(buildRestructuredPlaylists(INITIAL_PLAYLISTS))
             }
+            onNavigateToAnalysis={() => setActiveTab('analysis')}
           />
         )}
 
@@ -430,6 +433,22 @@ export default function App() {
             onRestoreOriginalPlaylists={handleRestoreOriginalPlaylists}
             isRestructuredActive={isRestructuredActive}
             onSelectClipForStudy={handleSelectClipForStudy}
+            onNavigateToTab={(tab) => setActiveTab(tab)}
+          />
+        )}
+
+        {activeTab === 'video-cosmos' && (
+          <VideoCosmosGraph
+            playlists={playlists}
+            onSelectClipForGemini={(clipId, title, cluster) => {
+              const matchedClip = uniqueClips.find(c => c.id === clipId);
+              if (matchedClip) {
+                handleNavigateToGemini(matchedClip, `Deconstruct and synthesize key principles from "${title}" in the "${cluster}" cluster.`);
+              } else {
+                setGeminiInitialContent(`Deconstruct and synthesize key principles from "${title}" (${clipId}) in the "${cluster}" cluster.`);
+                setActiveTab('gemini');
+              }
+            }}
             onNavigateToTab={(tab) => setActiveTab(tab)}
           />
         )}
@@ -503,42 +522,62 @@ export default function App() {
         {activeTab === 'roadmap' && (
           <RoadmapHub />
         )}
+
+        {activeTab === 'analysis' && (
+          <AnalysisHub />
+        )}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
-        <div className="w-full max-w-[1850px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span>
-            learn-better &bull; Personal Knowledge Hub &amp; Multi-AI Vibe Coding Platform
-          </span>
-          <div className="flex items-center gap-4 flex-wrap">
-            <button
-              onClick={() => setActiveTab('roadmap')}
-              className="text-emerald-400 hover:text-emerald-300 underline font-medium cursor-pointer flex items-center gap-1"
-            >
-              <span>🧭 Ecosystem Roadmap &amp; Multi-AI Guide</span>
-            </button>
-            <span className="text-slate-600 hidden sm:inline">&bull;</span>
-            <button
-              onClick={() => setActiveTab('gemini-chat')}
-              className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer flex items-center gap-1"
-            >
-              <span>💬 Gemini_development_chat</span>
-            </button>
-            <span className="text-slate-600 hidden sm:inline">&bull;</span>
-            <button
-              onClick={() => setActiveTab('guide')}
-              className="text-sky-400 hover:text-sky-300 underline font-medium cursor-pointer flex items-center gap-1"
-            >
-              <span>📖 Complete User Guide</span>
-            </button>
-            <span className="text-slate-600 hidden md:inline">&bull;</span>
-            <span className="hidden md:inline">
-              All new files safely isolated in dedicated web modules
+      {activeTab !== 'video-cosmos' && (
+        <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
+          <div className="w-full max-w-[1850px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span>
+              learn-better &bull; Personal Knowledge Hub &amp; Multi-AI Vibe Coding Platform
             </span>
+            <div className="flex items-center gap-4 flex-wrap">
+              <button
+                onClick={() => setActiveTab('analysis')}
+                className="text-sky-400 hover:text-sky-300 underline font-semibold cursor-pointer flex items-center gap-1"
+              >
+                <span>⚙️ System Analysis (Phase 1)</span>
+              </button>
+              <span className="text-slate-600 hidden sm:inline">&bull;</span>
+              <button
+                onClick={() => setActiveTab('video-cosmos')}
+                className="text-cyan-400 hover:text-cyan-300 underline font-medium cursor-pointer flex items-center gap-1"
+              >
+                <span>🌌 Video Cosmos Graph</span>
+              </button>
+              <span className="text-slate-600 hidden sm:inline">&bull;</span>
+              <button
+                onClick={() => setActiveTab('roadmap')}
+                className="text-emerald-400 hover:text-emerald-300 underline font-medium cursor-pointer flex items-center gap-1"
+              >
+                <span>🧭 Ecosystem Roadmap &amp; Multi-AI Guide</span>
+              </button>
+              <span className="text-slate-600 hidden sm:inline">&bull;</span>
+              <button
+                onClick={() => setActiveTab('gemini-chat')}
+                className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer flex items-center gap-1"
+              >
+                <span>💬 Gemini_development_chat</span>
+              </button>
+              <span className="text-slate-600 hidden sm:inline">&bull;</span>
+              <button
+                onClick={() => setActiveTab('guide')}
+                className="text-sky-400 hover:text-sky-300 underline font-medium cursor-pointer flex items-center gap-1"
+              >
+                <span>📖 Complete User Guide</span>
+              </button>
+              <span className="text-slate-600 hidden md:inline">&bull;</span>
+              <span className="hidden md:inline">
+                All new files safely isolated in dedicated web modules
+              </span>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }

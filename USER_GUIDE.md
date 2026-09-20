@@ -126,4 +126,46 @@ git push -u origin feature/gemini-knowledge-hub
 
 ---
 
+## 6. Troubleshooting & Operational Runbook: iPadOS & Cross-Site 401 Authorization Errors
+
+### 6.1 Incident Summary & Root Cause
+- **Symptoms**: Following an iPadOS system update, all web applets and preview frames fail to load, consistently returning `401 Unauthorized` errors across **all browsers** (Safari, Chrome, Brave, Edge).
+- **Underlying Cause**:
+  1. **WebKit Engine Ubiquity**: On iOS and iPadOS, Apple mandates that every browser uses the system WebKit engine. A privacy or security policy change at the OS level impacts all browsers uniformly.
+  2. **Intelligent Tracking Prevention (ITP) & Cross-Origin Cookies**: Google AI Studio hosts preview applets inside an `<iframe>` under Cloud Run domains (`*.run.app`). When iPadOS updates, it resets or enforces stricter **"Prevent Cross-Site Tracking"** rules. Safari and WebKit classify the authentication tokens/cookies sent into the iframe as third-party tracking cookies and silently drop them.
+  3. **Gateway Rejection**: The Cloud Run ingress reverse proxy receives the HTTP request without valid authorization credentials and rejects it with `HTTP 401 Unauthorized` before reaching the application code.
+
+### 6.2 Step-by-Step Resolution Runbook
+
+If this occurs again after a future iOS/iPadOS update, follow these steps:
+
+#### Step 1: Open the iPad "Settings" App
+1. Go to the Home Screen (swipe up from bottom edge).
+2. Tap the grey icon with mechanical gear wheels (**Settings**), or swipe down on the home screen to search for "Settings".
+
+#### Step 2: Configure System Safari & WebKit Settings (Affects All Browsers)
+1. In the Settings left sidebar, scroll down to **Safari** (or **Apps > Safari** in iPadOS 18+).
+2. Under **Privacy & Security**:
+   - Toggle **"Prevent Cross-Site Tracking"** to **OFF** (grey/white).
+   - Ensure **"Block All Cookies"** is **OFF**.
+3. Scroll to the bottom and tap **Advanced**:
+   - Tap **"Advanced Tracking and Fingerprinting Protection"**.
+   - Change setting from *"All Browsing"* to **"Off"** (or *"Private Browsing Only"*).
+
+#### Step 3: Configure Third-Party Browsers (Chrome / Brave / Edge)
+1. In the iPad Settings sidebar, select the browser (e.g., **Chrome** or **Brave**).
+2. Ensure **"Allow Cross-Website Tracking"** is toggled **ON** (green).
+3. If using **Brave**, tap the Lion icon in the address bar on AI Studio and drop shields for the domain.
+
+#### Step 4: Re-Authenticate Google Account
+1. Open a browser tab to `https://accounts.google.com` and ensure your Google account is verified with a fresh login session.
+2. Return to Google AI Studio and hard-refresh the workspace.
+
+#### Step 5: Instant Workaround (Standalone URL)
+If you need immediate access without changing device settings:
+- Tap the **"Open in new window" / "Pop out"** icon in the upper-right corner of the AI Studio preview pane, or navigate directly to the standalone Cloud Run URL (`https://ais-pre-...run.app`).
+- Running outside the `<iframe>` as a top-level tab makes all authentication first-party, completely bypassing cross-site cookie restrictions.
+
+---
+
 *Enjoy learning better! Use the top-right button in this guide to download this manual anytime.*

@@ -17,7 +17,9 @@ import {
   Youtube,
   RotateCcw,
   Check,
-  Network
+  Network,
+  FileSearch,
+  ArrowRight
 } from 'lucide-react';
 import { Playlist, YouTubeClip, SummaryData } from '../types';
 
@@ -35,6 +37,7 @@ interface PlaylistManagerProps {
   isRestructuredActive?: boolean;
   onNavigateToRestructure?: () => void;
   onToggleRestructure?: () => void;
+  onNavigateToAnalysis?: () => void;
 }
 
 export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
@@ -51,6 +54,7 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
   isRestructuredActive = false,
   onNavigateToRestructure,
   onToggleRestructure,
+  onNavigateToAnalysis,
 }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all');
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string>('all');
@@ -249,6 +253,21 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
+          {onNavigateToAnalysis && (
+            <button
+              id="main-page-analysis-btn"
+              onClick={onNavigateToAnalysis}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-sky-200 bg-sky-950 hover:bg-sky-900 border border-sky-600 rounded-lg transition-all shadow-md shadow-sky-950/50 ring-1 ring-sky-500/50 hover:scale-[1.02] active:scale-[0.98]"
+              title="Review Phase 1 System Analysis, Capability Catalog & Architecture Findings"
+            >
+              <FileSearch className="w-4 h-4 text-sky-400" />
+              <span>Analysis</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-900/90 text-sky-200 border border-sky-700/80 font-semibold">
+                Phase 1
+              </span>
+            </button>
+          )}
+
           {onSyncYouTube && (
             <button
               id="btn-sync-youtube"
@@ -290,6 +309,41 @@ export const PlaylistManager: React.FC<PlaylistManagerProps> = ({
             Add Clip
           </button>
         </div>
+      </div>
+
+      {/* Engineering Analysis Callout Banner */}
+      <div className="p-4 rounded-xl border bg-gradient-to-r from-slate-900 via-sky-950/40 to-slate-900 border-sky-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0 shadow-inner">
+            <FileSearch className="w-5 h-5 text-sky-400" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-sm text-white">
+                Engineering Analysis &bull; Transition from Vibe Coding
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800 font-semibold">
+                Phase 1 Introspection
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-medium">
+                14 Capabilities Audited
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-1">
+              Interactive review of the architecture specifications: dual-audience paradigm (Humans &bull; Agents), core capabilities, and modular transition roadmap.
+            </p>
+          </div>
+        </div>
+        {onNavigateToAnalysis && (
+          <button
+            id="banner-open-analysis-btn"
+            onClick={onNavigateToAnalysis}
+            className="flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg bg-sky-600 hover:bg-sky-500 text-white shadow-md transition-colors whitespace-nowrap"
+          >
+            <span>Review Material</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Restructuring Status & Proposal Callout Banner */}

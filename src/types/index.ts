@@ -136,6 +136,7 @@ export interface MindMapNode {
 export type ActiveTab = 
   | 'playlists' 
   | 'restructure'
+  | 'video-cosmos'
   | 'wordcloud-mindmap' 
   | 'knowledge' 
   | 'python-code' 
@@ -145,7 +146,59 @@ export type ActiveTab =
   | 'legacy-apps' 
   | 'github-sync' 
   | 'guide'
-  | 'roadmap';
+  | 'roadmap'
+  | 'analysis';
+
+export interface CosmosVideoNode {
+  id: string; // YouTube Video ID
+  title: string;
+  channel: string;
+  duration: string;
+  originalPlaylistTitle: string;
+  clusterId: string;
+  clusterTitle: string;
+  category: string;
+  categoryColor: string;
+  tags: string[];
+  status: 'to-watch' | 'in-progress' | 'synthesized' | 'mastered';
+  notes?: string;
+  summary?: string;
+  // Canvas coordinate & physical simulation properties
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  mass: number;
+  // Semantic relationships
+  relatedVideoIds: string[];
+  // Insights & References
+  keyInsights: string[];
+  keyReferences: Array<{
+    type: 'Paper' | 'Author/Thinker' | 'Tool/Library' | 'Book' | 'Concept' | 'Sibling Video';
+    title: string;
+    detail: string;
+    url?: string;
+  }>;
+}
+
+export interface CosmosTrajectoryStep {
+  stepIndex: number;
+  videoId: string;
+  videoTitle: string;
+  clusterTitle: string;
+  timestamp: number;
+  customNote?: string;
+}
+
+export interface CosmosTrajectoryVoyage {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  steps: CosmosTrajectoryStep[];
+  color: string;
+}
 
 export interface VideoAllocationItem {
   index: number;
