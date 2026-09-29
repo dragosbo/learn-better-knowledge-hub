@@ -63,6 +63,39 @@ export default function App() {
   // Cross-Tab Selected Context
   const [selectedClip, setSelectedClip] = useState<YouTubeClip | null>(null);
   const [geminiInitialContent, setGeminiInitialContent] = useState<string>('');
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      const isFs = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+      setIsFullscreen(isFs);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+      const el = document.documentElement;
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(() => {});
+      } else if ((el as any).webkitRequestFullscreen) {
+        (el as any).webkitRequestFullscreen();
+      }
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if ((document as any).webkitExitFullscreen) {
+        (document as any).webkitExitFullscreen();
+      }
+      setIsFullscreen(false);
+    }
+  };
 
   // Persist playlists to localStorage and backend
   useEffect(() => {
@@ -473,7 +506,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
+    <div className={`min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white ${isFullscreen ? 'fixed inset-0 z-50 overflow-y-auto w-screen h-screen' : ''}`}>
       {/* Top Navigation */}
       <Navbar
         activeTab={activeTab}
@@ -481,6 +514,8 @@ export default function App() {
         hasGeminiKey={hasGeminiKey}
         totalClips={allClips.length}
         totalNotes={totalNotesCount}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={toggleFullscreen}
       />
 
       {/* Main Tab Views */}

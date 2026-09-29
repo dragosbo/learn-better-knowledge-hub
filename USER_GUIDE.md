@@ -153,9 +153,9 @@ If this occurs again after a future iOS/iPadOS update, follow these steps:
    - Change setting from *"All Browsing"* to **"Off"** (or *"Private Browsing Only"*).
 
 #### Step 3: Configure Third-Party Browsers (Chrome / Brave / Edge)
-1. In the iPad Settings sidebar, select the browser (e.g., **Chrome** or **Brave**).
-2. Ensure **"Allow Cross-Website Tracking"** is toggled **ON** (green).
-3. If using **Brave**, tap the Lion icon in the address bar on AI Studio and drop shields for the domain.
+1. In the iPad Settings sidebar, select the browser (e.g., **Chrome** or **Brave**, or **Apps > Brave** on iPadOS 18+).
+2. Ensure **"Allow Cross-Website Tracking"** is toggled **ON** (green). *(Confirmed: This is the primary fix for the 401 error in Brave on iPad).*
+3. If using **Brave**, you can also tap the Lion icon in the address bar on AI Studio to toggle Shields off for the domain if needed.
 
 #### Step 4: Re-Authenticate Google Account
 1. Open a browser tab to `https://accounts.google.com` and ensure your Google account is verified with a fresh login session.

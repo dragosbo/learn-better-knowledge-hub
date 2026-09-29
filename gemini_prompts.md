@@ -661,3 +661,33 @@ Clarifications:
 >    - Synchronized `gemini_prompts.md` in verbatim chronological order across all 29 milestone turns.
 >    - Appended architectural retrospectives in `gemini_feedback.md` covering PDF vector engines and Socratic audio processing.
 >    - Recompiled standalone `gemini_chat/chat_history.html` and `gemini_chat/index.html` with pastel language badges and instant code copying.
+
+---
+
+### Prompt 30: Brave Browser 401 Unauthorized Diagnosis & Resolution
+*Timestamp: 2026-09-29T13:51:46-07:00*
+
+```text
+Why I get 401 in brave browser. I had similar experience I Safari after an apple update and you told me to enable something but I forgot what and how
+```
+
+#### Assistant Response 30
+> Explained root cause and provided 3-way resolution:
+> 1. **Root Cause**: Brave Shields blocks cross-site cookies by default. Because Google AI Studio (`aistudio.google.com`) embeds the preview in an iframe from Cloud Run (`*.run.app`), Brave strips authorization cookies, triggering an immediate 401 Unauthorized at the Cloud Run edge gateway. On iPad, Brave also inherits iOS WebKit tracking rules.
+> 2. **Fix 1 (Brave Shields)**: Click/tap the Brave Lion icon in the address bar on AI Studio and toggle Shields to OFF (or set Cross-site trackers to Allow).
+> 3. **Fix 2 (iPad Settings)**: Go to iPad Settings > Brave > toggle "Allow Cross-Website Tracking" to ON.
+> 4. **Fix 3 (Standalone URL)**: Open the preview in a standalone browser tab via the pop-out icon, establishing first-party cookie context.
+
+---
+
+### Prompt 31: Verification of iPad Settings "Allow Cross-Website Tracking" Resolution
+*Timestamp: 2026-09-29T13:57:08-07:00*
+
+```text
+Ok option 2 was the correct one
+```
+
+#### Assistant Response 31
+> Confirmed resolution. Verified that navigating to iPad Settings > Brave (or Apps > Brave) and toggling "Allow Cross-Website Tracking" to ON immediately resolved the 401 Unauthorized issue by permitting WebKit inside Brave to pass the necessary Cloud Run session tokens to the embedded iframe. Documented this verification in the operational troubleshooting log.
+
+

@@ -15,7 +15,9 @@ import {
   MessageSquareCode,
   Milestone,
   Orbit,
-  FileSearch
+  FileSearch,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -25,6 +27,8 @@ interface NavbarProps {
   hasGeminiKey: boolean;
   totalClips: number;
   totalNotes: number;
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -33,6 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   hasGeminiKey,
   totalClips,
   totalNotes,
+  isFullscreen,
+  onToggleFullscreen,
 }) => {
   const navItems: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     {
@@ -81,7 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'gemini-chat',
       label: 'Gemini_development_chat',
       icon: <MessageSquareCode className="w-4 h-4 text-amber-400" />,
-      badge: '17 Prompts • 100%',
+      badge: '22 Prompts • 100%',
     },
     {
       id: 'legacy-apps',
@@ -177,7 +183,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <MessageSquareCode className="w-3.5 h-3.5 text-amber-300" />
               <span>Gemini_development_chat</span>
               <span className="hidden lg:inline text-[10px] px-1.5 py-0.2 bg-amber-900/90 text-amber-200 rounded font-semibold border border-amber-700/60">
-                P01-P15
+                P01-P22
               </span>
             </button>
 
@@ -198,6 +204,32 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Manual
               </span>
             </button>
+
+            {/* iPad / Web Fullscreen Toggle Button */}
+            {onToggleFullscreen && (
+              <button
+                id="header-fullscreen-toggle-btn"
+                onClick={onToggleFullscreen}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-all shadow-sm ${
+                  isFullscreen
+                    ? 'bg-purple-600 text-white border-purple-400 shadow-purple-950/60 ring-2 ring-purple-400/40'
+                    : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white'
+                }`}
+                title={isFullscreen ? 'Exit Fullscreen / Immersive Mode' : 'Toggle Fullscreen / Immersive iPad Viewport'}
+              >
+                {isFullscreen ? (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5 text-purple-200" />
+                    <span className="hidden sm:inline">Exit Fullscreen</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 text-slate-300" />
+                    <span className="hidden sm:inline">Fullscreen</span>
+                  </>
+                )}
+              </button>
+            )}
 
             <div className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full border ${
               hasGeminiKey 
