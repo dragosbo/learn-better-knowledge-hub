@@ -270,3 +270,53 @@ Following an iPadOS system update, every applet across the Google AI Studio work
 - **Application Architectural Countermeasure (Zero-Iframe Workaround)**:
   - The applet provides direct standalone launch URLs (the "Open in new window" icon in AI Studio).
   - In a standalone tab, the Cloud Run domain becomes a **first-party context**, allowing authentication cookies to flow freely regardless of ITP cross-site settings.
+
+---
+
+## 13. Academic Vector Synthesis & Ruled Margin PDF Architecture
+
+### Context & Need
+Learners needed to export rich study briefs from the KnowledgeHub with physical notebook aesthetics (Cornell lined margins, crisp vector typography, checkbox checklists, and playlist-wide digests) without server round-trips or print dialog unpredictability.
+
+### Architectural Solution
+1. **Client-Side Vector Engine (`jspdf`)**:
+   - Eliminated heavy server-side headless browsers (Puppeteer/Playwright) in favor of lightweight pure JavaScript vector drawing.
+   - Vector guidelines drawn at 7.5mm intervals (`doc.line()`) mimicking authentic ruled notebooks.
+   - Vertical crimson rule at `x = 34.8mm` separating left margin labels (`[TAKEAWAY]`, `[INQUIRIES]`, `[PROMPTS]`) from main text.
+2. **Digest vs Brief Scope Decoupling**:
+   - `PdfExportModal.tsx` provides clean toggle between single video debriefs and multi-page playlist compendiums.
+   - Strict pagination logic tracking coordinate Y offset (`curY`) with automatic page creation (`doc.addPage()`) and persistent running headers/footers (`Page X of Y`).
+
+---
+
+## 14. Socratic Spoken Reflection & Gemini Audio Transcription Pipeline
+
+### Context & Need
+Providing video reflection via keyboard is often high friction. Enabling learners to debrief verbally via push-to-talk, receive Socratic probing questions, and have their spoken insights transcribed and synthesized directly into their notes creates high-retention learning.
+
+### Architectural Solution
+1. **Dual-Mode Push-to-Talk (`VoiceReflectionInterviewer.tsx`)**:
+   - Supports both mouse/touch hold-to-talk (>450ms press) and standard click-to-toggle.
+   - Real-time `MediaRecorder` web audio pipeline with animated waveform visualizer.
+2. **Gemini Transcribe & Socratic Synthesis**:
+   - `POST /api/gemini/transcribe-audio`: Streams base64 audio chunks directly into Gemini's multimodal transcription models.
+   - `POST /api/gemini/socratic-interview`: Generates 3-stage targeted probing questions (Merits → Learnings → Applications).
+   - Generates structured Markdown debriefs with one-click injection into the adjacent rich notes editor.
+3. **Dedicated Reflections Journal**:
+   - Extends the `YouTubeClip` domain model with persistent `voiceReflections` sessions stored in `channelPlaylists.json`.
+
+---
+
+## 15. Dual-Audience Introspection: Bridging Human UX & Autonomous Agent Tooling
+
+### Context & Need
+As systems scale through "vibe coding", they must become inspectable by both humans (visual dashboards, interactive reports) and autonomous AI coding agents (OpenAPI function calling schemas, tool execution endpoints).
+
+### Architectural Solution
+1. **Dual-Format Artifact Publishing**:
+   - Markdown specifications (`.md`) formatted for token-efficient agent consumption.
+   - Interactive standalone HTML reports (`.html`) with search, filter, and theme switching for human engineers.
+2. **Agent Tool Execution Gateway**:
+   - Exposed `GET /api/agent/tools` and `POST /api/agent/execute-tool` in `server.ts`.
+   - Allows external agents to safely query playlists, inspect capability matrices, extract clip summaries, and update study notes via structured JSON tool calls.
+

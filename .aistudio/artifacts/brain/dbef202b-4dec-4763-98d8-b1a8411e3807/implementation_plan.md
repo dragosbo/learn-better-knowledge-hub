@@ -1,112 +1,71 @@
-# VoiceReflectionInterviewer Component for KnowledgeHub
+# Comprehensive Conversation Archive & Analysis Audit Update
 
-Create a dedicated `VoiceReflectionInterviewer` component embedded side-by-side with the notes editor in `KnowledgeHub`. It provides a visual linear progress bar, collapsible Socratic question cards, and a dual-mode push-to-talk recording interface for spoken reflections.
+Update the complete development interaction history across all artifacts to include interactions from Prompt 16 through Prompt 21 (covering the iPad incident runbook, Analysis Phases 2 & 3, Academic Notebook PDF Export, Socratic Voice Feedback, and the Split VoiceReflectionInterviewer), and regenerate the standalone Gemini chat viewer HTML.
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> The following architectural and UX choices were confirmed during the interactive interview:
-> - **Placement**: Side-by-side split panel alongside the notes editor, enabling the student to simultaneously view/edit their written study notes and interact with the AI Socrates interviewer.
-> - **Progress Rendering**: Clean linear progress bar with step-by-step collapsible question cards (active question expanded with focus, completed stages collapsed as expandable review summaries).
-> - **Voice Interaction**: Dual-mode push-to-talk button supporting both click-to-toggle and hold-to-talk gestures with live audio waveform bars and instant speech transcription.
+> The following user preferences were confirmed:
+> - **Analysis Status**: Phases 1 (Architecture), 2 (Capability-to-File Matrix), and 3 (Dual-Audience Programmatic Agent Spec) are complete. No additional phases needed at this time.
+> - **Conversation Archive Scope**: Full audit log detailing Prompts 16 through 21 with verbatim prompts, assistant response syntheses, pastel language-specific code blocks, quota signals, and feature attributions.
+> - **Regeneration**: Re-run the standalone generation pipeline (`scripts/generate-gemini-chat-html.ts`) so `gemini_chat/chat_history.html` and the in-app `GeminiDevelopmentChat` viewer display all 21 prompts seamlessly.
 
-- **Confirmed Decision 1 (Split Panel Architecture)**: In `KnowledgeHub`, provide a toggleable side-by-side layout (`Editor + Socratic Interviewer`) so the student doesn't lose sight of their notes while speaking.
-- **Confirmed Decision 2 (Linear Progress & Collapsible Cards)**: Top progress bar indicating percentage completed (33% → 66% → 100%) paired with accordion-style question cards showing historical turns and active inquiry.
-- **Confirmed Decision 3 (Dual-Mode Push-to-Talk)**: Supports rapid desktop and mobile touch gestures (click to start/stop or hold down to record) with Gemini speech transcription and browser speech preview.
+- **Confirmed Decision 1 (Analysis Scope)**: Confirm Phases 1–3 as fully delivered; focus exclusively on the interaction archive update.
+- **Confirmed Decision 2 (Full Audit Fidelity)**: Include complete code blocks, technical schemas, and session metrics for all 6 recent prompts.
+- **Confirmed Decision 3 (Unified Synchronization)**: Update `src/data/geminiChatData.ts`, `gemini_prompts.md`, `gemini_feedback.md`, and rebuild `gemini_chat/chat_history.html`.
 
 ---
 
 ## 1. Overview & Core Concept
 
-- **What It Does**: Builds a dedicated `VoiceReflectionInterviewer` component that renders adjacent to the study notes canvas. It leads the learner through the 3-stage Socratic inquiry (Merits, Learnings, Applications), displays active AI inquiries with warm conversational guidance, accepts spoken feedback via dual-mode push-to-talk, and compiles a complete reflection debrief without modal interruptions.
-- **Target Audience / Persona**: Visual and auditory learners who prefer seeing their notes, transcript, and interviewer prompts simultaneously in a focused split workstation.
-- **Key Value**: Provides an unconstrained, non-modal reflection workspace where notes and verbal debriefs coexist and cross-pollinate.
+- **What It Does**: Synchronizes the complete conversation history from the initial setup through the latest Socratic voice features into a single, comprehensive audit log. The `GeminiDevelopmentChat` in-app component and the standalone `/gemini_chat/chat_history.html` file will reflect 21 full turns, grouped across Sessions 1 through 7, with pastel code blocks, collapsible accordions, and quick navigation.
+- **Target Audience / Persona**: The user and prospective collaborators or AI coding agents auditing the full evolution and architectural history of the `learn-better` application.
+- **Key Value**: Provides an immutable, transparent record of all technical decisions, code implementations, and problem resolutions (including the iPad incident and voice audio pipelines).
 
 ---
 
-## 2. User Experience & Visual Design
+## 2. Conversation & Interaction Inventory (Prompts 16–21)
 
-### Key User Flows
-1. **Activating the Split Interviewer**:
-   - In `KnowledgeHub`'s active view bar or notes header, user clicks **"Split Voice Interview"** or **"Launch Interviewer"**.
-   - The workspace smoothly expands into a 2-column layout: Left column contains the Study Notes / Takeaways, Right column hosts the `VoiceReflectionInterviewer`.
-2. **Visual Progress & Socratic Progression**:
-   - At the top of `VoiceReflectionInterviewer`, a smooth gradient linear progress bar tracks completion (`Step 1 of 3: Value & Merits`, `33%`).
-   - Stage 1 Card is expanded: Socrates asks what makes the clip standout and valuable.
-   - User speaks their answer using the dual-mode push-to-talk button.
-   - Upon confirming the answer, Stage 1 collapses into a completed badge with summary, and Stage 2 (Key Learnings) smoothly expands with an AI acknowledgment and the next inquiry.
-3. **Dual-Mode Recording Experience**:
-   - **Click Mode**: Click once to start recording; audio wave animates; click again to stop and transcribe.
-   - **Hold Mode**: Hold down mouse/touch to speak, release to stop and transcribe immediately.
-   - Transcribed text appears in real-time in an editable area.
-4. **Completion & Direct Note Enrichment**:
-   - At Stage 3, the final debrief is generated.
-   - User clicks **"Save & Append to Notes"**, which immediately writes the debrief into the left-hand editor without leaving the screen.
+### Session 6 (Incident Resolution & Analysis Phases 2 & 3)
+1. **Prompt 16 (iPad Settings & Incident Runbook)**:
+   - User issue: Applet stopped working on iPad browsers (Safari, Chrome, Brave).
+   - Solution: Guided user to iPad Settings > Safari > Advanced / Local Network permissions, fixed port 3000 accessibility, and documented the incident in `USER_GUIDE.md` and `analysis/`.
+2. **Prompt 17 (Phase 2 Analysis: Capability-to-File Matrix)**:
+   - Output: `analysis/02_CAPABILITY_FILE_MATRIX.md` and `02_capability_file_matrix.html`, mapping all 16 core capabilities to exact implementation files, lines, and test status.
+3. **Prompt 18 (Phase 3 Analysis: Dual-Audience Programmatic Agent Tools Spec)**:
+   - Output: `analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md` and `03_dual_audience_agent_tools_spec.html`, defining OpenAPI/Gemini function calling schemas (`/api/agent/tools`, `/api/agent/execute-tool`, `/api/agent/query`).
 
-### Visual Identity & Theme
-- **Color Discipline**: Deep slate background (`slate-950/70`), subtle borders (`slate-800`), indigo accents for Socrates guidance (`indigo-400`), rose accents for recording states (`rose-500`), and emerald accents for completed stages (`emerald-400`).
-- **Collapsible Cards**: Accordion headers displaying question number, stage title, and status checkmark. Active card features an indigo ring and illuminated prompt.
-- **Audio Meter**: Live 16-bar responsive frequency spectrum during active recording.
+### Session 7 (KnowledgeHub Enhancements: PDF Export & Voice Socratic Interviewer)
+4. **Prompt 19 (Academic Notebook PDF Export)**:
+   - Feature: `academicPdfGenerator.ts` + `PdfExportModal.tsx`, implementing A4 vector PDF export with classic Cornell red margin guidelines, horizontal ruled notebook lines, and single clip vs full playlist digest selection.
+5. **Prompt 20 (Socratic Voice Reflection & Spoken Feedback)**:
+   - Feature: `SocraticVoiceInterviewModal.tsx`, server-side audio transcription via `@google/genai` (`/api/gemini/transcribe-audio`), Socratic 3-stage question generator, and `VoiceReflectionsJournal.tsx` timeline.
+6. **Prompt 21 (VoiceReflectionInterviewer Component)**:
+   - Feature: Dedicated `VoiceReflectionInterviewer.tsx` rendered side-by-side with the notes editor, featuring a linear progress bar (33% → 66% → 100%), collapsible question cards, and dual-mode push-to-talk recording.
 
 ---
 
-## 3. Key Product Decisions & Trade-Offs
-
-- **Decision 1: Side-by-Side Split Panel vs. Full-Screen Modal**
-  - *Chosen Approach*: Implement `VoiceReflectionInterviewer` as a standalone component that mounts side-by-side with the notes editor inside `KnowledgeHub`.
-  - *Why*: Allows simultaneous reference to video timestamps, summary takeaways, and personal notes while speaking into the mic.
-  - *Alternatives Considered*: Modal overlay was implemented initially; the split panel provides superior productivity and zero context loss. Both will coexist harmoniously.
-- **Decision 2: Linear Progress Bar with Collapsible Cards**
-  - *Chosen Approach*: Top horizontal progress bar tracking completion percentage with collapsible step cards below.
-  - *Why*: Gives clear spatial awareness of interview length while maintaining a clean, compact layout that fits neatly into a split column.
-- **Decision 3: Dual-Mode Push-to-Talk Handling**
-  - *Chosen Approach*: Single smart button bound to `onClick`, `onMouseDown`, `onMouseUp`, `onTouchStart`, and `onTouchEnd` with threshold detection.
-  - *Why*: Caters naturally to both quick push-to-talk talkers and hands-free spoken reflectors.
-
----
-
-## 4. Technical Architecture & Data Strategy
-
-### Architecture & Component Diagram
+## 3. Technical Implementation & Synchronization Workflow
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│                              KnowledgeHub                              │
-│                                                                        │
-│  ┌─────────────────────────────────┐  ┌─────────────────────────────┐  │
-│  │ Left: Notes & Insights Editor   │  │ Right: VoiceReflection      │  │
-│  │ - Title, Tags, Channel          │  │        Interviewer           │  │
-│  │ - Markdown Notes Textarea       │  │ - Linear Progress Bar (66%)  │  │
-│  │ - Key Takeaways / Summaries     │  │ - [✔ Step 1: Merits (Coll)]  │  │
-│  │                                 │  │ - [▶ Step 2: Learnings (Act)]│  │
-│  │                                 │  │   - AI Socrates Question    │  │
-│  │                                 │  │   - Dual-Mode Mic Button    │  │
-│  │                                 │  │   - Live Waveform + Editor  │  │
-│  │                                 │  │ - [⏳ Step 3: Applications]  │  │
-│  │                                 │  │ - [Save & Sync to Notes]    │  │
-│  └─────────────────────────────────┘  └─────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│               Conversation Synchronization Flow                 │
+│                                                                 │
+│  ┌───────────────────────────┐     ┌─────────────────────────┐  │
+│  │ src/data/geminiChatData.ts │ ──> │ scripts/generate-gemini-│  │
+│  │ (Add entries P16 to P21)   │     │ chat-html.ts            │  │
+│  └─────────────┬─────────────┘     └───────────┬─────────────┘  │
+│                │                               │                │
+│                ▼                               ▼                │
+│  ┌───────────────────────────┐     ┌─────────────────────────┐  │
+│  │ gemini_prompts.md &       │     │ gemini_chat/            │  │
+│  │ gemini_feedback.md        │     │ chat_history.html       │  │
+│  │ (Sync markdown logs)      │     │ (Rebuilt standalone UI) │  │
+│  └───────────────────────────┘     └─────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Data Model & State
-- `VoiceReflectionInterviewerProps`:
-  ```typescript
-  interface VoiceReflectionInterviewerProps {
-    clip: YouTubeClip;
-    onSaveReflection: (clipId: string, session: VoiceReflectionSession, appendToNotes: boolean) => void;
-    onClose?: () => void;
-  }
-  ```
-- Component State:
-  - `activeStep`: 1 | 2 | 3 | 4 (summary)
-  - `expandedCard`: number (which step card is expanded)
-  - `turns`: `VoiceInterviewTurn[]`
-  - `isRecording`: boolean
-  - `transcript`: string
-
-### Interactive Component & State Mapping
-- `src/components/VoiceReflectionInterviewer.tsx`:
-  - New modular component containing linear progress bar, collapsible accordion cards, dual-mode push-to-talk button, audio waveform canvas, and final synthesis.
-- `src/components/KnowledgeHub.tsx`:
-  - Adds split-pane state `isInterviewerOpen: boolean` and a toggle button in the notes toolbar.
-  - Dynamically splits the grid from single-column to `grid-cols-1 lg:grid-cols-2` when the interviewer is active.
+- **Step 1**: Update `src/data/geminiChatData.ts` with new entries `P16`, `P17`, `P18`, `P19`, `P20`, and `P21` including verbatim user prompts, comprehensive assistant responses, code blocks, and quota signals.
+- **Step 2**: Re-run `npx tsx scripts/generate-gemini-chat-html.ts` to compile the updated dataset into `gemini_chat/chat_history.html` and `gemini_chat/index.html`.
+- **Step 3**: Sync `gemini_prompts.md` and `gemini_feedback.md` with complete documentation for all turns.
+- **Step 4**: Verify `compile_applet` and `lint_applet` to ensure total integrity.
