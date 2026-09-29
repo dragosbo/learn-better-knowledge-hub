@@ -297,3 +297,53 @@ export async function executeCliSync(channel = '@dragosborosgpt', mode: 'live' |
   return await res.json();
 }
 
+export async function transcribeAudio(audioBase64: string, mimeType = 'audio/webm'): Promise<{ transcript: string; model?: string }> {
+  const res = await fetch('/api/gemini/transcribe-audio', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ audioBase64, mimeType }),
+  });
+  if (!res.ok) {
+    throw new Error(`Audio transcription server error (${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function getSocraticNextQuestion(params: {
+  clipTitle: string;
+  clipChannel?: string;
+  stage: string;
+  userTranscript: string;
+}): Promise<{ acknowledgment: string; nextQuestion: string }> {
+  const res = await fetch('/api/gemini/socratic-interview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'next-question', ...params }),
+  });
+  if (!res.ok) {
+    throw new Error(`Socratic interview server error (${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function synthesizeSocraticInterview(params: {
+  clipTitle: string;
+  turns: Array<{ stage: string; question: string; transcript: string }>;
+}): Promise<{
+  whyGood: string;
+  keyLearnings: string[];
+  practicalApplications: string[];
+  oneLineSummary: string;
+}> {
+  const res = await fetch('/api/gemini/socratic-interview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'synthesize', ...params }),
+  });
+  if (!res.ok) {
+    throw new Error(`Synthesis server error (${res.status})`);
+  }
+  return await res.json();
+}
+
+

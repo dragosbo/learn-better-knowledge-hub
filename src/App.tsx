@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Playlist, YouTubeClip, SummaryData, LessonItem, ActiveTab } from './types';
+import { Playlist, YouTubeClip, SummaryData, LessonItem, ActiveTab, VoiceReflectionSession } from './types';
 import { INITIAL_PLAYLISTS } from './data/initialData';
 import { fetchHealth, fetchSummaries, fetchLessons, fetchLogs, fetchPlaylists, syncYouTubePlaylists, savePlaylists } from './services/api';
 import { Navbar } from './components/Navbar';
@@ -318,6 +318,88 @@ export default function App() {
     }
   };
 
+  const handleSaveVoiceReflection = (clipId: string, session: VoiceReflectionSession, appendToNotes: boolean) => {
+    setPlaylists((prev) => {
+      const updated = prev.map((pl) => ({
+        ...pl,
+        clips: pl.clips.map((c) => {
+          if (c.id === clipId) {
+            const currentReflections = c.voiceReflections || [];
+            let updatedNotes = c.notes;
+            if (appendToNotes) {
+              const formatted = `\n\n### 🎙 Spoken Voice Reflection (${session.date})\n**Core Takeaway:** ${session.synthesis.oneLineSummary}\n\n**Why Standout:**\n${session.synthesis.whyGood}\n\n**Key Learnings:**\n${session.synthesis.keyLearnings.map(l => `- ${l}`).join('\n')}\n\n**Action Ideas:**\n${session.synthesis.practicalApplications.map(a => `- ${a}`).join('\n')}\n`;
+              updatedNotes = (c.notes || '') + formatted;
+            }
+            return {
+              ...c,
+              voiceReflections: [session, ...currentReflections],
+              notes: updatedNotes,
+            };
+          }
+          return c;
+        }),
+      }));
+      try {
+        localStorage.setItem('learn_better_playlists_v3', JSON.stringify(updated));
+        fetch('/api/content/save-playlists', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ playlists: updated }),
+        }).catch((e) => console.warn('Save playlists sync failed', e));
+      } catch (e) {}
+      return updated;
+    });
+
+    if (selectedClip?.id === clipId) {
+      setSelectedClip((prev) => {
+        if (!prev) return null;
+        const currentReflections = prev.voiceReflections || [];
+        let updatedNotes = prev.notes;
+        if (appendToNotes) {
+          const formatted = `\n\n### 🎙 Spoken Voice Reflection (${session.date})\n**Core Takeaway:** ${session.synthesis.oneLineSummary}\n\n**Why Standout:**\n${session.synthesis.whyGood}\n\n**Key Learnings:**\n${session.synthesis.keyLearnings.map(l => `- ${l}`).join('\n')}\n\n**Action Ideas:**\n${session.synthesis.practicalApplications.map(a => `- ${a}`).join('\n')}\n`;
+          updatedNotes = (prev.notes || '') + formatted;
+        }
+        return {
+          ...prev,
+          voiceReflections: [session, ...currentReflections],
+          notes: updatedNotes,
+        };
+      });
+    }
+  };
+
+  const handleDeleteVoiceReflection = (clipId: string, sessionId: string) => {
+    setPlaylists((prev) => {
+      const updated = prev.map((pl) => ({
+        ...pl,
+        clips: pl.clips.map((c) => {
+          if (c.id === clipId && c.voiceReflections) {
+            return {
+              ...c,
+              voiceReflections: c.voiceReflections.filter((s) => s.id !== sessionId),
+            };
+          }
+          return c;
+        }),
+      }));
+      try {
+        localStorage.setItem('learn_better_playlists_v3', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    if (selectedClip?.id === clipId && selectedClip.voiceReflections) {
+      setSelectedClip((prev) =>
+        prev
+          ? {
+              ...prev,
+              voiceReflections: prev.voiceReflections?.filter((s) => s.id !== sessionId),
+            }
+          : null
+      );
+    }
+  };
+
   const handleApplyInsightsToClip = (
     clipId: string,
     insights: string[],
@@ -466,6 +548,7 @@ export default function App() {
             clips={uniqueClips}
             summaries={summaries}
             selectedClip={selectedClip}
+            playlists={playlists}
             onSelectClip={(clip) => setSelectedClip(clip)}
             onUpdateClipNotes={handleUpdateClipNotes}
             onAddQuestion={handleAddQuestion}
@@ -473,6 +556,8 @@ export default function App() {
             onAddIdea={handleAddIdea}
             onDeleteIdea={handleDeleteIdea}
             onNavigateToGemini={handleNavigateToGemini}
+            onSaveVoiceReflection={handleSaveVoiceReflection}
+            onDeleteVoiceReflection={handleDeleteVoiceReflection}
           />
         )}
 

@@ -12,15 +12,23 @@ import {
   FileDown, 
   Layers,
   Search,
-  Trash2
+  Trash2,
+  GraduationCap,
+  Mic,
+  Volume2
 } from 'lucide-react';
-import { YouTubeClip, SummaryData } from '../types';
+import { YouTubeClip, SummaryData, Playlist, VoiceReflectionSession } from '../types';
 import { AudioLessonPlayer } from './AudioLessonPlayer';
+import { PdfExportModal } from './PdfExportModal';
+import { SocraticVoiceInterviewModal } from './SocraticVoiceInterviewModal';
+import { VoiceReflectionsJournal } from './VoiceReflectionsJournal';
+import { VoiceReflectionInterviewer } from './VoiceReflectionInterviewer';
 
 interface KnowledgeHubProps {
   clips: YouTubeClip[];
   summaries: SummaryData[];
   selectedClip: YouTubeClip | null;
+  playlists?: Playlist[];
   onSelectClip: (clip: YouTubeClip) => void;
   onUpdateClipNotes: (clipId: string, notes: string) => void;
   onAddQuestion: (clipId: string, question: string) => void;
@@ -28,12 +36,15 @@ interface KnowledgeHubProps {
   onAddIdea: (clipId: string, idea: string) => void;
   onDeleteIdea: (clipId: string, index: number) => void;
   onNavigateToGemini: (clip: YouTubeClip, content: string) => void;
+  onSaveVoiceReflection?: (clipId: string, session: VoiceReflectionSession, appendToNotes: boolean) => void;
+  onDeleteVoiceReflection?: (clipId: string, sessionId: string) => void;
 }
 
 export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({
   clips,
   summaries,
   selectedClip,
+  playlists = [],
   onSelectClip,
   onUpdateClipNotes,
   onAddQuestion,
@@ -41,13 +52,31 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({
   onAddIdea,
   onDeleteIdea,
   onNavigateToGemini,
+  onSaveVoiceReflection,
+  onDeleteVoiceReflection,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeNoteText, setActiveNoteText] = useState(selectedClip?.notes || '');
   const [newQuestionInput, setNewQuestionInput] = useState('');
   const [newIdeaInput, setNewIdeaInput] = useState('');
   const [copied, setCopied] = useState(false);
-  const [activeView, setActiveView] = useState<'editor' | 'mindmap' | 'summary'>('editor');
+  const [activeView, setActiveView] = useState<'editor' | 'mindmap' | 'summary' | 'reflections'>('editor');
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const [isSideInterviewerOpen, setIsSideInterviewerOpen] = useState(false);
+
+  const handleSaveVoiceReflection = (clipId: string, session: VoiceReflectionSession, appendToNotes: boolean) => {
+    if (onSaveVoiceReflection) {
+      onSaveVoiceReflection(clipId, session, appendToNotes);
+    }
+    if (appendToNotes) {
+      const formattedNotes = `\n\n### 🎙 Spoken Voice Reflection (${session.date})\n**Core Takeaway:** ${session.synthesis.oneLineSummary}\n\n**Why Standout:**\n${session.synthesis.whyGood}\n\n**Key Learnings:**\n${session.synthesis.keyLearnings.map(l => `- ${l}`).join('\n')}\n\n**Action Ideas:**\n${session.synthesis.practicalApplications.map(a => `- ${a}`).join('\n')}\n`;
+      const newNotes = (activeNoteText || '') + formattedNotes;
+      setActiveNoteText(newNotes);
+      onUpdateClipNotes(clipId, newNotes);
+    }
+    setActiveView('reflections');
+  };
 
   // When selected clip changes, update local state
   React.useEffect(() => {
@@ -171,6 +200,29 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
         {currentClip && (
           <div className="flex items-center gap-2 flex-wrap">
             <button
+              onClick={() => {
+                setActiveView('editor');
+                setIsSideInterviewerOpen((prev) => !prev);
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors shadow-sm cursor-pointer ${
+                isSideInterviewerOpen && activeView === 'editor'
+                  ? 'bg-rose-600 text-white border-rose-500 shadow-rose-600/20'
+                  : 'text-rose-200 bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/80'
+              }`}
+              title="Toggle side-by-side Socratic voice reflection interviewer"
+            >
+              <Mic className="w-3.5 h-3.5 text-rose-300" />
+              {isSideInterviewerOpen && activeView === 'editor' ? 'Close Voice Interview' : 'Voice Interview'}
+            </button>
+            <button
+              onClick={() => setIsPdfModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-200 bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/80 rounded-lg transition-colors shadow-sm cursor-pointer"
+              title="Export academic notebook PDF with lined margins"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-rose-400" />
+              Export Study PDF
+            </button>
+            <button
               onClick={handleCopyToClipboard}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors"
             >
@@ -282,26 +334,52 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
                   >
                     Concept Map
                   </button>
+                  <button
+                    onClick={() => setActiveView('reflections')}
+                    className={`px-3 py-1 rounded font-medium transition-colors flex items-center gap-1.5 ${
+                      activeView === 'reflections' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Volume2 className="w-3.5 h-3.5" />
+                    Spoken Reflections {currentClip.voiceReflections && currentClip.voiceReflections.length > 0 ? `(${currentClip.voiceReflections.length})` : ''}
+                  </button>
                 </div>
               </div>
 
               {/* View 1: Personal Notes, Questions, and Ideas */}
               {activeView === 'editor' && (
-                <div className="space-y-6">
-                  {/* Notes Editor */}
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                        <BookOpen className="w-4 h-4 text-sky-400" />
-                        My Personal Notes & Insights
-                      </label>
-                      <button
-                        onClick={handleSaveNotes}
-                        className="text-xs text-sky-400 hover:text-sky-300 font-semibold"
-                      >
-                        Save Notes
-                      </button>
-                    </div>
+                <div className={`grid gap-6 ${isSideInterviewerOpen ? 'grid-cols-1 xl:grid-cols-12' : 'grid-cols-1'}`}>
+                  {/* Left Column: Notes & Questions */}
+                  <div className={`space-y-6 ${isSideInterviewerOpen ? 'xl:col-span-7' : ''}`}>
+                    {/* Notes Editor */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                          <BookOpen className="w-4 h-4 text-sky-400" />
+                          My Personal Notes & Insights
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsSideInterviewerOpen(!isSideInterviewerOpen)}
+                            className={`text-xs px-2.5 py-1 rounded-md border flex items-center gap-1 transition-colors cursor-pointer ${
+                              isSideInterviewerOpen
+                                ? 'bg-rose-950/80 border-rose-700 text-rose-300 font-semibold shadow-sm'
+                                : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+                            }`}
+                            title="Toggle side-by-side Socratic voice reflection interviewer"
+                          >
+                            <Mic className="w-3 h-3 text-rose-400" />
+                            {isSideInterviewerOpen ? 'Hide Interviewer' : 'Split Voice Interview'}
+                          </button>
+                          <button
+                            onClick={handleSaveNotes}
+                            className="text-xs text-sky-400 hover:text-sky-300 font-semibold cursor-pointer"
+                          >
+                            Save Notes
+                          </button>
+                        </div>
+                      </div>
                     <textarea
                       rows={5}
                       value={activeNoteText}
@@ -423,6 +501,18 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
                       </div>
                     </div>
                   </div>
+                  </div>
+
+                  {/* Right Column: Socratic VoiceReflectionInterviewer */}
+                  {isSideInterviewerOpen && (
+                    <div className="xl:col-span-5 h-full">
+                      <VoiceReflectionInterviewer
+                        clip={currentClip}
+                        onSaveReflection={handleSaveVoiceReflection}
+                        onClose={() => setIsSideInterviewerOpen(false)}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -521,6 +611,20 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
                   </div>
                 </div>
               )}
+
+              {/* View 4: Spoken Voice Reflections Journal */}
+              {activeView === 'reflections' && (
+                <VoiceReflectionsJournal
+                  currentClip={currentClip}
+                  onStartNewInterview={() => setIsVoiceModalOpen(true)}
+                  onAppendToNotes={(content) => {
+                    const newNotes = (activeNoteText || '') + content;
+                    setActiveNoteText(newNotes);
+                    onUpdateClipNotes(currentClip.id, newNotes);
+                  }}
+                  onDeleteSession={onDeleteVoiceReflection}
+                />
+              )}
             </div>
           ) : (
             <div className="text-center py-20 bg-slate-900 rounded-xl border border-slate-800">
@@ -529,6 +633,26 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
           )}
         </div>
       </div>
+
+      {/* Socratic Voice Reflection Interview Dialog */}
+      {currentClip && (
+        <SocraticVoiceInterviewModal
+          isOpen={isVoiceModalOpen}
+          onClose={() => setIsVoiceModalOpen(false)}
+          clip={currentClip}
+          onSaveReflection={handleSaveVoiceReflection}
+        />
+      )}
+
+      {/* Academic Notebook PDF Export Dialog */}
+      <PdfExportModal
+        isOpen={isPdfModalOpen}
+        onClose={() => setIsPdfModalOpen(false)}
+        currentClip={currentClip}
+        clips={clips}
+        summaries={summaries}
+        playlists={playlists}
+      />
     </div>
   );
 };

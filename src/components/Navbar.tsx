@@ -117,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'analysis',
       label: 'Analysis',
       icon: <FileSearch className="w-4 h-4 text-sky-400" />,
-      badge: 'Phase 1 • Deep Scan',
+      badge: 'Phases 1-3 • System Map',
     },
   ];
 
@@ -154,12 +154,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-sky-950/60 ring-2 ring-sky-400/40'
                   : 'bg-sky-950/80 text-sky-300 border-sky-600/80 hover:bg-sky-900 hover:text-white'
               }`}
-              title="Open the System Architecture & Capability Analysis (Phase 1)"
+              title="Open the System Architecture, Capability Matrix & Agent Protocol (Phases 1-3)"
             >
               <FileSearch className="w-3.5 h-3.5 text-sky-300" />
               <span>Analysis</span>
               <span className="hidden md:inline text-[10px] px-1.5 py-0.2 bg-sky-900/90 text-sky-200 rounded font-semibold border border-sky-700/60">
-                Phase 1
+                Phases 1-3
               </span>
             </button>
 

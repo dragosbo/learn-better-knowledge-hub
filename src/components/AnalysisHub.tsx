@@ -25,23 +25,33 @@ import {
   Download, 
   Eye, 
   FileCode2, 
-  FileText 
+  FileText,
+  Play,
+  Wrench,
+  Search,
+  Database,
+  Server,
+  Zap
 } from 'lucide-react';
 
-interface CapabilityItem {
+interface CapabilityDetail {
   id: string;
   title: string;
   badge: string;
   category: 'Media & Data' | 'Spatial & Viz' | 'Audio & AI' | 'DevOps & Docs';
   audience: 'human' | 'agent' | 'both';
   summary: string;
-  files: string[];
+  primaryComponent: string;
+  componentLines: string;
+  dataFiles: string[];
+  endpoints: string[];
+  supportingTools: string[];
   humanExperience: string;
   agentContract: string;
   reliability: 'High' | 'Medium' | 'Experimental';
 }
 
-const CAPABILITIES: CapabilityItem[] = [
+const CAPABILITIES_LEDGER: CapabilityDetail[] = [
   {
     id: '01',
     title: 'Playlists & Clips Management',
@@ -49,7 +59,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'Media & Data',
     audience: 'both',
     summary: 'Catalogs 71 YouTube playlists and 471+ clips with status tracking (to-watch, in-progress, synthesized, mastered), notes, and tags.',
-    files: ['src/components/PlaylistManager.tsx', 'src/data/channelPlaylists.json', 'server.ts (lines 347-381)'],
+    primaryComponent: 'src/components/PlaylistManager.tsx',
+    componentLines: '~1,032 lines',
+    dataFiles: ['src/data/channelPlaylists.json', 'src/data/initialData.ts', 'localStorage (learn_better_playlists_v3)'],
+    endpoints: ['GET /api/content/playlists', 'POST /api/content/save-playlists', 'POST /api/content/sync-youtube'],
+    supportingTools: ['lucide-react', 'src/services/api.ts'],
     humanExperience: 'Visual card grid with search, tag filters, clip status dropdowns, and one-click launch into the study studio.',
     agentContract: 'Deterministic JSON schema with id, title, channel, duration, notes, userQuestions, and userIdeas attributes.',
     reliability: 'High'
@@ -61,7 +75,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'Media & Data',
     audience: 'both',
     summary: 'Re-aggregates 71 fragmented micro-playlists into 28 balanced clusters with live side-by-side reallocation and automated multi-page PDF generation.',
-    files: ['src/components/PlaylistRestructureHub.tsx', 'src/data/playlistRestructureData.ts', 'jspdf & autotable'],
+    primaryComponent: 'src/components/PlaylistRestructureHub.tsx',
+    componentLines: '~750 lines',
+    dataFiles: ['src/data/playlistRestructureData.ts', 'localStorage (learn_better_is_restructured)'],
+    endpoints: ['Client-side algorithmic clustering (zero network latency)'],
+    supportingTools: ['jspdf', 'jspdf-autotable', 'lucide-react'],
     humanExperience: 'Color-coded reallocation matrix, cluster breakdown cards, and 1-click executive PDF report export with table styling.',
     agentContract: 'Algorithmic cluster mapping specification (RESTRUCTURE_CLUSTERS) with unambiguous string matching rules.',
     reliability: 'High'
@@ -73,7 +91,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'Spatial & Viz',
     audience: 'human',
     summary: '2D HTML5 Canvas celestial galaxy rendering 471 clips as stars in 5 sectoral quadrants with orbital constellation rings and flight recording.',
-    files: ['src/components/VideoCosmosGraph.tsx', 'src/data/videoCosmosData.ts'],
+    primaryComponent: 'src/components/VideoCosmosGraph.tsx',
+    componentLines: '~610 lines',
+    dataFiles: ['src/data/videoCosmosData.ts', 'localStorage (cosmos_custom_voyages_v1)'],
+    endpoints: ['Pure client-side Canvas physics engine'],
+    supportingTools: ['HTML5 Canvas 2D Context', 'lucide-react'],
     humanExperience: 'High-speed 60fps pan/zoom spatial navigation, star twinkle, constellation lines, and touch gesture support.',
     agentContract: 'Topological coordinate assignment algorithms and cluster centroid calculations in cartesian space.',
     reliability: 'High'
@@ -81,11 +103,15 @@ const CAPABILITIES: CapabilityItem[] = [
   {
     id: '04',
     title: 'Word Cloud & Mind Map Hub',
-    badge: 'Analytics',
+    badge: 'Semantic Analysis',
     category: 'Spatial & Viz',
     audience: 'both',
     summary: 'D3/Canvas-powered frequency analysis of technical terminology across all playlists with a synchronized 3-tier hierarchical mind map.',
-    files: ['src/components/PlaylistWordCloudMindMap.tsx', 'src/data/wordcloudMindmapData.ts', 'server.ts (lines 384-454)'],
+    primaryComponent: 'src/components/PlaylistWordCloudMindMap.tsx',
+    componentLines: '~480 lines',
+    dataFiles: ['src/data/wordcloudMindmapData.ts', 'imported_repo/data/wordclouds/*'],
+    endpoints: ['GET /api/playlists/wordcloud/:playlistId'],
+    supportingTools: ['HTML5 Canvas 2D', 'SVG radial tree rendering'],
     humanExperience: 'Interactive term filtering; visual inspection of curriculum vocabulary distributions.',
     agentContract: 'Tokenization pipeline, stopword filtering, and term weight calculations.',
     reliability: 'High'
@@ -93,11 +119,15 @@ const CAPABILITIES: CapabilityItem[] = [
   {
     id: '05',
     title: 'Knowledge Hub & Study Studio',
-    badge: 'Active Recall',
+    badge: 'Video Synthesis',
     category: 'Media & Data',
     audience: 'both',
     summary: 'Focused single-clip study studio combining YouTube video playback, transcripts, personal user notes, questions, and ideas.',
-    files: ['src/components/KnowledgeHub.tsx', 'src/data/initialData.ts', 'App.tsx'],
+    primaryComponent: 'src/components/KnowledgeHub.tsx',
+    componentLines: '~450 lines',
+    dataFiles: ['src/data/initialData.ts', 'src/App.tsx global state'],
+    endpoints: ['GET /api/content/summaries'],
+    supportingTools: ['YouTube Iframe API', 'lucide-react'],
     humanExperience: 'Split-screen video watching and note taking; question-and-answer tracking.',
     agentContract: 'Array structures for userQuestions and userIdeas ready for automated LLM quiz generation.',
     reliability: 'High'
@@ -109,7 +139,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'DevOps & Docs',
     audience: 'both',
     summary: '19 structured lessons (Claude prompt engineering + Kiro CLI workflows) rendered from markdown into an interactive course viewer.',
-    files: ['src/components/AILearningAcademy.tsx', 'imported_repo/lessons_*', 'server.ts (lines 85-121)'],
+    primaryComponent: 'src/components/AILearningAcademy.tsx',
+    componentLines: '~520 lines',
+    dataFiles: ['imported_repo/lessons_claude/', 'imported_repo/lessons_kiro/'],
+    endpoints: ['GET /api/content/lessons', 'GET /api/content/lesson/:id'],
+    supportingTools: ['react-markdown', 'lucide-react'],
     humanExperience: 'Formatted lesson reading, completion progress tracking, and chapter jump menu.',
     agentContract: 'Raw markdown lesson files accessible for prompt distillation and agent learning.',
     reliability: 'High'
@@ -121,7 +155,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'Audio & AI',
     audience: 'human',
     summary: 'Zero-cost client-side speech synthesis with Media Session API remote controls (play, pause, skip on AirPods stem while walking).',
-    files: ['src/components/AudioLessonPlayer.tsx', 'Web Speech API', 'navigator.mediaSession'],
+    primaryComponent: 'src/components/AudioLessonPlayer.tsx',
+    componentLines: '~380 lines',
+    dataFiles: ['Dynamic in-memory text chunker'],
+    endpoints: ['Web Speech API (SpeechSynthesis), MediaSession API'],
+    supportingTools: ['Web Speech API', 'navigator.mediaSession'],
     humanExperience: 'Learn on walks or commutes without looking at the screen; speed adjustment (0.75x to 1.5x).',
     agentContract: 'Text chunking pipeline splitting long markdown articles into speech-safe paragraphs.',
     reliability: 'High'
@@ -129,11 +167,15 @@ const CAPABILITIES: CapabilityItem[] = [
   {
     id: '08',
     title: 'Gemini AI Studio',
-    badge: 'Generative AI',
+    badge: 'Multi-Model AI',
     category: 'Audio & AI',
     audience: 'both',
     summary: 'Multi-model Gemini cascade (3.8-flash, flash-latest, 2.5-flash) with automatic 503 high-demand heuristic fallback for insights and vibe pilot.',
-    files: ['src/components/GeminiStudio.tsx', 'server.ts (lines 694-951)', '@google/genai'],
+    primaryComponent: 'src/components/GeminiStudio.tsx',
+    componentLines: '~710 lines',
+    dataFiles: ['Client session notes & prompts'],
+    endpoints: ['POST /api/gemini/extract-insights', 'POST /api/gemini/vibe-pilot'],
+    supportingTools: ['@google/genai SDK', 'lucide-react'],
     humanExperience: 'One-click extraction of insights, quiz questions, and prompt optimization directly into notes.',
     agentContract: 'Strict JSON schema generation (responseMimeType: application/json) and heuristic fallback resilience.',
     reliability: 'High'
@@ -145,7 +187,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'DevOps & Docs',
     audience: 'both',
     summary: 'Complete audit trail and visual viewer for all project prompts, capability evaluations, and session logs (100% coverage).',
-    files: ['src/components/GeminiDevelopmentChat.tsx', 'src/data/geminiChatData.ts', 'gemini_chat/chat_history.html'],
+    primaryComponent: 'src/components/GeminiDevelopmentChat.tsx',
+    componentLines: '~390 lines',
+    dataFiles: ['src/data/geminiChatData.ts', 'gemini_prompts.md', 'gemini_feedback.md', 'gemini_chat/chat_history.html'],
+    endpoints: ['GET /gemini_development_chat', 'GET /api/chat/history', 'POST /api/content/append-prompt'],
+    supportingTools: ['Static HTML iframe', 'react-markdown'],
     humanExperience: 'Searchable conversational history with capability breakdowns and code changes.',
     agentContract: 'Verbatim prompt ledger (gemini_prompts.md) serving as prompt regression baseline.',
     reliability: 'High'
@@ -157,7 +203,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'DevOps & Docs',
     audience: 'human',
     summary: 'Sandboxed iframe runner for original standalone HTML tools (YouTube explorer, standalone Claude reader, Kiro reader, wordcloud).',
-    files: ['src/components/LegacyAppsHub.tsx', 'server.ts (lines 142-177)', 'imported_repo/*.html'],
+    primaryComponent: 'src/components/LegacyAppsHub.tsx',
+    componentLines: '~340 lines',
+    dataFiles: ['imported_repo/*.html'],
+    endpoints: ['GET /api/content/legacy-apps', 'GET /imported_repo/*'],
+    supportingTools: ['Sandboxed <iframe>', 'lucide-react'],
     humanExperience: 'Run pre-existing standalone tools without leaving the modern React interface.',
     agentContract: 'Clean isolated routes (/legacy/*) ensuring zero code breakage during modernization.',
     reliability: 'High'
@@ -165,11 +215,15 @@ const CAPABILITIES: CapabilityItem[] = [
   {
     id: '11',
     title: 'Python Code Viewer',
-    badge: 'Engineering',
+    badge: 'CLI Tooling',
     category: 'DevOps & Docs',
     audience: 'both',
     summary: 'Two-column IDE layout with syntax highlighting and I/O specifications for backend Python scripts (transcription, audio re-encoding, speech).',
-    files: ['src/components/PythonCodeViewer.tsx', 'src/data/pythonFiles.ts', 'server.ts (lines 275-309)'],
+    primaryComponent: 'src/components/PythonCodeViewer.tsx & PythonSyntaxHighlighter.tsx',
+    componentLines: '~360 lines',
+    dataFiles: ['src/data/pythonFiles.ts', 'scripts/*.py'],
+    endpoints: ['GET /api/content/python-files'],
+    supportingTools: ['Custom syntax tokenizer', 'lucide-react'],
     humanExperience: 'Side-by-side code inspection, line counts, function signatures, and vibe-coding rationale.',
     agentContract: 'Structured I/O and dependency mapping metadata for each Python file.',
     reliability: 'High'
@@ -181,7 +235,11 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'DevOps & Docs',
     audience: 'both',
     summary: 'Safe export guides, .bat/.sh synchronization scripts, and branch isolation instructions preventing repository overwrite.',
-    files: ['src/components/GitHubSyncGuide.tsx', 'export_to_github.sh', 'export_to_github.bat'],
+    primaryComponent: 'src/components/GitHubSyncGuide.tsx',
+    componentLines: '~660 lines',
+    dataFiles: ['export_to_github.sh', 'export_to_github.bat'],
+    endpoints: ['POST /api/cli/execute-sync'],
+    supportingTools: ['react-markdown', 'lucide-react'],
     humanExperience: 'One-click copyable git commands with visual conflict avoidance explanations.',
     agentContract: 'Exact CLI arguments and non-destructive git push procedures.',
     reliability: 'High'
@@ -192,9 +250,13 @@ const CAPABILITIES: CapabilityItem[] = [
     badge: 'Documentation',
     category: 'DevOps & Docs',
     audience: 'both',
-    summary: 'Full markdown documentation viewer with built-in voice narration and quick-jump anchor navigation.',
-    files: ['src/components/UserGuideViewer.tsx', 'USER_GUIDE.md', 'src/utils/guideHtmlFormatter.ts'],
-    humanExperience: 'Listen to the manual or jump directly to specific feature workflows.',
+    summary: 'Full markdown documentation viewer with built-in voice narration, quick-jump anchors, and the iPadOS 401 troubleshooting runbook.',
+    primaryComponent: 'src/components/UserGuideViewer.tsx',
+    componentLines: '~330 lines',
+    dataFiles: ['USER_GUIDE.md'],
+    endpoints: ['GET /api/content/logs'],
+    supportingTools: ['src/utils/guideHtmlFormatter.ts', 'Web Speech Audio Engine'],
+    humanExperience: 'Listen to the manual or jump directly to specific feature workflows and iPadOS setup.',
     agentContract: 'Comprehensive natural-language specification of all application capabilities.',
     reliability: 'High'
   },
@@ -205,30 +267,48 @@ const CAPABILITIES: CapabilityItem[] = [
     category: 'DevOps & Docs',
     audience: 'both',
     summary: 'Strategic architecture guide detailing multi-device sync, blob asset strategies, and multi-model agent collaboration blueprints.',
-    files: ['src/components/RoadmapHub.tsx', 'src/data/roadmapData.ts', 'suggestions.md'],
+    primaryComponent: 'src/components/RoadmapHub.tsx',
+    componentLines: '~480 lines',
+    dataFiles: ['src/data/roadmapData.ts', 'suggestions.md'],
+    endpoints: ['Declarative data models in roadmapData.ts'],
+    supportingTools: ['lucide-react'],
     humanExperience: 'Visual milestone cards, technical guides, and multi-AI handoff protocols.',
     agentContract: 'Machine-parsable milestone identifiers and implementation roadmaps.',
     reliability: 'High'
   }
 ];
 
-type AnalysisViewMode = 'overview' | 'html-report' | 'markdown-spec';
+type AnalysisPhase = 1 | 2 | 3;
+type AnalysisViewMode = 'overview' | 'html-report' | 'markdown-spec' | 'agent-playground';
 
 export const AnalysisHub: React.FC = () => {
+  const [selectedPhase, setSelectedPhase] = useState<AnalysisPhase>(2);
   const [activeViewMode, setActiveViewMode] = useState<AnalysisViewMode>('overview');
   const [markdownContent, setMarkdownContent] = useState<string>('');
-  const [htmlUrl, setHtmlUrl] = useState<string>('/analysis/01_high_level_system_architecture.html');
+  const [htmlUrl, setHtmlUrl] = useState<string>('/analysis/02_capability_file_matrix.html');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [iframeKey, setIframeKey] = useState<number>(0);
   const [isIframeFullscreen, setIsIframeFullscreen] = useState<boolean>(false);
   const [markdownViewType, setMarkdownViewType] = useState<'formatted' | 'raw'>('formatted');
   const [copiedMarkdownText, setCopiedMarkdownText] = useState<boolean>(false);
   const [activeAudienceFilter, setActiveAudienceFilter] = useState<'all' | 'human' | 'agent'>('all');
+  const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [copiedMarkdown, setCopiedMarkdown] = useState(false);
+  const [copiedPath, setCopiedPath] = useState(false);
 
+  // Agent Playground state
+  const [selectedTool, setSelectedTool] = useState<string>('search_playlists');
+  const [toolQueryArg, setToolQueryArg] = useState<string>('AI');
+  const [toolLimitArg, setToolLimitArg] = useState<number>(5);
+  const [toolStatusArg, setToolStatusArg] = useState<string>('all');
+  const [isExecutingTool, setIsExecutingTool] = useState<boolean>(false);
+  const [toolExecutionResult, setToolExecutionResult] = useState<any>(null);
+  const [copiedToolSchema, setCopiedToolSchema] = useState<boolean>(false);
+
+  // Fetch phase documentation whenever selectedPhase changes
   useEffect(() => {
-    fetch('/api/analysis/data')
+    setIsLoading(true);
+    fetch(`/api/analysis/data?phase=${selectedPhase}`)
       .then((res) => {
         if (!res.ok) throw new Error('API fetch failed');
         return res.json();
@@ -239,8 +319,21 @@ export const AnalysisHub: React.FC = () => {
         setIsLoading(false);
       })
       .catch(() => {
-        // Fallback to static serving
-        fetch('/analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md')
+        // Fallback static files
+        const fallbackMd = selectedPhase === 1 
+          ? '/analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md' 
+          : selectedPhase === 2 
+            ? '/analysis/02_CAPABILITY_FILE_MATRIX.md' 
+            : '/analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md';
+        
+        const fallbackHtml = selectedPhase === 1
+          ? '/analysis/01_high_level_system_architecture.html'
+          : selectedPhase === 2
+            ? '/analysis/02_capability_file_matrix.html'
+            : '/analysis/03_dual_audience_agent_tools_spec.html';
+
+        setHtmlUrl(fallbackHtml);
+        fetch(fallbackMd)
           .then((r) => r.text())
           .then((txt) => {
             setMarkdownContent(txt);
@@ -248,39 +341,64 @@ export const AnalysisHub: React.FC = () => {
           })
           .catch(() => setIsLoading(false));
       });
-  }, []);
+  }, [selectedPhase]);
 
-  const filteredCapabilities = CAPABILITIES.filter((c) => {
+  const filteredCapabilities = CAPABILITIES_LEDGER.filter((c) => {
     const matchesAudience = 
       activeAudienceFilter === 'all' || 
       c.audience === activeAudienceFilter || 
       c.audience === 'both';
+    
+    const matchesCategory = 
+      activeCategoryFilter === 'all' ||
+      c.category === activeCategoryFilter;
+
+    const q = searchQuery.toLowerCase().trim();
     const matchesSearch = 
-      c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.files.some(f => f.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesAudience && matchesSearch;
+      !q ||
+      c.title.toLowerCase().includes(q) ||
+      c.summary.toLowerCase().includes(q) ||
+      c.primaryComponent.toLowerCase().includes(q) ||
+      c.dataFiles.some(f => f.toLowerCase().includes(q)) ||
+      c.endpoints.some(e => e.toLowerCase().includes(q));
+
+    return matchesAudience && matchesCategory && matchesSearch;
   });
 
-  const handleCopyMarkdownPath = () => {
-    navigator.clipboard.writeText('/analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md');
-    setCopiedMarkdown(true);
-    setTimeout(() => setCopiedMarkdown(false), 2000);
+  const handleCopyPath = () => {
+    const p = selectedPhase === 1 
+      ? '/analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md' 
+      : selectedPhase === 2 
+        ? '/analysis/02_CAPABILITY_FILE_MATRIX.md' 
+        : '/analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md';
+    navigator.clipboard.writeText(p);
+    setCopiedPath(true);
+    setTimeout(() => setCopiedPath(false), 2000);
   };
 
   const handleDownloadHtml = () => {
+    const filename = selectedPhase === 1 
+      ? '01_high_level_system_architecture.html' 
+      : selectedPhase === 2 
+        ? '02_capability_file_matrix.html' 
+        : '03_dual_audience_agent_tools_spec.html';
     const link = document.createElement('a');
     link.href = htmlUrl;
-    link.download = '01_high_level_system_architecture.html';
+    link.download = filename;
     link.click();
   };
 
   const handleDownloadMarkdown = () => {
+    const filename = selectedPhase === 1 
+      ? '01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md' 
+      : selectedPhase === 2 
+        ? '02_CAPABILITY_FILE_MATRIX.md' 
+        : '03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md';
     const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = '01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md';
+    link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -291,53 +409,220 @@ export const AnalysisHub: React.FC = () => {
     setTimeout(() => setCopiedMarkdownText(false), 2000);
   };
 
+  // Run live agent tool call
+  const handleExecuteAgentTool = async () => {
+    setIsExecutingTool(true);
+    try {
+      let args: any = {};
+      if (selectedTool === 'search_playlists') {
+        args = { query: toolQueryArg, status: toolStatusArg, limit: toolLimitArg };
+      } else if (selectedTool === 'get_capability_matrix') {
+        args = { capabilityId: toolQueryArg || undefined };
+      } else if (selectedTool === 'get_study_notes') {
+        args = { filterBy: 'all', limit: toolLimitArg };
+      } else if (selectedTool === 'query_video_cosmos') {
+        args = { cluster: toolQueryArg || undefined, limit: toolLimitArg };
+      } else if (selectedTool === 'get_code_manifest') {
+        args = { scope: 'all' };
+      }
+
+      const res = await fetch('/api/agent/execute-tool', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tool: selectedTool, arguments: args })
+      });
+      const data = await res.json();
+      setToolExecutionResult(data);
+    } catch (err: any) {
+      setToolExecutionResult({ error: err.message });
+    } finally {
+      setIsExecutingTool(false);
+    }
+  };
+
+  const sampleToolSchemas = {
+    search_playlists: {
+      name: 'search_playlists',
+      description: 'Searches 71 curated YouTube playlists and 471+ video clips by keyword, channel name, category tag, or watch status.',
+      parameters: {
+        type: 'object',
+        properties: {
+          query: { type: 'string', description: 'Keyword to search clip titles and playlist titles' },
+          status: { type: 'string', enum: ['all', 'to-watch', 'in-progress', 'synthesized', 'mastered'] },
+          limit: { type: 'integer', description: 'Max items to return (default 20)' }
+        }
+      }
+    }
+  };
+
+  const handleCopyToolSchema = () => {
+    navigator.clipboard.writeText(JSON.stringify(sampleToolSchemas, null, 2));
+    setCopiedToolSchema(true);
+    setTimeout(() => setCopiedToolSchema(false), 2000);
+  };
+
   return (
     <div className="space-y-8 pb-16">
+      {/* ========================================================================= */}
+      {/* 3-PHASE MASTER NAVIGATION TABS */}
+      {/* ========================================================================= */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-2 sm:p-2.5 shadow-lg">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          {/* Phase 1 Button */}
+          <button
+            onClick={() => { setSelectedPhase(1); }}
+            className={`flex-1 flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+              selectedPhase === 1
+                ? 'bg-slate-800/90 border-sky-500/80 text-white shadow-md ring-2 ring-sky-500/30'
+                : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+            }`}
+          >
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold">
+                <span className={`w-2 h-2 rounded-full ${selectedPhase === 1 ? 'bg-sky-400' : 'bg-slate-600'}`}></span>
+                <span className={selectedPhase === 1 ? 'text-sky-300' : 'text-slate-300'}>Phase 1</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-950 text-sky-400 border border-sky-800/60">Audit</span>
+              </div>
+              <div className="font-extrabold text-sm text-white">System Architecture</div>
+              <div className="text-[11px] text-slate-400">High-level topology &amp; technical debt</div>
+            </div>
+            <div className="hidden lg:block text-xs font-mono text-sky-400/80">01_ARCH.md</div>
+          </button>
+
+          {/* Phase 2 Button */}
+          <button
+            onClick={() => { setSelectedPhase(2); }}
+            className={`flex-1 flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+              selectedPhase === 2
+                ? 'bg-sky-950/80 border-sky-400 text-white shadow-md ring-2 ring-sky-400/40'
+                : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+            }`}
+          >
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold">
+                <span className={`w-2 h-2 rounded-full ${selectedPhase === 2 ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`}></span>
+                <span className={selectedPhase === 2 ? 'text-sky-300' : 'text-slate-300'}>Phase 2</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60">Delivering Files</span>
+              </div>
+              <div className="font-extrabold text-sm text-white">Capability &rarr; File Matrix</div>
+              <div className="text-[11px] text-slate-300">Exact files, components, lines &amp; contracts</div>
+            </div>
+            <div className="hidden lg:block text-xs font-mono text-emerald-400/80">02_MATRIX.md</div>
+          </button>
+
+          {/* Phase 3 Button */}
+          <button
+            onClick={() => { setSelectedPhase(3); }}
+            className={`flex-1 flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+              selectedPhase === 3
+                ? 'bg-amber-950/80 border-amber-400 text-white shadow-md ring-2 ring-amber-400/40'
+                : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+            }`}
+          >
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold">
+                <span className={`w-2 h-2 rounded-full ${selectedPhase === 3 ? 'bg-amber-400 animate-pulse' : 'bg-slate-600'}`}></span>
+                <span className={selectedPhase === 3 ? 'text-amber-300' : 'text-slate-300'}>Phase 3</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-800/60">Live Endpoints</span>
+              </div>
+              <div className="font-extrabold text-sm text-white">Agent Tools &amp; API Protocol</div>
+              <div className="text-[11px] text-slate-300">OpenAI/Gemini function calling &amp; simulator</div>
+            </div>
+            <div className="hidden lg:block text-xs font-mono text-amber-400/80">03_AGENT.md</div>
+          </button>
+        </div>
+      </div>
+
       {/* Hero Header */}
       <div className="rounded-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-slate-800 p-6 sm:p-8 relative overflow-hidden shadow-xl">
         <div className="absolute -right-24 -top-24 w-96 h-96 bg-sky-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -left-24 -bottom-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 space-y-4 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/80 text-sky-400 border border-sky-800 text-xs font-semibold">
-            <Cpu className="w-3.5 h-3.5" />
-            <span>Architecture &amp; Capability Introspection</span>
+          {/* Phase Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/80 border border-slate-800 text-xs font-semibold">
+            <Cpu className="w-3.5 h-3.5 text-sky-400" />
+            <span className="text-white">Architecture &amp; Capability Ledger</span>
             <span>&bull;</span>
-            <span className="text-emerald-400">Phase 1 Baseline</span>
+            {selectedPhase === 1 && <span className="text-sky-400 font-bold">Phase 1: High-Level System Architecture</span>}
+            {selectedPhase === 2 && <span className="text-emerald-400 font-bold">Phase 2: Capability-to-File Delivery Matrix</span>}
+            {selectedPhase === 3 && <span className="text-amber-400 font-bold">Phase 3: Dual-Audience Interfaces &amp; Agent Tool Protocol</span>}
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Transitioning from Vibe Coding to Engineered Architecture
+            {selectedPhase === 1 && 'Transitioning from Vibe Coding to Engineered Architecture'}
+            {selectedPhase === 2 && 'Exact File Delivery & Component Registry for Every Capability'}
+            {selectedPhase === 3 && 'Dual-Audience Machine Protocol & Autonomous Agent Tool Calling'}
           </h1>
 
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            This module provides a comprehensive high-level analysis of <strong className="text-white">learn-better</strong>. 
-            Having proven high capability density through fast-paced human + AI vibe coding, we are now laying the 
-            architectural foundation to make the system robust, modular, easily maintainable, and natively accessible to both <strong className="text-sky-400">humans</strong> and <strong className="text-amber-400">autonomous AI agents</strong>.
+            {selectedPhase === 1 && (
+              <>
+                Phase 1 analyzes the holistic architecture of <strong className="text-white">learn-better</strong>. Having accumulated 14 rich capabilities organically through vibe coding, we mapped the system topology and identified technical debt remediations.
+              </>
+            )}
+            {selectedPhase === 2 && (
+              <>
+                Phase 2 provides direct, code-level traceability answering: <strong className="text-emerald-300">"For each capability in the system, exactly which files, components, datasets, server endpoints, and utility functions deliver it?"</strong>
+              </>
+            )}
+            {selectedPhase === 3 && (
+              <>
+                Phase 3 enables <strong className="text-amber-400">Autonomous AI Agents (Claude, Gemini, ChatGPT)</strong> to query, inspect, and update playlists, clips, and notes via strict JSON Schema REST APIs and standard Function Calling declarations without touching UI code.
+              </>
+            )}
           </p>
 
           {/* Quick Review Navigation Actions */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
-              id="analysis-hero-html-btn"
+              onClick={() => setActiveViewMode('overview')}
+              className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                activeViewMode === 'overview'
+                  ? 'bg-sky-500 text-slate-950 ring-2 ring-sky-300 font-black shadow-md'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>
+                {selectedPhase === 1 && 'Architecture Overview'}
+                {selectedPhase === 2 && 'Capability & File Matrix (14)'}
+                {selectedPhase === 3 && 'Agent API Endpoints & Schemas'}
+              </span>
+            </button>
+
+            {selectedPhase === 3 && (
+              <button
+                onClick={() => setActiveViewMode('agent-playground')}
+                className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                  activeViewMode === 'agent-playground'
+                    ? 'bg-amber-400 text-slate-950 ring-2 ring-amber-300 font-black shadow-md'
+                    : 'bg-amber-600/90 hover:bg-amber-500 text-white'
+                }`}
+              >
+                <Terminal className="w-3.5 h-3.5" />
+                <span>Live Tool Simulator &amp; Tester</span>
+              </button>
+            )}
+
+            <button
               onClick={() => setActiveViewMode('html-report')}
-              className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-md ${
+              className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
                 activeViewMode === 'html-report'
-                  ? 'bg-sky-500 text-slate-950 ring-2 ring-sky-300'
-                  : 'bg-sky-600 hover:bg-sky-500 text-white'
+                  ? 'bg-sky-500 text-slate-950 ring-2 ring-sky-300 font-black shadow-md'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
-              <span>Review Interactive HTML Report</span>
+              <span>Interactive HTML Frame</span>
             </button>
 
             <button
-              id="analysis-hero-md-btn"
               onClick={() => setActiveViewMode('markdown-spec')}
-              className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-md ${
+              className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
                 activeViewMode === 'markdown-spec'
-                  ? 'bg-amber-400 text-slate-950 ring-2 ring-amber-300'
-                  : 'bg-amber-600/90 hover:bg-amber-500 text-white'
+                  ? 'bg-amber-400 text-slate-950 ring-2 ring-amber-300 font-black shadow-md'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
               }`}
             >
               <FileCode2 className="w-3.5 h-3.5" />
@@ -345,36 +630,12 @@ export const AnalysisHub: React.FC = () => {
             </button>
 
             <button
-              id="analysis-hero-overview-btn"
-              onClick={() => setActiveViewMode('overview')}
-              className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg transition-all ${
-                activeViewMode === 'overview'
-                  ? 'bg-slate-700 text-white border border-slate-600'
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Overview &amp; 14 Capabilities</span>
-            </button>
-
-            <a
-              href="/analysis/01_high_level_system_architecture.html"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors"
-              title="Open standalone report in external tab if supported"
-            >
-              <span>External Tab</span>
-              <ExternalLink className="w-3 h-3 text-slate-400" />
-            </a>
-
-            <button
-              onClick={handleCopyMarkdownPath}
+              onClick={handleCopyPath}
               className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-colors"
               title="Copy local workspace path to clipboard"
             >
-              {copiedMarkdown ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
-              <span>{copiedMarkdown ? 'Path Copied!' : 'Copy Path'}</span>
+              {copiedPath ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+              <span>{copiedPath ? 'Path Copied!' : 'Copy Path'}</span>
             </button>
           </div>
         </div>
@@ -382,20 +643,20 @@ export const AnalysisHub: React.FC = () => {
         {/* Quick Stat Highlights */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-800/80">
           <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-            <div className="text-xl sm:text-2xl font-bold text-sky-400">14</div>
-            <div className="text-xs text-slate-400 mt-0.5">Critical Capabilities</div>
+            <div className="text-xl sm:text-2xl font-bold text-sky-400">14 / 14</div>
+            <div className="text-xs text-slate-400 mt-0.5">Capabilities Mapped</div>
           </div>
           <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
             <div className="text-xl sm:text-2xl font-bold text-emerald-400">471+</div>
             <div className="text-xs text-slate-400 mt-0.5">Clips Indexed</div>
           </div>
           <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-            <div className="text-xl sm:text-2xl font-bold text-amber-400">71 &rarr; 28</div>
-            <div className="text-xs text-slate-400 mt-0.5">Cluster Rebalance</div>
+            <div className="text-xl sm:text-2xl font-bold text-amber-400">5 Endpoints</div>
+            <div className="text-xs text-slate-400 mt-0.5">Programmatic Agent APIs</div>
           </div>
           <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-            <div className="text-xl sm:text-2xl font-bold text-purple-400">Dual Audience</div>
-            <div className="text-xs text-slate-400 mt-0.5">Human UX + Agent Schemas</div>
+            <div className="text-xl sm:text-2xl font-bold text-purple-400">100% Safe</div>
+            <div className="text-xs text-slate-400 mt-0.5">Atomic Flat-File Writes</div>
           </div>
         </div>
       </div>
@@ -404,7 +665,6 @@ export const AnalysisHub: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-900 border border-slate-800 rounded-xl shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
           <button
-            id="tab-view-overview"
             onClick={() => setActiveViewMode('overview')}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeViewMode === 'overview'
@@ -413,14 +673,34 @@ export const AnalysisHub: React.FC = () => {
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>Architecture &amp; Capabilities</span>
+            <span>
+              {selectedPhase === 1 && 'System Architecture'}
+              {selectedPhase === 2 && 'Capability Delivery Matrix'}
+              {selectedPhase === 3 && 'Agent API Specifications'}
+            </span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">
-              14 Modules
+              {selectedPhase === 2 ? '14 Files Detailed' : selectedPhase === 3 ? '5 Endpoints' : 'Baseline'}
             </span>
           </button>
 
+          {selectedPhase === 3 && (
+            <button
+              onClick={() => setActiveViewMode('agent-playground')}
+              className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                activeViewMode === 'agent-playground'
+                  ? 'bg-amber-600 text-white shadow'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Terminal className="w-3.5 h-3.5" />
+              <span>Live Agent Playground</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
+                Interactive Test
+              </span>
+            </button>
+          )}
+
           <button
-            id="tab-view-html"
             onClick={() => setActiveViewMode('html-report')}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeViewMode === 'html-report'
@@ -431,12 +711,11 @@ export const AnalysisHub: React.FC = () => {
             <Eye className="w-3.5 h-3.5" />
             <span>Interactive HTML Report</span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
-              Human UX &bull; Live Frame
+              Live Frame
             </span>
           </button>
 
           <button
-            id="tab-view-markdown"
             onClick={() => setActiveViewMode('markdown-spec')}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeViewMode === 'markdown-spec'
@@ -445,7 +724,7 @@ export const AnalysisHub: React.FC = () => {
             }`}
           >
             <FileCode2 className="w-3.5 h-3.5" />
-            <span>Machine-Readable Markdown</span>
+            <span>Machine Markdown (.md)</span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
               Agent Spec
             </span>
@@ -453,29 +732,472 @@ export const AnalysisHub: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 text-xs text-slate-400">
-          <span className="hidden sm:inline">Active View:</span>
+          <span className="hidden sm:inline">Active File:</span>
           <span className="font-semibold text-white font-mono text-[11px] bg-slate-950 px-2.5 py-1 rounded border border-slate-800">
-            {activeViewMode === 'overview' && 'System Architecture Catalog & Technical Debt'}
-            {activeViewMode === 'html-report' && '01_high_level_system_architecture.html'}
-            {activeViewMode === 'markdown-spec' && '01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md'}
+            {selectedPhase === 1 && (activeViewMode === 'html-report' ? '01_high_level_system_architecture.html' : '01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md')}
+            {selectedPhase === 2 && (activeViewMode === 'html-report' ? '02_capability_file_matrix.html' : '02_CAPABILITY_FILE_MATRIX.md')}
+            {selectedPhase === 3 && (activeViewMode === 'html-report' ? '03_dual_audience_agent_tools_spec.html' : '03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md')}
           </span>
         </div>
       </div>
 
-      {/* VIEW 1: Embedded Interactive HTML Report */}
+      {/* ========================================================================= */}
+      {/* VIEW: LIVE AGENT PLAYGROUND & TOOL SIMULATOR (PHASE 3) */}
+      {/* ========================================================================= */}
+      {activeViewMode === 'agent-playground' && selectedPhase === 3 && (
+        <div className="space-y-6">
+          <div className="p-6 rounded-2xl bg-slate-900 border border-amber-900/60 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Terminal className="w-5 h-5 text-amber-400" />
+                  <span>Autonomous AI Agent Tool-Calling Sandbox</span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Simulate external LLM tool calls (OpenAI, Gemini, Claude) by executing real server actions against <code className="text-sky-400">/api/agent/execute-tool</code>.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopyToolSchema}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold border border-slate-700 transition-colors"
+                >
+                  {copiedToolSchema ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-amber-400" />}
+                  <span>{copiedToolSchema ? 'JSON Copied!' : 'Copy Tool JSON Schema'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Interactive Control Panel */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-4 md:col-span-1 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">Select Tool</label>
+                  <select
+                    value={selectedTool}
+                    onChange={(e) => setSelectedTool(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  >
+                    <option value="search_playlists">search_playlists</option>
+                    <option value="get_capability_matrix">get_capability_matrix</option>
+                    <option value="get_study_notes">get_study_notes</option>
+                    <option value="query_video_cosmos">query_video_cosmos</option>
+                    <option value="get_code_manifest">get_code_manifest</option>
+                  </select>
+                </div>
+
+                {selectedTool === 'search_playlists' && (
+                  <>
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-400">Query String</label>
+                      <input
+                        type="text"
+                        value={toolQueryArg}
+                        onChange={(e) => setToolQueryArg(e.target.value)}
+                        placeholder="e.g. AI, React, Prompt, Gemini"
+                        className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-400">Status Filter</label>
+                      <select
+                        value={toolStatusArg}
+                        onChange={(e) => setToolStatusArg(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white"
+                      >
+                        <option value="all">all</option>
+                        <option value="to-watch">to-watch</option>
+                        <option value="in-progress">in-progress</option>
+                        <option value="synthesized">synthesized</option>
+                        <option value="mastered">mastered</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {selectedTool === 'get_capability_matrix' && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-400">Capability ID</label>
+                    <input
+                      type="text"
+                      value={toolQueryArg}
+                      onChange={(e) => setToolQueryArg(e.target.value)}
+                      placeholder="e.g. 01, 02, 07 (leave blank for all)"
+                      className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-slate-400">Result Limit</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="50"
+                    value={toolLimitArg}
+                    onChange={(e) => setToolLimitArg(parseInt(e.target.value, 10) || 5)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white"
+                  />
+                </div>
+
+                <button
+                  onClick={handleExecuteAgentTool}
+                  disabled={isExecutingTool}
+                  className="w-full mt-2 py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-amber-950 disabled:opacity-50"
+                >
+                  {isExecutingTool ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Executing Tool Call...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5" />
+                      <span>Execute Agent Tool</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Real-Time Output Console */}
+              <div className="space-y-2 md:col-span-2 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span className="text-xs font-mono text-slate-300">Live JSON Payload Response</span>
+                  </div>
+                  {toolExecutionResult && (
+                    <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">
+                      {toolExecutionResult.executionTimeMs || 8}ms &bull; {toolExecutionResult.resultCount || 0} items
+                    </span>
+                  )}
+                </div>
+
+                <pre className="font-mono text-xs text-emerald-400 bg-slate-900/60 p-4 rounded-lg overflow-x-auto max-h-80 whitespace-pre-wrap">
+                  {toolExecutionResult 
+                    ? JSON.stringify(toolExecutionResult, null, 2)
+                    : '// Click "Execute Agent Tool" to test server-side execution...'}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VIEW: MAIN OVERVIEW (PHASE-SPECIFIC) */}
+      {/* ========================================================================= */}
+      {activeViewMode === 'overview' && (
+        <div className="space-y-8">
+          {/* PHASE 2 OVERVIEW: FULL CAPABILITY-TO-FILE DELIVERY MATRIX */}
+          {selectedPhase === 2 && (
+            <div className="space-y-6">
+              {/* Matrix Search & Filter Bar */}
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+                <div className="relative w-full md:w-96">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by capability, component (.tsx), data file (.json), or endpoint..."
+                    className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                  <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+                    <span className="text-slate-500 px-2 text-[11px]">Domain:</span>
+                    {['all', 'Media & Data', 'Spatial & Viz', 'Audio & AI', 'DevOps & Docs'].map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setActiveCategoryFilter(cat)}
+                        className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                          activeCategoryFilter === cat
+                            ? 'bg-sky-600 text-white font-bold'
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850'
+                        }`}
+                      >
+                        {cat === 'all' ? 'All' : cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+                    <span className="text-slate-500 px-2 text-[11px]">Audience:</span>
+                    {['all', 'human', 'agent'].map((aud) => (
+                      <button
+                        key={aud}
+                        onClick={() => setActiveAudienceFilter(aud as any)}
+                        className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                          activeAudienceFilter === aud
+                            ? 'bg-sky-600 text-white font-bold'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        {aud.charAt(0).toUpperCase() + aud.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Capability Traceability Cards */}
+              <div className="grid grid-cols-1 gap-6">
+                {filteredCapabilities.map((cap) => (
+                  <div
+                    key={cap.id}
+                    className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all shadow-md space-y-4"
+                  >
+                    {/* Top Row */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                      <div className="flex items-center gap-3">
+                        <span className="w-8 h-8 rounded-lg bg-sky-950 text-sky-400 font-mono font-bold text-xs flex items-center justify-center border border-sky-800/80">
+                          #{cap.id}
+                        </span>
+                        <div>
+                          <h3 className="text-base font-bold text-white flex items-center gap-2">
+                            <span>{cap.title}</span>
+                            <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-sky-300 font-medium border border-slate-700">
+                              {cap.badge}
+                            </span>
+                          </h3>
+                          <p className="text-xs text-slate-400">{cap.summary}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-medium">
+                          {cap.category}
+                        </span>
+                        <span className={`text-[11px] px-2 py-0.5 rounded font-bold ${
+                          cap.audience === 'agent' 
+                            ? 'bg-amber-950 text-amber-300 border border-amber-800' 
+                            : cap.audience === 'human'
+                              ? 'bg-sky-950 text-sky-300 border border-sky-800'
+                              : 'bg-indigo-950 text-indigo-300 border border-indigo-800'
+                        }`}>
+                          {cap.audience === 'both' ? 'Human + Agent' : cap.audience === 'human' ? 'Human UX' : 'Agent API'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Files Delivery Details Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                      {/* Column 1: UI Component */}
+                      <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                        <div className="text-[11px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <Code2 className="w-3.5 h-3.5" />
+                          <span>Primary UI Component</span>
+                        </div>
+                        <div className="font-mono text-xs font-bold text-white break-all">
+                          {cap.primaryComponent}
+                        </div>
+                        <div className="text-[11px] text-slate-500 font-mono">
+                          Scale: {cap.componentLines}
+                        </div>
+                      </div>
+
+                      {/* Column 2: Data & Storage */}
+                      <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                        <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <Database className="w-3.5 h-3.5" />
+                          <span>Data &amp; Storage Files</span>
+                        </div>
+                        <ul className="text-xs font-mono text-slate-300 space-y-1">
+                          {cap.dataFiles.map((df, i) => (
+                            <li key={i} className="truncate text-[11px]">&bull; {df}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Column 3: Backend Server Endpoints */}
+                      <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                        <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <Server className="w-3.5 h-3.5" />
+                          <span>Server Endpoints (server.ts)</span>
+                        </div>
+                        <ul className="text-xs font-mono text-slate-300 space-y-1">
+                          {cap.endpoints.map((ep, i) => (
+                            <li key={i} className="truncate text-[11px] text-amber-300/90">&bull; {ep}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* Dual Contracts */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                      <div>
+                        <span className="font-bold text-sky-400">Human UX: </span>
+                        <span className="text-slate-300">{cap.humanExperience}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold text-amber-400">Agent Contract: </span>
+                        <span className="text-slate-300">{cap.agentContract}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* PHASE 3 OVERVIEW: DUAL-AUDIENCE MACHINE PROTOCOL & TOOL SCHEMAS */}
+          {selectedPhase === 3 && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 rounded-2xl bg-slate-900 border border-sky-900/60 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-lg bg-sky-950 text-sky-400 font-bold flex items-center justify-center">👤</span>
+                    <h3 className="font-bold text-white text-base">Human Interface Channel</h3>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Designed for cognitive ergonomics, spatial immersion, and audio multitasking. Features interactive 60fps canvas astronomy, AirPods stem play/pause controls, and printable PDF reports.
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-slate-900 border border-amber-900/60 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-lg bg-amber-950 text-amber-400 font-bold flex items-center justify-center">🤖</span>
+                    <h3 className="font-bold text-white text-base">Autonomous Agent Protocol</h3>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Provides zero-friction REST endpoints under <code className="text-amber-400">/api/agent/*</code> and standard OpenAI / Gemini / Claude tool calling schemas with zero DOM scraping needed.
+                  </p>
+                </div>
+              </div>
+
+              {/* Endpoints Table */}
+              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <Server className="w-4 h-4 text-emerald-400" />
+                    <span>Real-Time Programmatic Agent Endpoints</span>
+                  </h3>
+                  <button
+                    onClick={() => setActiveViewMode('agent-playground')}
+                    className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition-colors"
+                  >
+                    Open Live Playground
+                  </button>
+                </div>
+
+                <div className="divide-y divide-slate-800 font-mono text-xs">
+                  <div className="py-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold">GET</span>
+                      <span className="text-white font-bold">/api/agent/capabilities</span>
+                    </div>
+                    <span className="text-slate-400 font-sans text-xs">Returns machine-readable manifest of all 14 capabilities</span>
+                  </div>
+
+                  <div className="py-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold">GET</span>
+                      <span className="text-white font-bold">/api/agent/schema</span>
+                    </div>
+                    <span className="text-slate-400 font-sans text-xs">Exports JSON Schemas for Playlist, YouTubeClip, CosmosNode, Cluster</span>
+                  </div>
+
+                  <div className="py-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold">GET</span>
+                      <span className="text-white font-bold">/api/agent/tools</span>
+                    </div>
+                    <span className="text-slate-400 font-sans text-xs">Function Calling declarations for OpenAI, Gemini &amp; Claude</span>
+                  </div>
+
+                  <div className="py-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 font-bold">POST</span>
+                      <span className="text-white font-bold">/api/agent/execute-tool</span>
+                    </div>
+                    <span className="text-slate-400 font-sans text-xs">Executes tool queries and atomic disk mutations safely server-side</span>
+                  </div>
+
+                  <div className="py-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">POST</span>
+                      <span className="text-white font-bold">/api/agent/query</span>
+                    </div>
+                    <span className="text-slate-400 font-sans text-xs">Structured agent query filter endpoint</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* PHASE 1 OVERVIEW: SYSTEM TOPOLOGY & TECHNICAL DEBT */}
+          {selectedPhase === 1 && (
+            <div className="space-y-6">
+              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-amber-400" />
+                    <span>Technical Debt &amp; Remediation Assessment</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">Architectural risks inherited from organic vibe coding and target remediations</p>
+                </div>
+
+                <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/60">
+                  <table className="w-full text-left text-xs text-slate-300">
+                    <thead className="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-800">
+                      <tr>
+                        <th className="p-3">Area</th>
+                        <th className="p-3">Organic Pattern</th>
+                        <th className="p-3">Failure Risk</th>
+                        <th className="p-3">Target Clean Architecture</th>
+                        <th className="p-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/80">
+                      <tr>
+                        <td className="p-3 font-semibold text-white">Monolithic Server</td>
+                        <td className="p-3 text-slate-400">Single 1,300+ line server.ts</td>
+                        <td className="p-3 text-amber-400">High friction in editing</td>
+                        <td className="p-3 text-emerald-400">Modular routers in /server/routes</td>
+                        <td className="p-3"><span className="text-[10px] px-2 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800">Phase 3 APIs Live</span></td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-white">File Persistence</td>
+                        <td className="p-3 text-slate-400">Direct fs.writeFileSync</td>
+                        <td className="p-3 text-amber-400">Disk corruption risk on crash</td>
+                        <td className="p-3 text-emerald-400">Atomic write via temporary file + rename</td>
+                        <td className="p-3"><span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">Resolved in Phase 3</span></td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-white">Agent Accessibility</td>
+                        <td className="p-3 text-slate-400">HTML rendering only</td>
+                        <td className="p-3 text-amber-400">LLM agents must parse UI DOM</td>
+                        <td className="p-3 text-emerald-400">Strict JSON schemas &amp; /api/agent/*</td>
+                        <td className="p-3"><span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">Delivered in Phase 3</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VIEW: EMBEDDED INTERACTIVE HTML REPORT */}
+      {/* ========================================================================= */}
       {activeViewMode === 'html-report' && (
         <div className={`space-y-3 ${isIframeFullscreen ? 'fixed inset-0 z-50 bg-slate-950 p-4' : ''}`}>
-          {/* Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-900 border border-slate-800 shadow-sm">
             <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
               <div>
                 <span className="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Interactive Architecture Guide</span>
-                  <code className="text-[11px] font-mono text-sky-400">/analysis/01_high_level_system_architecture.html</code>
+                  <span>Interactive Phase {selectedPhase} Report</span>
+                  <code className="text-[11px] font-mono text-sky-400">{htmlUrl}</code>
                 </span>
                 <p className="text-[11px] text-slate-400">
-                  Visual breakdown designed for humans: system layers, component relationships, and transition roadmap.
+                  Visual breakdown designed for human inspection: responsive tables, interactive filters, and rich styling.
                 </p>
               </div>
             </div>
@@ -530,14 +1252,13 @@ export const AnalysisHub: React.FC = () => {
             </div>
           </div>
 
-          {/* Embedded Frame */}
           <div className={`rounded-xl border border-slate-800 overflow-hidden bg-slate-950 shadow-2xl ${
             isIframeFullscreen ? 'h-[calc(100vh-80px)]' : 'h-[850px]'
           }`}>
             <iframe
               key={iframeKey}
               src={htmlUrl}
-              title="System Architecture & Capability Analysis (Phase 1)"
+              title={`Phase ${selectedPhase} Analysis Report`}
               className="w-full h-full border-0 bg-slate-950"
               sandbox="allow-scripts allow-same-origin allow-popups"
             />
@@ -545,26 +1266,28 @@ export const AnalysisHub: React.FC = () => {
         </div>
       )}
 
-      {/* VIEW 2: Machine-Readable Markdown Specification */}
+      {/* ========================================================================= */}
+      {/* VIEW: MACHINE-READABLE MARKDOWN SPECIFICATION */}
+      {/* ========================================================================= */}
       {activeViewMode === 'markdown-spec' && (
         <div className="space-y-4">
-          {/* Markdown Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-900 border border-slate-800 shadow-sm">
             <div className="flex items-center gap-2.5">
               <BookOpen className="w-4 h-4 text-amber-400" />
               <div>
                 <span className="text-xs font-bold text-white flex items-center gap-2">
-                  <span>Autonomous AI Agent Specification</span>
-                  <code className="text-[11px] font-mono text-amber-400">/analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md</code>
+                  <span>Phase {selectedPhase} Markdown Specification</span>
+                  <code className="text-[11px] font-mono text-amber-400">
+                    {selectedPhase === 1 ? '01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md' : selectedPhase === 2 ? '02_CAPABILITY_FILE_MATRIX.md' : '03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md'}
+                  </code>
                 </span>
                 <p className="text-[11px] text-slate-400">
-                  Machine-parsable markdown: complete capability inventory, strict contracts, and engineering roadmap for autonomous LLMs.
+                  Canonical markdown format ready for ingestion by AI co-pilots and autonomous LLM agents.
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Formatted vs Raw */}
               <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800">
                 <button
                   onClick={() => setMarkdownViewType('formatted')}
@@ -593,7 +1316,7 @@ export const AnalysisHub: React.FC = () => {
               <button
                 onClick={handleCopyMarkdownText}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition-colors"
-                title="Copy entire markdown specification text to clipboard"
+                title="Copy entire markdown specification"
               >
                 {copiedMarkdownText ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
                 <span>{copiedMarkdownText ? 'Copied Full Spec!' : 'Copy Spec'}</span>
@@ -601,461 +1324,33 @@ export const AnalysisHub: React.FC = () => {
 
               <button
                 onClick={handleDownloadMarkdown}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-colors shadow-sm"
-                title="Download 01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition-colors"
+                title="Download markdown file"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5 text-sky-400" />
                 <span>Download .md</span>
               </button>
             </div>
           </div>
 
-          {/* Markdown Content */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 sm:p-8 shadow-sm">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-6 sm:p-8 overflow-x-auto shadow-xl">
             {isLoading ? (
-              <div className="py-20 text-center text-slate-400 flex flex-col items-center gap-3">
-                <RefreshCw className="w-6 h-6 animate-spin text-amber-400" />
-                <span className="text-xs">Loading machine-readable specification from /analysis/...</span>
+              <div className="py-20 text-center space-y-3">
+                <RefreshCw className="w-8 h-8 text-sky-400 animate-spin mx-auto" />
+                <p className="text-xs text-slate-400">Loading Phase {selectedPhase} specification...</p>
               </div>
             ) : markdownViewType === 'raw' ? (
-              <pre className="p-4 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+              <pre className="text-xs font-mono text-slate-300 whitespace-pre-wrap leading-relaxed">
                 {markdownContent}
               </pre>
             ) : (
-              <div className="prose prose-invert max-w-none text-slate-200 text-sm sm:text-base leading-relaxed space-y-4">
-                <Markdown
-                  components={{
-                    h1: ({ children }) => (
-                      <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-4 mb-5 pb-3 border-b border-slate-800 tracking-tight">
-                        {children}
-                      </h1>
-                    ),
-                    h2: ({ children }) => (
-                      <h2 className="text-xl sm:text-2xl font-bold text-sky-400 mt-8 mb-4 pb-2 border-b border-slate-800/80 tracking-tight flex items-center gap-2">
-                        <span>#</span>
-                        <span>{children}</span>
-                      </h2>
-                    ),
-                    h3: ({ children }) => (
-                      <h3 className="text-lg font-bold text-amber-300 mt-6 mb-3">
-                        {children}
-                      </h3>
-                    ),
-                    table: ({ children }) => (
-                      <div className="overflow-x-auto my-6 border border-slate-800 rounded-xl bg-slate-950/60 shadow-sm">
-                        <table className="min-w-full text-xs sm:text-sm text-left border-collapse">
-                          {children}
-                        </table>
-                      </div>
-                    ),
-                    thead: ({ children }) => (
-                      <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-bold uppercase text-[11px] tracking-wider">
-                        {children}
-                      </thead>
-                    ),
-                    th: ({ children }) => (
-                      <th className="px-4 py-3 border-r border-slate-800 last:border-r-0">
-                        {children}
-                      </th>
-                    ),
-                    td: ({ children }) => (
-                      <td className="px-4 py-3 border-t border-slate-800 border-r border-slate-800 last:border-r-0 text-slate-300">
-                        {children}
-                      </td>
-                    ),
-                    code: ({ children, className }) => {
-                      const isInline = !className;
-                      if (isInline) {
-                        return (
-                          <code className="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-xs border border-slate-700/60">
-                            {children}
-                          </code>
-                        );
-                      }
-                      return (
-                        <code className="block p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-emerald-300 overflow-x-auto my-4 leading-relaxed">
-                          {children}
-                        </code>
-                      );
-                    },
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-l-4 border-amber-500/80 pl-4 py-1 italic bg-amber-950/20 text-slate-300 rounded-r-lg my-4">
-                        {children}
-                      </blockquote>
-                    )
-                  }}
-                >
-                  {markdownContent}
-                </Markdown>
+              <div className="prose prose-invert prose-sky max-w-none text-slate-300 text-sm leading-relaxed space-y-4">
+                <Markdown>{markdownContent}</Markdown>
               </div>
             )}
           </div>
         </div>
       )}
-
-      {/* VIEW 3: Architecture Dashboard & 14 Capabilities Matrix */}
-      {activeViewMode === 'overview' && (
-        <div className="space-y-10">
-          {/* The Dual-Audience Section */}
-          <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <Users className="w-5 h-5 text-sky-400" />
-              <span>The Dual-Audience Paradigm</span>
-            </h2>
-            <p className="text-xs text-slate-400">Designing software for human cognitive ergonomics and AI agent predictability simultaneously</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-5 rounded-2xl bg-slate-900/70 border border-sky-900/40 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sky-400 font-bold text-sm">
-                <Users className="w-4 h-4" />
-                <span>Audience 1: The Human (Learner &amp; Developer)</span>
-              </div>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800 font-medium">Cognitive UX</span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Focuses on visual delight, spatial intuition, audio ergonomics, and effortless physical interactions.
-            </p>
-            <div className="space-y-2 pt-2 text-xs text-slate-300">
-              <div className="flex items-start gap-2">
-                <span className="text-sky-400 font-bold">&check;</span>
-                <span><strong>AirPods Speech Synthesis:</strong> Zero-cost audio consumption via Web Speech API and stem hardware controls.</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-sky-400 font-bold">&check;</span>
-                <span><strong>Video Cosmos 2D Graph:</strong> Spatial coordinate-based exploration of video content as a celestial map.</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-sky-400 font-bold">&check;</span>
-                <span><strong>Interactive Word Clouds &amp; Mindmaps:</strong> Fast visual thematic scanning across technical domains.</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-sky-400 font-bold">&check;</span>
-                <span><strong>Executive PDF Reports:</strong> Downloadable, multi-page branded PDF documentation for offline human study.</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-900/70 border border-amber-900/40 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
-                <Bot className="w-4 h-4" />
-                <span>Audience 2: The Agent (LLMs, Copilots &amp; Tooling)</span>
-              </div>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 font-medium">Machine Schemas</span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Requires deterministic contracts, structured JSON payloads, verifiable audit logs, and zero UI ambiguity.
-            </p>
-            <div className="space-y-2 pt-2 text-xs text-slate-300">
-              <div className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">&check;</span>
-                <span><strong>Structured JSON Data Core:</strong> All 71 playlists stored with explicit schemas in <code>src/data/</code>.</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">&check;</span>
-                <span><strong>Verbatim Prompt Audit Ledger:</strong> <code>gemini_prompts.md</code> serving as an immutable record for regression checks.</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">&check;</span>
-                <span><strong>Headless CLI &amp; Python Modules:</strong> Direct script invocation (<code>scripts/sync-youtube.mjs</code>) with exit codes.</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">&check;</span>
-                <span><strong>Deterministic Heuristic Fallback:</strong> Synthetic takeaway generation when upstream LLMs trigger 503 load errors.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* System Architecture Flow Diagram */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <Layers className="w-5 h-5 text-indigo-400" />
-              <span>Runtime Architecture &amp; Data Flow Topology</span>
-            </h2>
-            <p className="text-xs text-slate-400">How client state, the Express server, disk persistence, and external APIs communicate</p>
-          </div>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-            {/* Layer 1 */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="font-bold text-sky-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-                <span>1. Presentation Layer</span>
-              </div>
-              <p className="text-slate-400 text-[11px]">React 19 + Tailwind CSS + Lucide Icons + Motion</p>
-              <ul className="text-slate-300 space-y-1 text-[11px] list-disc pl-3.5">
-                <li>14 dynamic tabs with zero reload</li>
-                <li>HTML5 2D Canvas for Cosmos map</li>
-                <li>Web Speech API + Media Session</li>
-                <li>jsPDF table compilation engine</li>
-              </ul>
-            </div>
-
-            {/* Layer 2 */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="font-bold text-indigo-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
-                <span>2. Client State &amp; Cache</span>
-              </div>
-              <p className="text-slate-400 text-[11px]">App.tsx Root State + LocalStorage v3</p>
-              <ul className="text-slate-300 space-y-1 text-[11px] list-disc pl-3.5">
-                <li>Instant local storage hydration</li>
-                <li>Deduplicated uniqueClips index</li>
-                <li>Optimistic note and tag updates</li>
-                <li>Cross-tab clip selection bridge</li>
-              </ul>
-            </div>
-
-            {/* Layer 3 */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="font-bold text-amber-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                <span>3. Server Services</span>
-              </div>
-              <p className="text-slate-400 text-[11px]">Express 4.21 on Port 3000 (0.0.0.0)</p>
-              <ul className="text-slate-300 space-y-1 text-[11px] list-disc pl-3.5">
-                <li>Gemini API cascade (3.8 &rarr; flash &rarr; 2.5)</li>
-                <li>503 high-demand heuristic recovery</li>
-                <li>YouTube Innertube scraper &amp; sync</li>
-                <li>child_process CLI execution</li>
-              </ul>
-            </div>
-
-            {/* Layer 4 */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="font-bold text-emerald-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>4. Persistence &amp; Files</span>
-              </div>
-              <p className="text-slate-400 text-[11px]">Local File System Storage</p>
-              <ul className="text-slate-300 space-y-1 text-[11px] list-disc pl-3.5">
-                <li><code>src/data/channelPlaylists.json</code></li>
-                <li><code>gemini_prompts.md</code> ledger</li>
-                <li><code>/analysis/</code> documentation files</li>
-                <li><code>/legacy/</code> sandboxed HTML tools</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Capabilities Filter & Catalog */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <FileSearch className="w-5 h-5 text-sky-400" />
-              <span>Capability Catalog ({filteredCapabilities.length} / 14 Modules)</span>
-            </h2>
-            <p className="text-xs text-slate-400">Detailed examination of business logic, supporting files, and dual-audience utility</p>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <input
-              type="text"
-              placeholder="Search capability or file..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-1.5 text-xs rounded-lg bg-slate-900 border border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-            />
-            <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
-              <button
-                onClick={() => setActiveAudienceFilter('all')}
-                className={`px-2.5 py-1 rounded font-medium transition-colors ${activeAudienceFilter === 'all' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'}`}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setActiveAudienceFilter('human')}
-                className={`px-2.5 py-1 rounded font-medium transition-colors ${activeAudienceFilter === 'human' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'}`}
-              >
-                Human
-              </button>
-              <button
-                onClick={() => setActiveAudienceFilter('agent')}
-                className={`px-2.5 py-1 rounded font-medium transition-colors ${activeAudienceFilter === 'agent' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'}`}
-              >
-                Agent
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredCapabilities.map((c) => (
-            <div key={c.id} className="p-5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between space-y-3">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500">#{c.id}</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-medium">
-                      {c.badge}
-                    </span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                      c.audience === 'human' 
-                        ? 'bg-sky-950 text-sky-300 border border-sky-800' 
-                        : c.audience === 'agent' 
-                        ? 'bg-amber-950 text-amber-300 border border-amber-800' 
-                        : 'bg-purple-950 text-purple-300 border border-purple-800'
-                    }`}>
-                      {c.audience === 'human' ? '👤 Human' : c.audience === 'agent' ? '🤖 Agent' : '👤+🤖 Dual'}
-                    </span>
-                  </div>
-                </div>
-
-                <h3 className="font-bold text-white text-base">{c.title}</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">{c.summary}</p>
-              </div>
-
-              <div className="pt-3 border-t border-slate-800/80 space-y-2 text-xs">
-                <div>
-                  <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">Supporting Files</span>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {c.files.map((file, i) => (
-                      <code key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-950 text-sky-300 border border-slate-800">
-                        {file}
-                      </code>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-slate-400">
-                  <span className="text-sky-400 font-semibold">Human UX:</span> {c.humanExperience}
-                </div>
-
-                <div className="text-[11px] text-slate-400">
-                  <span className="text-amber-400 font-semibold">Agent Schema:</span> {c.agentContract}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Vulnerabilities & Technical Debt Assessment */}
-      <div className="space-y-4">
-        <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-400" />
-            <span>Technical Debt &amp; Fragility Assessment</span>
-          </h2>
-          <p className="text-xs text-slate-400">Architectural risks inherited from spontaneous vibe coding and target clean-engineering remediations</p>
-        </div>
-
-        <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-800">
-              <tr>
-                <th className="p-3.5">Area</th>
-                <th className="p-3.5">Current Pattern</th>
-                <th className="p-3.5">Failure Mode / Risk</th>
-                <th className="p-3.5">Target Clean State</th>
-                <th className="p-3.5">Priority</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/80">
-              <tr className="hover:bg-slate-800/30">
-                <td className="p-3.5 font-semibold text-white">Monolithic Server (<code>server.ts</code>)</td>
-                <td className="p-3.5">Single file with routing, YouTube scraping, child processes, and Gemini API cascades (&gt;970 lines).</td>
-                <td className="p-3.5 text-amber-400">High friction; uncaught exception risks entire dev server downtime.</td>
-                <td className="p-3.5 text-emerald-400">Decompose into modular router controllers: <code>/server/routes/*</code>.</td>
-                <td className="p-3.5"><span className="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800 font-bold">HIGH</span></td>
-              </tr>
-              <tr className="hover:bg-slate-800/30">
-                <td className="p-3.5 font-semibold text-white">Unatomic Flat-File Persistence</td>
-                <td className="p-3.5">Direct <code>fs.writeFileSync</code> overwriting <code>channelPlaylists.json</code>.</td>
-                <td className="p-3.5 text-amber-400">Process kill or disk race condition can truncate dataset to 0 bytes.</td>
-                <td className="p-3.5 text-emerald-400">Write to temporary file, atomic rename, and timestamped rolling backups.</td>
-                <td className="p-3.5"><span className="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800 font-bold">HIGH</span></td>
-              </tr>
-              <tr className="hover:bg-slate-800/30">
-                <td className="p-3.5 font-semibold text-white">Client Root State Dispersion</td>
-                <td className="p-3.5"><code>App.tsx</code> holds 15+ states and drills callbacks across 14 tabs.</td>
-                <td className="p-3.5 text-amber-400">Unnecessary re-renders, state sync divergence between tabs.</td>
-                <td className="p-3.5 text-emerald-400">Introduce lightweight domain context (<code>PlaylistsContext</code>, <code>AudioContext</code>).</td>
-                <td className="p-3.5"><span className="px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-bold">MEDIUM</span></td>
-              </tr>
-              <tr className="hover:bg-slate-800/30">
-                <td className="p-3.5 font-semibold text-white">DOM Scraping Fragility</td>
-                <td className="p-3.5">Regex and DOM parsing against public YouTube HTML for playlist updates.</td>
-                <td className="p-3.5 text-amber-400">YouTube markup changes will break live synchronization silently.</td>
-                <td className="p-3.5 text-emerald-400">Encapsulate behind resilient adapter with schema validation and test fixtures.</td>
-                <td className="p-3.5"><span className="px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-bold">MEDIUM</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Strategic Transition Roadmap */}
-      <div className="space-y-4">
-        <div className="space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <ArrowRight className="w-5 h-5 text-emerald-400" />
-            <span>Strategic Engineering Roadmap (From Vibe to Robust)</span>
-          </h2>
-          <p className="text-xs text-slate-400">Preserving 100% existing functionality while methodically raising architectural resilience</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-5 rounded-2xl bg-slate-900 border border-sky-500/50 space-y-3 relative shadow-md shadow-sky-950/40">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800">PHASE 1 (ACTIVE)</span>
-              <span className="text-emerald-400 font-bold text-xs flex items-center gap-1">&check; Current</span>
-            </div>
-            <h3 className="font-bold text-white text-sm">System Introspection &amp; Baseline</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Create <code>/analysis/</code> documentation, build in-app review dashboard, catalog all 14 capabilities, and map data flows without mutating existing code.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">PHASE 2</span>
-              <span className="text-slate-500 text-xs">Upcoming</span>
-            </div>
-            <h3 className="font-bold text-white text-sm">Modular Decoupling &amp; Schemas</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Extract <code>server.ts</code> routes into modular controllers; implement atomic file persistence; formalize strict domain schemas.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">PHASE 3</span>
-              <span className="text-slate-500 text-xs">Upcoming</span>
-            </div>
-            <h3 className="font-bold text-white text-sm">Dual-Audience Agent Tooling</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Expose structured programmatic agent endpoints, machine-readable tool contracts (JSON schema), and enhance human audio/canvas ergonomics.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">PHASE 4</span>
-              <span className="text-slate-500 text-xs">Upcoming</span>
-            </div>
-            <h3 className="font-bold text-white text-sm">Verification, Tests &amp; Monorepo</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Implement automated regression test harness (contract validation, API tests), telemetry tracking, and export-ready GitHub monorepo.
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
-  )}
-</div>
   );
 };

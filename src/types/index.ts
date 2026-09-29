@@ -11,7 +11,29 @@ export interface YouTubeClip {
   notes?: string;
   userQuestions?: string[];
   userIdeas?: string[];
+  voiceReflections?: VoiceReflectionSession[];
   addedAt: string;
+}
+
+export interface VoiceInterviewTurn {
+  stage: 'merits' | 'learnings' | 'applications';
+  question: string;
+  transcript: string;
+  timestamp: string;
+}
+
+export interface VoiceReflectionSession {
+  id: string;
+  clipId: string;
+  clipTitle: string;
+  date: string;
+  turns: VoiceInterviewTurn[];
+  synthesis: {
+    whyGood: string;
+    keyLearnings: string[];
+    practicalApplications: string[];
+    oneLineSummary: string;
+  };
 }
 
 export interface Playlist {
