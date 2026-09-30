@@ -252,6 +252,64 @@ app.get(['/agent-tools', '/analysis/agent-tools'], (req, res) => {
   }
 });
 
+// 4b-4. Decks & Videos folders static serving
+const decksDir = path.resolve(process.cwd(), 'decks');
+const videosDir = path.resolve(process.cwd(), 'videos');
+
+app.use('/decks', express.static(decksDir, {
+  extensions: ['html', 'htm'],
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  }
+}));
+
+app.use('/videos', express.static(videosDir, {
+  extensions: ['html', 'htm', 'json', 'md', 'txt'],
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  }
+}));
+
+app.get(['/decks', '/decks/overview'], (req, res) => {
+  const target = path.join(decksDir, '00_SERIES_OVERVIEW_PLAYLIST.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Decks overview playlist not found.');
+  }
+});
+
+app.get(['/videos/capability-1', '/videos/player', '/video-hub'], (req, res) => {
+  const target = path.join(videosDir, '01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 1 video player not found.');
+  }
+});
+
+
+app.get('/api/decks/manifest', (req, res) => {
+  try {
+    const manifestPath = path.join(videosDir, '00_SERIES_VIDEO_PLAYLIST.json');
+    if (fs.existsSync(manifestPath)) {
+      const data = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+      res.json(data);
+    } else {
+      res.status(404).json({ error: 'Video playlist manifest not found' });
+    }
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 app.get('/api/analysis/data', (req, res) => {
   try {
     const requestedPhase = req.query.phase ? parseInt(req.query.phase as string, 10) : null;

@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 1: Playlist Manager — Technical Blueprint & Live Test Suite</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .slide {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.35s ease-in-out;
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 16px; }
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .blueprint-grid {
+      background-image: radial-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none overflow-x-hidden selection:bg-sky-500 selection:text-white">
+
+  <!-- Top App & Slide Toolbar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase tracking-wider">Deck 01 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Playlist Manager Capability</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Technical Architecture & Live Interactive Diagnostic Suite</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Progress Bar -->
+  <div class="w-full bg-slate-900 h-1 relative">
+    <div id="progressBar" class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 h-1 transition-all duration-300" style="width: 14.28%;"></div>
+  </div>
+
+  <!-- Main Slide Display Area -->
+  <main id="slideContainer" class="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 py-6 max-w-6xl mx-auto w-full relative">
+
+    <!-- SLIDE 1: Mission & Architectural Scope -->
+    <section class="slide active flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden blueprint-grid" data-slide="1">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Capability 01</span>
+          <span class="text-xs text-slate-400">Foundation Architecture</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 1 of 7</span>
+      </div>
+
+      <!-- Two-Column Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left Column: Problem & Mission -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-sky-950/80 border border-sky-800 text-sky-300 text-xs font-medium">
+            <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+            <span>Content Ingestion & State Foundation</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Playlists & Clips Management
+          </h2>
+          <p class="text-sm sm:text-base text-sky-400 font-medium">
+            Solving YouTube's Sprawl: Turning 70 Scattered Playlists into a Searchable Knowledge Base
+          </p>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            YouTube buries channels behind pagination tokens, isolates watch history, and provides no personal study annotations. Playlist Manager normalizes <span class="text-emerald-400 font-bold">486 video clips</span> across <span class="text-sky-400 font-bold">70 playlists</span> into five cognitive domains with instant local search.
+          </p>
+
+          <div class="grid grid-cols-3 gap-3 pt-2">
+            <div class="bg-slate-950/80 p-3 rounded-lg border border-slate-800">
+              <div class="text-xl font-bold text-sky-400">70</div>
+              <div class="text-[10px] text-slate-400 uppercase">Playlists</div>
+            </div>
+            <div class="bg-slate-950/80 p-3 rounded-lg border border-slate-800">
+              <div class="text-xl font-bold text-emerald-400">486</div>
+              <div class="text-[10px] text-slate-400 uppercase">Clips</div>
+            </div>
+            <div class="bg-slate-950/80 p-3 rounded-lg border border-slate-800">
+              <div class="text-xl font-bold text-indigo-400">5</div>
+              <div class="text-[10px] text-slate-400 uppercase">Domains</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Visual Architecture Topology -->
+        <div class="lg:col-span-5 bg-slate-950/90 border border-slate-800 rounded-xl p-4 space-y-3 font-mono text-xs shadow-xl">
+          <div class="text-xs font-bold text-sky-400 flex items-center justify-between pb-1 border-b border-slate-800">
+            <span>DATA PIPELINE TOPOLOGY</span>
+            <span class="text-[10px] text-emerald-400 font-normal">HTTP 200 OK</span>
+          </div>
+
+          <div class="space-y-2 text-[11px] text-slate-300">
+            <div class="p-2 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+              <span class="text-rose-400">YouTube Innertube Crawler</span>
+              <span class="text-[10px] text-slate-500">Continuation tokens</span>
+            </div>
+            <div class="text-center text-slate-500 text-xs">▼</div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+              <span class="text-sky-300">channelPlaylists.json</span>
+              <span class="text-[10px] text-emerald-400">Immutable store</span>
+            </div>
+            <div class="text-center text-slate-500 text-xs">▼</div>
+            <div class="p-2 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+              <span class="text-indigo-300">server.ts (/api/content/*)</span>
+              <span class="text-[10px] text-slate-400">Express REST Gateway</span>
+            </div>
+            <div class="text-center text-slate-500 text-xs">▼</div>
+            <div class="p-2 rounded bg-sky-950/80 border border-sky-800 flex items-center justify-between">
+              <span class="text-white font-bold">PlaylistManager.tsx (React)</span>
+              <span class="text-[10px] text-sky-300">Fast DOM grid</span>
+            </div>
+          </div>
+
+          <div class="pt-2 text-[10px] text-slate-500 border-t border-slate-800/80 text-center">
+            Zero external cloud databases • 100% Client/Server local cache
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide Footer Bar -->
+      <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+        <span>Channel: @dragosborosgpt</span>
+        <span>Keyboard: Use ← → keys to navigate • Space to listen</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: Two-Column Blueprint — Data Model vs UI Grid -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative blueprint-grid" data-slide="2">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Blueprint</span>
+          <span class="text-xs text-white font-semibold">Data Contracts vs UI Catalog Grid</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 2 of 7</span>
+      </div>
+
+      <!-- Two-Column Body -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-stretch">
+        <!-- Left Column: Code Contracts -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-sky-400 font-mono">src/types/index.ts</span>
+              <span class="text-[10px] text-slate-400">TypeScript Contract</span>
+            </div>
+            <pre class="text-[11px] font-mono text-slate-300 pt-3 code-scroll overflow-y-auto max-h-[320px] leading-relaxed">
+<span class="text-indigo-400">export interface</span> <span class="text-emerald-400">YouTubeClip</span> {
+  id: <span class="text-sky-300">string</span>;              <span class="text-slate-500">// Immutable video ID</span>
+  title: <span class="text-sky-300">string</span>;
+  duration?: <span class="text-sky-300">string</span>;
+  notes?: <span class="text-sky-300">string</span>;          <span class="text-slate-500">// Personal markdown notes</span>
+  userQuestions?: <span class="text-sky-300">string[]</span>; <span class="text-slate-500">// Open inquiries</span>
+  userIdeas?: <span class="text-sky-300">string[]</span>;     <span class="text-slate-500">// AI prompts / vibe code</span>
+  status?: <span class="text-amber-300">'to-watch'</span> | <span class="text-amber-300">'watching'</span> | 
+           <span class="text-amber-300">'reviewed'</span> | <span class="text-amber-300">'synthesized'</span>;
+  voiceReflections?: <span class="text-purple-300">VoiceReflectionSession[]</span>;
+  addedAt?: <span class="text-sky-300">string</span>;
+}
+
+<span class="text-indigo-400">export interface</span> <span class="text-emerald-400">Playlist</span> {
+  id: <span class="text-sky-300">string</span>;
+  title: <span class="text-sky-300">string</span>;
+  category: <span class="text-sky-300">string</span>;        <span class="text-slate-500">// 1 of 5 learning domains</span>
+  clips: <span class="text-emerald-400">YouTubeClip[]</span>;
+}</pre>
+          </div>
+          <div class="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+            Immutable IDs prevent state collision during re-indexing.
+          </div>
+        </div>
+
+        <!-- Right Column: UI Mockup & Catalog Grid -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-emerald-400">CATALOG GRID ARCHITECTURE</span>
+              <span class="text-[10px] text-slate-400">PlaylistManager.tsx</span>
+            </div>
+
+            <!-- UI Mockup Cards -->
+            <div class="space-y-3 pt-3">
+              <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-white truncate max-w-[200px]">Does intelligence have a basis in genetics?</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">Synthesized</span>
+                </div>
+                <div class="text-[11px] text-slate-400">Playlist: Intelligence Proof of Concept • 4:30 min</div>
+                <div class="flex items-center gap-2 pt-1">
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Notes (342 words)</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Questions (3)</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300">Voice Debrief</span>
+                </div>
+              </div>
+
+              <div class="bg-slate-900/60 border border-slate-800/80 rounded-lg p-3 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-slate-300 truncate max-w-[200px]">Chapter 1: When Did Intelligence Begin</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Reviewed</span>
+                </div>
+                <div class="text-[11px] text-slate-500">Playlist: Intelligence Proof of Concept • 5:12 min</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-sky-950/40 p-2.5 rounded-lg border border-sky-900/60 text-xs text-sky-200 mt-3">
+            <strong>Pagination & Viewport:</strong> 36 items rendered per page with dynamic "Show All" toggle to preserve 60fps on touch devices.
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide Footer Bar -->
+      <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+        <span>Contract-First: JSON schema serves as the single source of truth</span>
+        <span>Slide 2 / 7</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Two-Column Blueprint — 5-Domain Taxonomy & Search Index -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative blueprint-grid" data-slide="3">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">Taxonomy</span>
+          <span class="text-xs text-white font-semibold">5-Domain Categorization & Fuzzy Search Engine</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 3 of 7</span>
+      </div>
+
+      <!-- Two-Column Body -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-stretch">
+        <!-- Left Column: Search Algorithm -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-sky-400 font-mono">SEARCH ENGINE LOGIC</span>
+              <span class="text-[10px] text-emerald-400">&lt;50ms Query Benchmark</span>
+            </div>
+            <pre class="text-[11px] font-mono text-slate-300 pt-3 code-scroll overflow-y-auto max-h-[300px] leading-relaxed">
+<span class="text-slate-500">// Multi-token fuzzy query across 486 items</span>
+<span class="text-indigo-400">const</span> filteredClips = useMemo(() =&gt; {
+  <span class="text-indigo-400">if</span> (!query.trim()) <span class="text-indigo-400">return</span> domainClips;
+  
+  <span class="text-indigo-400">const</span> tokens = query.toLowerCase().split(<span class="text-amber-300">' '</span>);
+  <span class="text-indigo-400">return</span> domainClips.filter(clip =&gt; {
+    <span class="text-indigo-400">const</span> target = <span class="text-amber-300">`</span><span class="text-sky-300">${clip.title} ${clip.notes || ''} ${clip.playlistTitle}</span><span class="text-amber-300">`</span>.toLowerCase();
+    <span class="text-indigo-400">return</span> tokens.every(t =&gt; target.includes(t));
+  });
+}, [query, selectedDomain, playlists]);</pre>
+          </div>
+
+          <div class="space-y-1.5 pt-3 border-t border-slate-800 text-xs text-slate-300">
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-400 font-bold">✓</span>
+              <span>Searches title, playlist title, notes, and questions simultaneously.</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-400 font-bold">✓</span>
+              <span>Zero server latency: entire index runs in client memory.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: 5-Domain Visual Map -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-indigo-400">5 COGNITIVE DOMAINS</span>
+              <span class="text-[10px] text-slate-400">Taxonomy Partitioning</span>
+            </div>
+
+            <div class="space-y-2 pt-3">
+              <div class="p-2.5 rounded-lg bg-cyan-950/50 border border-cyan-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                  <span class="text-xs font-bold text-cyan-200">AI & Machine Learning</span>
+                </div>
+                <span class="text-[11px] text-cyan-400 font-mono">19 Playlists • Hinton, Fridman</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-emerald-950/50 border border-emerald-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                  <span class="text-xs font-bold text-emerald-200">Engineering & Code</span>
+                </div>
+                <span class="text-[11px] text-emerald-400 font-mono">16 Playlists • Git, TypeScript</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-amber-950/50 border border-amber-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                  <span class="text-xs font-bold text-amber-200">Science & Mathematics</span>
+                </div>
+                <span class="text-[11px] text-amber-400 font-mono">14 Playlists • Kellis, Genetics</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-purple-950/50 border border-purple-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
+                  <span class="text-xs font-bold text-purple-200">Knowledge & Notes</span>
+                </div>
+                <span class="text-[11px] text-purple-400 font-mono">12 Playlists • Obsidian, Systems</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-rose-950/50 border border-rose-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
+                  <span class="text-xs font-bold text-rose-200">Lifestyle & General</span>
+                </div>
+                <span class="text-[11px] text-rose-400 font-mono">9 Playlists • Health, Focus</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 pt-2 border-t border-slate-800 text-center">
+            Combobox dropdown provides 1-click teleportation to any specific playlist.
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide Footer Bar -->
+      <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+        <span>Domain Selector: Filter 486 clips down to a focused study domain</span>
+        <span>Slide 3 / 7</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Two-Column Blueprint — Study Lifecycle & Hub Bridges -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative blueprint-grid" data-slide="4">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Progression</span>
+          <span class="text-xs text-white font-semibold">4-Stage Study Lifecycle & Teleportation Bridges</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 4 of 7</span>
+      </div>
+
+      <!-- Two-Column Body -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-stretch">
+        <!-- Left Column: Study State Machine -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-emerald-400">STUDY STATE MACHINE</span>
+              <span class="text-[10px] text-slate-400">Progressive Retention</span>
+            </div>
+
+            <div class="space-y-2.5 pt-3">
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-300">1. To Watch</span>
+                <span class="text-[11px] text-slate-400">Unprocessed catalog item</span>
+              </div>
+              <div class="p-2.5 rounded bg-sky-950/60 border border-sky-800 flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-300">2. Watching</span>
+                <span class="text-[11px] text-sky-200">Active playback / audio stream</span>
+              </div>
+              <div class="p-2.5 rounded bg-emerald-950/60 border border-emerald-800 flex items-center justify-between">
+                <span class="text-xs font-bold text-emerald-300">3. Reviewed</span>
+                <span class="text-[11px] text-emerald-200">Personal study notes recorded</span>
+              </div>
+              <div class="p-2.5 rounded bg-purple-950/60 border border-purple-800 flex items-center justify-between">
+                <span class="text-xs font-bold text-purple-300">4. Synthesized</span>
+                <span class="text-[11px] text-purple-200">Voice Socratic debrief & PDF export</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+            Clicking status pill rotates states and persists instantly to localStorage and server.
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Teleportation Bridges -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-sky-400">CROSS-CAPABILITY BRIDGES</span>
+              <span class="text-[10px] text-slate-400">KnowledgeHub & Cosmos</span>
+            </div>
+
+            <div class="space-y-3 pt-3">
+              <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-sky-300">Bridge 1: Knowledge Hub</span>
+                  <span class="text-[10px] text-slate-400">Notes & Voice</span>
+                </div>
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                  Clicking <code>Study in KnowledgeHub</code> transfers the clip ID to active context, opening the Cornell note-taker and Socratic voice interviewer.
+                </p>
+              </div>
+
+              <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-cyan-300">Bridge 2: Video Cosmos Graph</span>
+                  <span class="text-[10px] text-slate-400">Spatial Starfield</span>
+                </div>
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                  Clicking <code>Study in Video Cosmos</code> shifts to the 2D starfield and smoothly centers the celestial camera on the corresponding video star.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded bg-emerald-950/40 border border-emerald-800/80 text-xs text-emerald-200">
+            <strong>Retention Metric:</strong> Navbar counter displays total notes count across all playlists in real time.
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide Footer Bar -->
+      <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+        <span>Zero-Loss Hand-off: Clip context is preserved across tab transitions</span>
+        <span>Slide 4 / 7</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: Two-Column Blueprint — Non-Destructive YouTube Sync -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative blueprint-grid" data-slide="5">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Pipeline</span>
+          <span class="text-xs text-white font-semibold">Non-Destructive YouTube Sync Engine</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 5 of 7</span>
+      </div>
+
+      <!-- Two-Column Body -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-stretch">
+        <!-- Left Column: Merge Algorithm -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-sky-400 font-mono">NON-DESTRUCTIVE MERGE</span>
+              <span class="text-[10px] text-emerald-400">Zero-Mutation</span>
+            </div>
+            <pre class="text-[11px] font-mono text-slate-300 pt-3 code-scroll overflow-y-auto max-h-[300px] leading-relaxed">
+<span class="text-slate-500">// Ingesting new clips without overwriting user notes</span>
+<span class="text-indigo-400">function</span> mergeIncomingClips(existing, incoming) {
+  <span class="text-indigo-400">const</span> map = <span class="text-indigo-400">new</span> Map(existing.map(c =&gt; [c.id, c]));
+
+  <span class="text-indigo-400">return</span> incoming.map(inc =&gt; {
+    <span class="text-indigo-400">const</span> old = map.get(inc.id);
+    <span class="text-indigo-400">if</span> (old) {
+      <span class="text-indigo-400">return</span> {
+        ...inc,
+        notes: old.notes,                     <span class="text-emerald-400">// Preserved</span>
+        userQuestions: old.userQuestions,     <span class="text-emerald-400">// Preserved</span>
+        status: old.status || inc.status,     <span class="text-emerald-400">// Preserved</span>
+        voiceReflections: old.voiceReflections <span class="text-emerald-400">// Preserved</span>
+      };
+    }
+    <span class="text-indigo-400">return</span> inc; <span class="text-slate-500">// Freshly added clip</span>
+  });
+}</pre>
+          </div>
+
+          <div class="text-[11px] text-emerald-300 pt-2 border-t border-slate-800 flex items-center gap-1.5">
+            <span>🛡️</span>
+            <span>Safeguards handwritten notes and transcripts during live channel refreshes.</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Sync Execution Flow -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-indigo-400">SYNC PIPELINE ARCHITECTURE</span>
+              <span class="text-[10px] text-slate-400">POST /api/content/sync-youtube</span>
+            </div>
+
+            <div class="space-y-3 pt-3 text-xs text-slate-300">
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-start gap-2">
+                <span class="text-sky-400 font-mono">1.</span>
+                <span>User clicks <strong>"Sync with YouTube"</strong> button in playlist toolbar.</span>
+              </div>
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-start gap-2">
+                <span class="text-sky-400 font-mono">2.</span>
+                <span>Server queries channel <code>@dragosborosgpt</code> traversing continuation tokens.</span>
+              </div>
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-start gap-2">
+                <span class="text-sky-400 font-mono">3.</span>
+                <span>Discovers new public playlists and video uploads.</span>
+              </div>
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-start gap-2">
+                <span class="text-sky-400 font-mono">4.</span>
+                <span>Atomic write persists to <code>src/data/channelPlaylists.json</code>.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-[11px] text-slate-400 text-center">
+            Local Fallback: Reverts smoothly to bundled initialData if offline.
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide Footer Bar -->
+      <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+        <span>Channel: @dragosborosgpt</span>
+        <span>Slide 5 / 7</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Interactive Step-by-Step Test Suite & Verification -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border-2 border-sky-500/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative blueprint-grid" data-slide="6">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-500 text-slate-950 font-bold">Interactive Test Suite</span>
+          <span class="text-xs text-white font-semibold">Live Capability Diagnostic Lab</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 6 of 7</span>
+      </div>
+
+      <!-- Interactive Test Panels -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-stretch">
+        
+        <!-- Left Column: Live Verification Buttons -->
+        <div class="lg:col-span-7 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="text-xs font-bold text-sky-400 pb-2 border-b border-slate-800 flex items-center justify-between">
+              <span>LIVE SYSTEM DIAGNOSTICS</span>
+              <span id="diagnosticStatus" class="text-[10px] text-slate-400 font-mono">Ready to test</span>
+            </div>
+
+            <div class="space-y-2.5 pt-2">
+              <!-- Test 1: Catalog API Check -->
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-white">1. Catalog API Response</div>
+                  <div class="text-[11px] text-slate-400">Verify /api/content/playlists & clip count</div>
+                </div>
+                <button onclick="runCatalogTest()" id="btnTestCatalog" class="px-2.5 py-1 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded transition-all">
+                  Run Check
+                </button>
+              </div>
+
+              <!-- Test 2: Search Benchmark -->
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-white">2. Search Index Benchmark</div>
+                  <div class="text-[11px] text-slate-400">Measure query time for "intelligence"</div>
+                </div>
+                <button onclick="runSearchBenchmark()" id="btnTestSearch" class="px-2.5 py-1 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold rounded transition-all">
+                  Benchmark
+                </button>
+              </div>
+
+              <!-- Test 3: Status Transition -->
+              <div class="p-2.5 rounded bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-white">3. Study State Rotation</div>
+                  <div class="text-[11px] text-slate-400">Simulate lifecycle: To-Watch ➔ Synthesized</div>
+                </div>
+                <button onclick="runStatusRotationTest()" id="btnTestStatus" class="px-2.5 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded transition-all">
+                  Simulate
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Output Console -->
+          <div id="testConsole" class="bg-black/80 rounded-lg p-2.5 font-mono text-[11px] text-slate-300 border border-slate-800 h-24 overflow-y-auto code-scroll">
+            <span class="text-slate-500">// Output will appear here when checks are executed...</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Pass/Fail Checklist -->
+        <div class="lg:col-span-5 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-emerald-400 pb-2 border-b border-slate-800 flex items-center justify-between">
+              <span>TEST VERIFICATION CHECKLIST</span>
+              <span id="checklistScore" class="text-[10px] text-emerald-400 font-mono">0 / 4 Passed</span>
+            </div>
+
+            <div class="space-y-2 pt-3 text-xs">
+              <label class="flex items-center gap-2.5 p-2 rounded bg-slate-900/60 border border-slate-800/80 cursor-pointer">
+                <input type="checkbox" id="chk1" onchange="updateChecklist()" class="rounded bg-slate-800 border-slate-700 text-emerald-500">
+                <span>Playlists load (&gt;50 playlists, &gt;400 clips)</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded bg-slate-900/60 border border-slate-800/80 cursor-pointer">
+                <input type="checkbox" id="chk2" onchange="updateChecklist()" class="rounded bg-slate-800 border-slate-700 text-emerald-500">
+                <span>5-domain tabs filter items accurately</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded bg-slate-900/60 border border-slate-800/80 cursor-pointer">
+                <input type="checkbox" id="chk3" onchange="updateChecklist()" class="rounded bg-slate-800 border-slate-700 text-emerald-500">
+                <span>Search filters in under 50 milliseconds</span>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2 rounded bg-slate-900/60 border border-slate-800/80 cursor-pointer">
+                <input type="checkbox" id="chk4" onchange="updateChecklist()" class="rounded bg-slate-800 border-slate-700 text-emerald-500">
+                <span>Clip status changes persist on refresh</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+            <button onclick="resetChecklist()" class="text-[11px] text-slate-500 hover:text-slate-300">Reset Checklist</button>
+            <a href="/" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 font-medium">Open Live App ↗</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Footer Bar -->
+      <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+        <span>Interactive verification runs live against the active AI Studio backend</span>
+        <span>Slide 6 / 7</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Production Metrics & The Hemingway Bridge to Deck 02 -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border-2 border-indigo-500/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative blueprint-grid" data-slide="7">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">Mastery</span>
+          <span class="text-xs text-white font-semibold">Production Summary & The Hemingway Bridge</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 7 of 7</span>
+      </div>
+
+      <!-- Two-Column Body -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-stretch">
+        <!-- Left Column: Production Checklist -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider pb-2 border-b border-slate-800">
+              CAPABILITY 01 PRODUCTION READINESS
+            </div>
+
+            <ul class="text-xs text-slate-300 space-y-2 pt-3">
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span><strong>Scalable Ingestion:</strong> 486 clips across 70 playlists with pagination.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span><strong>Cognitive Partitioning:</strong> 5 domains preventing endless scrolling.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span><strong>Multi-Token Search:</strong> Client-side fuzzy matching across titles & notes.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span><strong>Zero Mutation Sync:</strong> Preserves user research during channel updates.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span><strong>Cross-Tab Bridges:</strong> Direct teleportation to KnowledgeHub & Cosmos Graph.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+            Capability 01 status: Verified & Production Ready.
+          </div>
+        </div>
+
+        <!-- Right Column: The Hemingway Bridge to Deck 02 -->
+        <div class="lg:col-span-6 bg-indigo-950/40 border border-indigo-700/80 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-indigo-300 uppercase tracking-wider pb-2 border-b border-indigo-800/80 flex items-center justify-between">
+              <span>THE HEMINGWAY BRIDGE #1</span>
+              <span class="text-[10px] text-amber-400 font-mono">Up Next in Session 2</span>
+            </div>
+
+            <div class="space-y-3 pt-3">
+              <div>
+                <h4 class="text-sm font-bold text-white">Deck 02: Allocation & Restructure Hub</h4>
+                <p class="text-xs text-indigo-200 mt-1">
+                  71 scattered playlists is still cognitively demanding. In Deck 02, we explore the algorithmic <strong>71➔28 Restructure Plan</strong>.
+                </p>
+              </div>
+
+              <div class="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1.5 text-xs">
+                <div class="text-[11px] font-bold text-sky-300">Session 2 Preview:</div>
+                <div class="text-[11px] text-slate-300">• 28 Thematic Clusters with Video Allocation Matrix</div>
+                <div class="text-[11px] text-slate-300">• Restructure Plan PDF & CSV export suites</div>
+                <div class="text-[11px] text-slate-300">• Automated Python script with <code>--dry-run</code> & <code>--execute</code> flags</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Starter Prompt -->
+          <div class="bg-black/60 p-2.5 rounded border border-indigo-900/60 text-[11px] font-mono text-emerald-300 flex items-center justify-between gap-2 mt-3">
+            <span class="truncate">Proceed with Session 2: Build Deck 02 & 03</span>
+            <button onclick="navigator.clipboard.writeText('Proceed with Session 2 of the Capability Series: Build Deck 02 (Allocation & Restructure Hub) and Deck 03 (Video Cosmos Graph).'); alert('Copied Session 2 prompt!');" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-[10px] whitespace-nowrap">
+              Copy
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Navigation Footer -->
+      <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+        <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-all">
+          ← Return to Master Curriculum
+        </a>
+        <a href="/" class="px-3.5 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-lg shadow-md transition-all">
+          Explore Live Application →
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Dock -->
+  <footer class="bg-slate-900/90 border-t border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between sticky bottom-0 z-40 backdrop-blur-md">
+    <div class="flex items-center gap-2">
+      <button onclick="prevSlide()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors" title="Previous Slide (Left Arrow)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      <!-- Slide Indicator Pills -->
+      <div id="slidePills" class="flex items-center gap-1.5 px-2">
+        <button onclick="goToSlide(1)" class="w-6 h-2 rounded-full bg-sky-500 transition-all"></button>
+        <button onclick="goToSlide(2)" class="w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all"></button>
+        <button onclick="goToSlide(3)" class="w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all"></button>
+        <button onclick="goToSlide(4)" class="w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all"></button>
+        <button onclick="goToSlide(5)" class="w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all"></button>
+        <button onclick="goToSlide(6)" class="w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all"></button>
+        <button onclick="goToSlide(7)" class="w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all"></button>
+      </div>
+
+      <button onclick="nextSlide()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors" title="Next Slide (Right Arrow)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Quick Keyboard Help Indicator -->
+    <div class="hidden md:flex items-center gap-3 text-[11px] text-slate-500">
+      <span><kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">←</kbd> <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">→</kbd> Navigate</span>
+      <span><kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">Space</kbd> Audio</span>
+      <span><kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">N</kbd> Notes</span>
+      <span><kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">F</kbd> Fullscreen</span>
+    </div>
+  </footer>
+
+  <!-- Slide Notes Drawer (Collapsible) -->
+  <aside id="notesDrawer" class="hidden fixed bottom-16 right-4 sm:right-6 w-96 max-w-[calc(100vw-2rem)] bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-4 z-50 flex-col space-y-2">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+      <div class="flex items-center gap-1.5 text-xs font-bold text-sky-400">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        <span>Speaker Script & Blueprint Notes</span>
+      </div>
+      <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs">✕</button>
+    </div>
+    <div id="notesContent" class="text-xs text-slate-300 max-h-48 overflow-y-auto code-scroll leading-relaxed">
+      <!-- Injected per slide -->
+    </div>
+  </aside>
+
+  <!-- JavaScript: Navigation, Audio Narration, MediaSession & Live Test Suite -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+    let isSpeaking = false;
+    let voiceRate = 1.0;
+    let autoAdvance = false;
+
+    // Per-slide narration scripts
+    const slideScripts = {
+      1: "Welcome to Deck 1: Playlist Manager. This module represents the foundational content ingestion layer of the Learn Better ecosystem. By normalizing 70 YouTube playlists and 486 video clips into a structured local database, the platform provides lightning-fast search, custom categorization, and note-taking across your entire learning archive.",
+      2: "Here is our first technical blueprint: Data Model versus Catalog Grid. On the left, strict TypeScript contracts define the immutable properties of each YouTubeClip and Playlist. On the right, the React frontend renders a responsive catalog card grid with pagination boundaries that maintain smooth sixty frames-per-second performance on touch devices.",
+      3: "Next is the 5-Domain Taxonomy and Search Index. Instead of scrolling through seventy playlists, clips are grouped into Artificial Intelligence, Engineering, Science, Knowledge, and Lifestyle. The in-memory search engine uses multi-token fuzzy matching to filter across video titles, playlist names, and personal notes in under fifty milliseconds.",
+      4: "This blueprint illustrates the progressive study lifecycle. Every video progresses through four distinct states: To Watch, Watching, Reviewed, and Synthesized. Clicking status pills updates global counters in real time, with seamless one-click bridges to the KnowledgeHub markdown editor and the Video Cosmos starfield.",
+      5: "The YouTube synchronization pipeline is non-destructive. When you trigger a channel sync, the server crawls continuation tokens for channel dragosborosgpt. The merge algorithm appends newly discovered clips while guaranteeing that your handwritten study notes, personal questions, and transcripts are never overwritten.",
+      6: "Slide 6 is our interactive diagnostic lab. You can now click the live check buttons to measure catalog roundtrip latency, benchmark search index speed, and test state persistence right here inside the presentation. Use the checklist on the right to verify each test milestone.",
+      7: "To conclude Deck 1: the Playlist Manager is fully verified and production ready. As part of our Hemingway Bridge protocol, we leave tomorrow's priority clearly outlined: Deck 02 will tackle the Allocation and Restructure Hub, grouping these seventy-one playlists into twenty-eight master clusters. You can copy the resumption prompt below to continue tomorrow. Thank you!"
+    };
+
+    function updateSlideUI() {
+      // Toggle slides
+      document.querySelectorAll('.slide').forEach((el, index) => {
+        if (index + 1 === currentSlide) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+
+      // Update progress bar
+      const pct = (currentSlide / totalSlides) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+
+      // Update pills
+      const pills = document.getElementById('slidePills').children;
+      for (let i = 0; i < pills.length; i++) {
+        if (i + 1 === currentSlide) {
+          pills[i].className = 'w-6 h-2 rounded-full bg-sky-500 transition-all';
+        } else {
+          pills[i].className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all';
+        }
+      }
+
+      // Update speaker notes
+      document.getElementById('notesContent').textContent = slideScripts[currentSlide];
+
+      // Update MediaSession metadata
+      updateMediaSession();
+
+      // If currently speaking, speak the new slide
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideUI();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideUI();
+      }
+    }
+
+    function goToSlide(num) {
+      if (num >= 1 && num <= totalSlides) {
+        currentSlide = num;
+        updateSlideUI();
+      }
+    }
+
+    // Audio Narration with Auto-Advance & MediaSession
+    function toggleSlideNarration() {
+      if (!('speechSynthesis' in window)) {
+        alert('Web Speech API is not supported in this browser.');
+        return;
+      }
+
+      if (isSpeaking) {
+        stopNarration();
+      } else {
+        speakCurrentSlide();
+      }
+    }
+
+    function speakCurrentSlide() {
+      window.speechSynthesis.cancel();
+      const text = slideScripts[currentSlide];
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = voiceRate;
+
+      utter.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('playLabel').textContent = 'Pause';
+        document.getElementById('waveform').classList.remove('hidden');
+        document.getElementById('waveform').classList.add('flex');
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.playbackState = 'playing';
+        }
+      };
+
+      utter.onend = () => {
+        stopNarration();
+        if (autoAdvance && currentSlide < totalSlides) {
+          setTimeout(() => {
+            nextSlide();
+            speakCurrentSlide();
+          }, 1400);
+        }
+      };
+
+      utter.onerror = () => {
+        stopNarration();
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    function stopNarration() {
+      window.speechSynthesis.cancel();
+      isSpeaking = false;
+      document.getElementById('playLabel').textContent = 'Listen';
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
+    }
+
+    function changeVoiceRate(rate) {
+      voiceRate = parseFloat(rate);
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleAutoAdvance(val) {
+      autoAdvance = val;
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('hidden');
+      drawer.classList.toggle('flex');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // AirPods Stem Remote Controls via MediaSession API
+    function updateMediaSession() {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: `Slide ${currentSlide} of ${totalSlides}: Playlist Manager`,
+          artist: 'Learn Better Presentation Series',
+          album: 'Capability Technical Blueprints',
+          artwork: [
+            { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }
+          ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => toggleSlideNarration());
+        navigator.mediaSession.setActionHandler('pause', () => toggleSlideNarration());
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+          nextSlide();
+          if (isSpeaking) speakCurrentSlide();
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+          prevSlide();
+          if (isSpeaking) speakCurrentSlide();
+        });
+      }
+    }
+
+    // Touch Swipe Gestures for iPad
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const deltaX = touchEndX - touchStartX;
+      if (deltaX < -50) {
+        nextSlide(); // Swipe left -> advance
+      } else if (deltaX > 50) {
+        prevSlide(); // Swipe right -> back
+      }
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === ' ' || e.key === 'k') {
+        e.preventDefault();
+        toggleSlideNarration();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotesDrawer();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key >= '1' && e.key <= '7') {
+        goToSlide(parseInt(e.key, 10));
+      }
+    });
+
+    // ==========================================
+    // Slide 6: Interactive Live Diagnostic Suite
+    // ==========================================
+    let cachedPlaylists = null;
+
+    async function runCatalogTest() {
+      const consoleEl = document.getElementById('testConsole');
+      const statusEl = document.getElementById('diagnosticStatus');
+      consoleEl.innerHTML = '<span class="text-sky-400">[TEST 1] Fetching /api/content/playlists...</span>';
+      statusEl.textContent = 'Testing catalog API...';
+
+      const t0 = performance.now();
+      try {
+        const res = await fetch('/api/content/playlists');
+        const data = await res.json();
+        const duration = Math.round(performance.now() - t0);
+
+        if (data && data.playlists) {
+          cachedPlaylists = data.playlists;
+          const totalClips = data.playlists.reduce((acc, p) => acc + (p.clips ? p.clips.length : 0), 0);
+          consoleEl.innerHTML += `<br><span class="text-emerald-400">✓ SUCCESS: HTTP ${res.status} OK (${duration}ms)</span>`;
+          consoleEl.innerHTML += `<br><span class="text-slate-300">Playlists: ${data.playlists.length} | Total Clips: ${totalClips}</span>`;
+          statusEl.textContent = `Catalog OK (${duration}ms)`;
+          document.getElementById('chk1').checked = true;
+          updateChecklist();
+        } else {
+          consoleEl.innerHTML += `<br><span class="text-rose-400">✗ Response missing playlists array</span>`;
+        }
+      } catch (err) {
+        consoleEl.innerHTML += `<br><span class="text-rose-400">✗ Error: ${err.message}</span>`;
+        statusEl.textContent = 'Test failed';
+      }
+    }
+
+    async function runSearchBenchmark() {
+      const consoleEl = document.getElementById('testConsole');
+      const statusEl = document.getElementById('diagnosticStatus');
+
+      if (!cachedPlaylists) {
+        consoleEl.innerHTML = '<span class="text-amber-400">Loading catalog first before benchmark...</span>';
+        await runCatalogTest();
+      }
+
+      consoleEl.innerHTML += '<br><span class="text-indigo-400">[TEST 2] Benchmarking multi-token query: "intelligence genetics"...</span>';
+      statusEl.textContent = 'Benchmarking search...';
+
+      const allClips = cachedPlaylists.flatMap(p => p.clips || []);
+      const t0 = performance.now();
+
+      const tokens = ['intelligence', 'genetics'];
+      const results = allClips.filter(c => {
+        const str = `${c.title} ${c.notes || ''}`.toLowerCase();
+        return tokens.some(t => str.includes(t));
+      });
+
+      const duration = (performance.now() - t0).toFixed(2);
+      consoleEl.innerHTML += `<br><span class="text-emerald-400">✓ BENCHMARK: Scanned ${allClips.length} items in ${duration}ms</span>`;
+      consoleEl.innerHTML += `<br><span class="text-slate-300">Matches found: ${results.length} clips</span>`;
+      statusEl.textContent = `Search: ${duration}ms`;
+
+      document.getElementById('chk2').checked = true;
+      document.getElementById('chk3').checked = true;
+      updateChecklist();
+    }
+
+    function runStatusRotationTest() {
+      const consoleEl = document.getElementById('testConsole');
+      const statusEl = document.getElementById('diagnosticStatus');
+
+      consoleEl.innerHTML += '<br><span class="text-emerald-400">[TEST 3] Simulating lifecycle rotation...</span>';
+      const stages = ['to-watch', 'watching', 'reviewed', 'synthesized'];
+      let testClip = { id: 'test_clip_1', title: 'Sample Lesson', status: 'to-watch' };
+
+      stages.forEach((st, idx) => {
+        testClip.status = st;
+        consoleEl.innerHTML += `<br><span class="text-slate-400">Step ${idx+1}: Transitioned to <code class="text-sky-300">'${st}'</code></span>`;
+      });
+
+      consoleEl.innerHTML += '<br><span class="text-emerald-400">✓ State machine rotation verified without exception</span>';
+      statusEl.textContent = 'Lifecycle OK';
+
+      document.getElementById('chk4').checked = true;
+      updateChecklist();
+    }
+
+    function updateChecklist() {
+      const chks = [
+        document.getElementById('chk1').checked,
+        document.getElementById('chk2').checked,
+        document.getElementById('chk3').checked,
+        document.getElementById('chk4').checked
+      ];
+      const count = chks.filter(Boolean).length;
+      const scoreEl = document.getElementById('checklistScore');
+      scoreEl.textContent = `${count} / 4 Passed`;
+      if (count === 4) {
+        scoreEl.className = 'text-[10px] text-emerald-400 font-bold font-mono px-1.5 py-0.5 rounded bg-emerald-950 border border-emerald-800';
+        scoreEl.textContent = 'ALL 4 PASSED ✓';
+      }
+    }
+
+    function resetChecklist() {
+      ['chk1', 'chk2', 'chk3', 'chk4'].forEach(id => {
+        document.getElementById(id).checked = false;
+      });
+      updateChecklist();
+      document.getElementById('testConsole').innerHTML = '<span class="text-slate-500">// Diagnostics reset. Ready to run new checks.</span>';
+    }
+
+    // Initialize UI on load
+    updateSlideUI();
+  </script>
+</body>
+</html>

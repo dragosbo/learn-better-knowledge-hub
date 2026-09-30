@@ -17,7 +17,8 @@ import {
   Orbit,
   FileSearch,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Presentation
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -204,6 +205,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Manual
               </span>
             </button>
+
+            {/* Capability Slide Decks & Videos Launcher Button */}
+            <a
+              id="header-slide-decks-btn"
+              href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border bg-gradient-to-r from-indigo-950 to-sky-950 text-sky-200 border-indigo-700/80 hover:border-sky-400 hover:text-white transition-all shadow-sm"
+              title="Open the 15-Capability Slide Decks & Video Series"
+            >
+              <Presentation className="w-3.5 h-3.5 text-sky-400" />
+              <span>Decks & Videos</span>
+              <span className="hidden lg:inline text-[10px] px-1 py-0.2 bg-indigo-900/90 text-indigo-200 rounded font-semibold border border-indigo-700/60">
+                15 Series
+              </span>
+            </a>
 
             {/* iPad / Web Fullscreen Toggle Button */}
             {onToggleFullscreen && (

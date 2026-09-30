@@ -1,0 +1,242 @@
+{
+  "seriesTitle": "Learn Better: 15 Core Capabilities Presentation & Video Series",
+  "version": "1.0.0",
+  "generatedDate": "2026-09-30",
+  "author": "AI Studio Senior Engineering Engine",
+  "totalCapabilities": 15,
+  "completedCapabilities": 1,
+  "inProgressCapabilities": 0,
+  "pacingStrategy": "Multi-Day Token-Preserving Cadence (2-3 modules per session)",
+  "continuityProtocol": "Hemingway Bridge",
+  "chapters": [
+    {
+      "chapterNumber": 1,
+      "chapterTitle": "Catalog & Content Ingestion",
+      "modules": ["00", "01", "02"]
+    },
+    {
+      "chapterNumber": 2,
+      "chapterTitle": "Spatial & Cognitive Visualizations",
+      "modules": ["03", "04"]
+    },
+    {
+      "chapterNumber": 3,
+      "chapterTitle": "Study Studio & Multimodal Voice Reflections",
+      "modules": ["05", "06", "07"]
+    },
+    {
+      "chapterNumber": 4,
+      "chapterTitle": "AI Engines & Development History",
+      "modules": ["08", "09", "10"]
+    },
+    {
+      "chapterNumber": 5,
+      "chapterTitle": "Codebase, DevOps & Autonomous Agents",
+      "modules": ["11", "12", "13", "14", "15"]
+    }
+  ],
+  "items": [
+    {
+      "id": "cap-00",
+      "number": 0,
+      "title": "Series Master Playlist & Curriculum Overview",
+      "chapter": 1,
+      "status": "ready",
+      "deckFile": "decks/00_SERIES_OVERVIEW_PLAYLIST.html",
+      "storyboardFile": "videos/00_SERIES_OVERVIEW_STORYBOARD.md",
+      "slideCount": 6,
+      "estimatedDurationSec": 240,
+      "summary": "Master curriculum overview framing all 15 capabilities into 5 logical pedagogical chapters."
+    },
+    {
+      "id": "cap-01",
+      "number": 1,
+      "title": "Playlists & Clips Management",
+      "chapter": 1,
+      "status": "ready",
+      "deckFile": "decks/01_CAPABILITY_PLAYLIST_MANAGER.html",
+      "storyboardFile": "videos/01_CAPABILITY_PLAYLISTS_AND_CLIPS_STORYBOARD.md",
+      "videoPlayerUrl": "/videos/01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html",
+      "notebooklmDossierFile": "videos/01_NOTEBOOKLM_SOURCE_DOSSIER.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 270,
+      "summary": "YouTube playlist catalog ingestion, continuation token scraping (70 playlists, 486 clips), domain categorization, and study status tracking."
+    },
+    {
+      "id": "cap-02",
+      "number": 2,
+      "title": "Allocation & Restructure Hub",
+      "chapter": 1,
+      "status": "primer",
+      "deckFile": "decks/02_CAPABILITY_ALLOCATION_RESTRUCTURE.html",
+      "storyboardFile": "videos/02_CAPABILITY_ALLOCATION_RESTRUCTURE_STORYBOARD.md",
+      "slideCount": 8,
+      "estimatedDurationSec": 300,
+      "summary": "Algorithmic consolidation of 71 scattered YouTube playlists into 28 balanced thematic master clusters with Python dry-run automation."
+    },
+    {
+      "id": "cap-03",
+      "number": 3,
+      "title": "Video Cosmos Graph",
+      "chapter": 2,
+      "status": "planned",
+      "deckFile": "decks/03_CAPABILITY_VIDEO_COSMOS_GRAPH.html",
+      "storyboardFile": "videos/03_CAPABILITY_VIDEO_COSMOS_GRAPH_STORYBOARD.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 260,
+      "summary": "Celestial 2D canvas starfield with category galaxies, constellation trajectory recorder, and star dossiers."
+    },
+    {
+      "id": "cap-04",
+      "number": 4,
+      "title": "Word Cloud & Mind Map Hub",
+      "chapter": 2,
+      "status": "planned",
+      "deckFile": "decks/04_CAPABILITY_WORDCLOUD_MINDMAP.html",
+      "storyboardFile": "videos/04_CAPABILITY_WORDCLOUD_MINDMAP_STORYBOARD.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 250,
+      "summary": "Frequency-weighted concept bubbles, 3-tier hierarchical mind maps, and live keyword filtering."
+    },
+    {
+      "id": "cap-05",
+      "number": 5,
+      "title": "Knowledge Hub & Socratic Reflection Studio",
+      "chapter": 3,
+      "status": "planned",
+      "deckFile": "decks/05_CAPABILITY_KNOWLEDGE_HUB.html",
+      "storyboardFile": "videos/05_CAPABILITY_KNOWLEDGE_HUB_STORYBOARD.md",
+      "slideCount": 8,
+      "estimatedDurationSec": 320,
+      "summary": "Markdown notes editor, Cornell academic vector PDF generator, push-to-talk Socratic voice reflection, and spoken journal."
+    },
+    {
+      "id": "cap-06",
+      "number": 6,
+      "title": "AI Coding Academy",
+      "chapter": 3,
+      "status": "planned",
+      "deckFile": "decks/06_CAPABILITY_AI_CODING_ACADEMY.html",
+      "storyboardFile": "videos/06_CAPABILITY_AI_CODING_ACADEMY_STORYBOARD.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 280,
+      "summary": "Claude (10 lessons) and Kiro (9 lessons) interactive curriculum for prompt engineering and vibe coding."
+    },
+    {
+      "id": "cap-07",
+      "number": 7,
+      "title": "AirPods Audio Player & MediaSession Engine",
+      "chapter": 3,
+      "status": "planned",
+      "deckFile": "decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html",
+      "storyboardFile": "videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_STORYBOARD.md",
+      "slideCount": 6,
+      "estimatedDurationSec": 230,
+      "summary": "Zero-quota client-side Web Speech synthesis with AirPods stem pinch remote control."
+    },
+    {
+      "id": "cap-08",
+      "number": 8,
+      "title": "Gemini AI Studio & Prompt Workbench",
+      "chapter": 4,
+      "status": "planned",
+      "deckFile": "decks/08_CAPABILITY_GEMINI_AI_STUDIO.html",
+      "storyboardFile": "videos/08_CAPABILITY_GEMINI_AI_STUDIO_STORYBOARD.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 270,
+      "summary": "Server-side multimodal model cascade, prompt library, and quiz/takeaway distillation."
+    },
+    {
+      "id": "cap-09",
+      "number": 9,
+      "title": "Gemini Development Chat & Capability Audit",
+      "chapter": 4,
+      "status": "planned",
+      "deckFile": "decks/09_CAPABILITY_GEMINI_DEV_CHAT.html",
+      "storyboardFile": "videos/09_CAPABILITY_GEMINI_DEV_CHAT_STORYBOARD.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 260,
+      "summary": "22-prompt full development dialogue audit, pastel syntax blocks, and quota signals."
+    },
+    {
+      "id": "cap-10",
+      "number": 10,
+      "title": "Legacy HTML Tools Hub",
+      "chapter": 4,
+      "status": "planned",
+      "deckFile": "decks/10_CAPABILITY_LEGACY_HTML_TOOLS.html",
+      "storyboardFile": "videos/10_CAPABILITY_LEGACY_HTML_TOOLS_STORYBOARD.md",
+      "slideCount": 6,
+      "estimatedDurationSec": 220,
+      "summary": "Sandboxed viewport access to original repository apps (youtube.html, wordcloud.html, etc.)."
+    },
+    {
+      "id": "cap-11",
+      "number": 11,
+      "title": "Python Code Viewer",
+      "chapter": 5,
+      "status": "planned",
+      "deckFile": "decks/11_CAPABILITY_PYTHON_CODE_VIEWER.html",
+      "storyboardFile": "videos/11_CAPABILITY_PYTHON_CODE_VIEWER_STORYBOARD.md",
+      "slideCount": 6,
+      "estimatedDurationSec": 230,
+      "summary": "Two-column Python code inspector with syntax highlighting and file tree navigation."
+    },
+    {
+      "id": "cap-12",
+      "number": 12,
+      "title": "GitHub Sync & Multi-AI Monorepo Protocol",
+      "chapter": 5,
+      "status": "planned",
+      "deckFile": "decks/12_CAPABILITY_GITHUB_SYNC_PROTOCOL.html",
+      "storyboardFile": "videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_STORYBOARD.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 260,
+      "summary": "Safe branch isolation protocol for merging AI Studio changes back to dragosbo/learn-better."
+    },
+    {
+      "id": "cap-13",
+      "number": 13,
+      "title": "Interactive User Guide & iPad Runbook",
+      "chapter": 5,
+      "status": "planned",
+      "deckFile": "decks/13_CAPABILITY_USER_GUIDE_RUNBOOK.html",
+      "storyboardFile": "videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_STORYBOARD.md",
+      "slideCount": 7,
+      "estimatedDurationSec": 250,
+      "summary": "Comprehensive user guide, print/PDF export, and the iPadOS 401 WebKit cross-site tracking runbook."
+    },
+    {
+      "id": "cap-14",
+      "number": 14,
+      "title": "Ecosystem Roadmap Hub",
+      "chapter": 5,
+      "status": "planned",
+      "deckFile": "decks/14_CAPABILITY_ROADMAP_HUB.html",
+      "storyboardFile": "videos/14_CAPABILITY_ROADMAP_HUB_STORYBOARD.md",
+      "slideCount": 6,
+      "estimatedDurationSec": 240,
+      "summary": "Milestone progression tracker, multi-device topology (iPad/Windows/iPhone), and blob storage architecture."
+    },
+    {
+      "id": "cap-15",
+      "number": 15,
+      "title": "Analysis Hub & Autonomous Agent Tools Gateway",
+      "chapter": 5,
+      "status": "planned",
+      "deckFile": "decks/15_CAPABILITY_ANALYSIS_AGENT_GATEWAY.html",
+      "storyboardFile": "videos/15_CAPABILITY_ANALYSIS_AGENT_GATEWAY_STORYBOARD.md",
+      "slideCount": 8,
+      "estimatedDurationSec": 310,
+      "summary": "Dual-audience introspection, 16-capability matrix, OpenAPI function calling schemas, and live sandbox."
+    }
+  ],
+  "hemingwayBridge": {
+    "currentSession": 1,
+    "lastCompletedModule": "01_CAPABILITY_PLAYLISTS_AND_CLIPS",
+    "nextModuleToBuild": "02_CAPABILITY_ALLOCATION_RESTRUCTURE",
+    "primerStatus": "Outline & schemas drafted for Deck 02",
+    "continuationPrompt": "Proceed with Session 2 of the Capability Series: Build Deck 02 (Allocation & Restructure Hub) and Deck 03 (Video Cosmos Graph).",
+    "overnightDecision": "Should the Restructure Hub slide deck emphasize the 71-to-28 mapping visualization or the automated Python execution flags (--dry-run vs --execute)?"
+  }
+}

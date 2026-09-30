@@ -1,71 +1,85 @@
-# Comprehensive Conversation Archive & Analysis Audit Update
+# Implementation Plan: Capability 1 NotebookLM Dossier & Video Player Hub
 
-Update the complete development interaction history across all artifacts to include interactions from Prompt 16 through Prompt 21 (covering the iPad incident runbook, Analysis Phases 2 & 3, Academic Notebook PDF Export, Socratic Voice Feedback, and the Split VoiceReflectionInterviewer), and regenerate the standalone Gemini chat viewer HTML.
+Create an optimized **NotebookLM Source Dossier Generator** and a **Dedicated Video Player Hub** for Capability 1 (Playlist Manager), enabling users to generate NotebookLM audio/video overviews and upload or stream them directly inside the Decks & Videos suite.
+
+---
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
 > The following user preferences were confirmed:
-> - **Analysis Status**: Phases 1 (Architecture), 2 (Capability-to-File Matrix), and 3 (Dual-Audience Programmatic Agent Spec) are complete. No additional phases needed at this time.
-> - **Conversation Archive Scope**: Full audit log detailing Prompts 16 through 21 with verbatim prompts, assistant response syntheses, pastel language-specific code blocks, quota signals, and feature attributions.
-> - **Regeneration**: Re-run the standalone generation pipeline (`scripts/generate-gemini-chat-html.ts`) so `gemini_chat/chat_history.html` and the in-app `GeminiDevelopmentChat` viewer display all 21 prompts seamlessly.
-
-- **Confirmed Decision 1 (Analysis Scope)**: Confirm Phases 1–3 as fully delivered; focus exclusively on the interaction archive update.
-- **Confirmed Decision 2 (Full Audit Fidelity)**: Include complete code blocks, technical schemas, and session metrics for all 6 recent prompts.
-- **Confirmed Decision 3 (Unified Synchronization)**: Update `src/data/geminiChatData.ts`, `gemini_prompts.md`, `gemini_feedback.md`, and rebuild `gemini_chat/chat_history.html`.
+> - **NotebookLM Strategy**: Since Google NotebookLM does not offer an external public API, generate a specialized, high-yield **NotebookLM Source Dossier** (`videos/01_NOTEBOOKLM_SOURCE_DOSSIER.md`) optimized for NotebookLM's deep-dive audio/video engine.
+> - **Video Player Hub Location**: Build a **Dedicated Video Hub** inside the Decks and Videos suite (`videos/01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html`), accessible directly from `decks/00_SERIES_OVERVIEW_PLAYLIST.html`, the in-app navigation, and Deck 1.
+> - **Dual Playback Modes**:
+>   1. **Interactive Scene-by-Scene Simulator**: Out-of-the-box animated video simulator playing through the 5 storyboard scenes with synchronized Web Speech voiceover and visual cards.
+>   2. **NotebookLM Media Uploader & Streamer**: Drag-and-drop or file picker allowing the user to upload their exported NotebookLM MP4/MP3 or paste an external URL, with automatic local persistence and synchronized transcript tracking.
 
 ---
 
-## 1. Overview & Core Concept
-
-- **What It Does**: Synchronizes the complete conversation history from the initial setup through the latest Socratic voice features into a single, comprehensive audit log. The `GeminiDevelopmentChat` in-app component and the standalone `/gemini_chat/chat_history.html` file will reflect 21 full turns, grouped across Sessions 1 through 7, with pastel code blocks, collapsible accordions, and quick navigation.
-- **Target Audience / Persona**: The user and prospective collaborators or AI coding agents auditing the full evolution and architectural history of the `learn-better` application.
-- **Key Value**: Provides an immutable, transparent record of all technical decisions, code implementations, and problem resolutions (including the iPad incident and voice audio pipelines).
-
----
-
-## 2. Conversation & Interaction Inventory (Prompts 16–21)
-
-### Session 6 (Incident Resolution & Analysis Phases 2 & 3)
-1. **Prompt 16 (iPad Settings & Incident Runbook)**:
-   - User issue: Applet stopped working on iPad browsers (Safari, Chrome, Brave).
-   - Solution: Guided user to iPad Settings > Safari > Advanced / Local Network permissions, fixed port 3000 accessibility, and documented the incident in `USER_GUIDE.md` and `analysis/`.
-2. **Prompt 17 (Phase 2 Analysis: Capability-to-File Matrix)**:
-   - Output: `analysis/02_CAPABILITY_FILE_MATRIX.md` and `02_capability_file_matrix.html`, mapping all 16 core capabilities to exact implementation files, lines, and test status.
-3. **Prompt 18 (Phase 3 Analysis: Dual-Audience Programmatic Agent Tools Spec)**:
-   - Output: `analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md` and `03_dual_audience_agent_tools_spec.html`, defining OpenAPI/Gemini function calling schemas (`/api/agent/tools`, `/api/agent/execute-tool`, `/api/agent/query`).
-
-### Session 7 (KnowledgeHub Enhancements: PDF Export & Voice Socratic Interviewer)
-4. **Prompt 19 (Academic Notebook PDF Export)**:
-   - Feature: `academicPdfGenerator.ts` + `PdfExportModal.tsx`, implementing A4 vector PDF export with classic Cornell red margin guidelines, horizontal ruled notebook lines, and single clip vs full playlist digest selection.
-5. **Prompt 20 (Socratic Voice Reflection & Spoken Feedback)**:
-   - Feature: `SocraticVoiceInterviewModal.tsx`, server-side audio transcription via `@google/genai` (`/api/gemini/transcribe-audio`), Socratic 3-stage question generator, and `VoiceReflectionsJournal.tsx` timeline.
-6. **Prompt 21 (VoiceReflectionInterviewer Component)**:
-   - Feature: Dedicated `VoiceReflectionInterviewer.tsx` rendered side-by-side with the notes editor, featuring a linear progress bar (33% → 66% → 100%), collapsible question cards, and dual-mode push-to-talk recording.
-
----
-
-## 3. Technical Implementation & Synchronization Workflow
+## 1. System Architecture & Components
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│               Conversation Synchronization Flow                 │
-│                                                                 │
-│  ┌───────────────────────────┐     ┌─────────────────────────┐  │
-│  │ src/data/geminiChatData.ts │ ──> │ scripts/generate-gemini-│  │
-│  │ (Add entries P16 to P21)   │     │ chat-html.ts            │  │
-│  └─────────────┬─────────────┘     └───────────┬─────────────┘  │
-│                │                               │                │
-│                ▼                               ▼                │
-│  ┌───────────────────────────┐     ┌─────────────────────────┐  │
-│  │ gemini_prompts.md &       │     │ gemini_chat/            │  │
-│  │ gemini_feedback.md        │     │ chat_history.html       │  │
-│  │ (Sync markdown logs)      │     │ (Rebuilt standalone UI) │  │
-│  └───────────────────────────┘     └─────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                 Capability 1 Video & NotebookLM Pipeline                    │
+│                                                                             │
+│  ┌─────────────────────────────────┐   Upload   ┌────────────────────────┐  │
+│  │ videos/01_NOTEBOOKLM_DOSSIER.md │ ─────────> │ Google NotebookLM      │  │
+│  │ (Curated source text & prompts) │            │ (notebooklm.google.com)│  │
+│  └─────────────────────────────────┘            └───────────┬────────────┘  │
+│                                                             │ Generate      │
+│                                                             ▼ MP4 / MP3     │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │ videos/01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html (Dedicated Video Hub)│  │
+│  │                                                                       │  │
+│  │  ├─ Mode A: Built-in Scene-by-Scene Video Simulator (Instant Play)    │  │
+│  │  ├─ Mode B: NotebookLM Upload / URL Dropzone (IndexedDB Persistence)  │  │
+│  │  ├─ Synchronized Transcript & Storyboard Cue Sheet Drawer             │  │
+│  │  └─ 1-Click Copy Dossier for NotebookLM                              │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Step 1**: Update `src/data/geminiChatData.ts` with new entries `P16`, `P17`, `P18`, `P19`, `P20`, and `P21` including verbatim user prompts, comprehensive assistant responses, code blocks, and quota signals.
-- **Step 2**: Re-run `npx tsx scripts/generate-gemini-chat-html.ts` to compile the updated dataset into `gemini_chat/chat_history.html` and `gemini_chat/index.html`.
-- **Step 3**: Sync `gemini_prompts.md` and `gemini_feedback.md` with complete documentation for all turns.
-- **Step 4**: Verify `compile_applet` and `lint_applet` to ensure total integrity.
+---
+
+## 2. Deliverables Specification
+
+### A. NotebookLM Source Dossier (`videos/01_NOTEBOOKLM_SOURCE_DOSSIER.md`)
+- Formatted specifically to trigger high-engagement, pedagogical deep-dive podcasts when uploaded to NotebookLM:
+  - **Persona & Context Header**: Defines the technical domain and learning goals of Learn Better.
+  - **The Narrative Arc**: The journey from 70 chaotic YouTube playlists to a structured 5-domain knowledge engine.
+  - **Technical Architecture**: Data models (`YouTubeClip`, `Playlist`), continuation scraping, and non-destructive sync.
+  - **Discussion Questions for AI Hosts**: Targeted questions prompting the NotebookLM hosts to discuss why continuation token traps happen, why 5 domains work better than infinite scroll, and how zero-mutation guarantees protect user notes.
+  - **Quick Copy Button & Download**: In-browser 1-click copy action for immediate pasting into NotebookLM.
+
+### B. Dedicated Video Player Hub (`videos/01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html`)
+- **Visual Design**: Dark-mode theater interface with 16:9 responsive video viewport, animated waveform audio spectrum, chapter scrubber, and synchronized transcript reader.
+- **Playback Engine**:
+  - **Mode 1: Automated Storyboard Simulator**:
+    - Plays the 5 scenes from `videos/01_CAPABILITY_PLAYLISTS_AND_CLIPS_STORYBOARD.md` sequentially.
+    - Synchronized visual slide transitions with animated zoom, focus highlights, and per-scene voice narration.
+  - **Mode 2: User Video/Audio Player (NotebookLM Dropzone)**:
+    - Drag-and-drop zone supporting `.mp4`, `.webm`, `.mp3`, `.wav`, and `.m4a` files.
+    - URL input for streaming direct video links or YouTube embeds.
+    - Persists uploaded media in browser `IndexedDB` (`learn_better_videos_v1`) so your video remains loaded on reload.
+- **Synchronized Transcript & Cue Drawer**:
+  - Displays the active timestamped scene, highlighting lines as speech progresses.
+  - Allows clicking any scene timestamp (e.g. `01:25`) to jump the video directly to that chapter.
+
+### C. Server Routes & Manifest Synchronization
+- Update `server.ts` to route `/videos/capability-1` and `/videos/player` directly to the new video hub.
+- Update `videos/00_SERIES_VIDEO_PLAYLIST.json` with the video player URL (`videos/01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html`) and dossier path.
+- Add "Watch Video" buttons to `decks/00_SERIES_OVERVIEW_PLAYLIST.html` and `decks/01_CAPABILITY_PLAYLIST_MANAGER.html`.
+
+---
+
+## 3. Testing & Verification Protocol
+
+1. **NotebookLM Dossier Test**:
+   - Verify `videos/01_NOTEBOOKLM_SOURCE_DOSSIER.md` is accessible via HTTP and renders clean markdown with zero syntax errors.
+2. **Video Simulator Test**:
+   - Open `/videos/01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html` in browser.
+   - Click "Play Video Simulation" to verify that Scene 1 transitions to Scene 2 with synchronized narration and chapter highlight.
+3. **NotebookLM Uploader Test**:
+   - Drag and drop a sample video/audio file into the dropzone to verify HTML5 `<video>` / `<audio>` playback and IndexedDB caching.
+4. **Applet Compilation**:
+   - Run `compile_applet` and `lint_applet` to confirm clean builds.

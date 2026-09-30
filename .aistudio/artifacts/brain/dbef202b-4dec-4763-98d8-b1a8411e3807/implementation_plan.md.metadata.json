@@ -1,6 +1,6 @@
 {
-  "summary": "Implementation plan for updating the complete conversation archive across all interactions (Prompts 16 through 21), including code blocks, quota signals, full audit logs, and regenerating the standalone chat viewer HTML files.",
-  "updatedAt": "2026-09-29T20:42:46.410449670Z",
+  "summary": "Implementation plan for Capability 1 NotebookLM source dossier generator and dedicated video player hub with upload/playback capabilities inside the Decks & Videos suite.",
+  "updatedAt": "2026-09-30T09:15:46.551340507Z",
   "requestFeedback": true,
   "userFacing": true
 }

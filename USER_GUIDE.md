@@ -168,4 +168,33 @@ If you need immediate access without changing device settings:
 
 ---
 
+### Section 7: iPad Fullscreen & Immersive Mode (Brave / Safari / Chrome)
+
+On iPadOS, Apple restricts native DOM fullscreen (`requestFullscreen`) inside embedded `<iframe>` views and third-party WebKit wrappers. Learn Better provides three methods to achieve a completely distraction-free, full-screen learning environment:
+
+#### Method 1: The In-App Immersive Fullscreen Button (Instant)
+- Located in the top navigation bar next to "Decks & Videos".
+- Look for the **Fullscreen icon** button (`[ ⛶ ]`).
+- **How it works**:
+  - Attempts the WebKit native `webkitRequestFullscreen()` API.
+  - Automatically activates **CSS Immersive Viewport Mode** (`fixed inset-0 z-50 w-screen h-screen`), eliminating surrounding page chrome, paddings, and scrolls.
+  - Tap the button again (now showing `Exit Fullscreen` with a purple ring) or press Escape to restore regular mode.
+
+#### Method 2: Brave on iPad Toolbar Collapse (Settings)
+- In the Brave app on your iPad:
+  1. Tap the **three dots menu (`...`)** in the navigation bar.
+  2. Tap **Settings > Display** (or **Appearance**).
+  3. Turn on **"Hide Toolbar on Scroll"** (or enable Compact Toolbar).
+  4. When you scroll through playlists or transcripts, Brave automatically slides its address bar and tab bar off-screen.
+
+#### Method 3: 100% True Edge-to-Edge Fullscreen (Add to Home Screen / PWA)
+- To eliminate 100% of browser bars (address bar, tab strips, navigation buttons):
+  1. Open the app in its own standalone tab via the **"Open in new window"** pop-out icon in AI Studio (or browse directly to the app's `*.run.app` URL).
+  2. In Brave or Safari, tap the **Share button** (square with an arrow pointing up).
+  3. Tap **"Add to Home Screen"**.
+  4. Give it a name (e.g., "Learn Better") and tap **Add**.
+  5. Tap the new Learn Better icon on your iPad home screen: it launches with Apple's standalone PWA engine with **zero browser UI**, giving you true edge-to-edge native app full screen.
+
+---
+
 *Enjoy learning better! Use the top-right button in this guide to download this manual anytime.*
