@@ -283,7 +283,7 @@ app.get(['/decks', '/decks/overview'], (req, res) => {
   }
 });
 
-app.get(['/videos/capability-1', '/videos/player', '/video-hub'], (req, res) => {
+app.get(['/videos/capability-1', '/videos/capability-01', '/videos/player', '/video-hub'], (req, res) => {
   const target = path.join(videosDir, '01_CAPABILITY_PLAYLIST_MANAGER_VIDEO.html');
   if (fs.existsSync(target)) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -291,6 +291,17 @@ app.get(['/videos/capability-1', '/videos/player', '/video-hub'], (req, res) => 
     res.sendFile(target);
   } else {
     res.status(404).send('Capability 1 video player not found.');
+  }
+});
+
+app.get(['/videos/capability-2', '/videos/capability-02'], (req, res) => {
+  const target = path.join(videosDir, '02_CAPABILITY_ALLOCATION_RESTRUCTURE_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 2 video player not found.');
   }
 });
 
@@ -1900,12 +1911,25 @@ Format as strict JSON:
 
 // Vite middleware & Static Serving
 async function startServer() {
+  // 1. Immediately open port 3000 so container health probes and /api routes respond in milliseconds
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server listening immediately on http://0.0.0.0:${PORT}`);
+  });
+
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
+    const vitePromise = createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
-    app.use(vite.middlewares);
+
+    app.use(async (req, res, next) => {
+      try {
+        const vite = await vitePromise;
+        vite.middlewares(req, res, next);
+      } catch (err) {
+        next(err);
+      }
+    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
@@ -1913,10 +1937,6 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
-
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
-  });
 }
 
 startServer();

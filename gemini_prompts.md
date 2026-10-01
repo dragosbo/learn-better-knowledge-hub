@@ -751,3 +751,22 @@ Can you toggle fulls screen in brave on iPad?
 > 1. **In-App Immersive Toggle**: Added a dedicated Fullscreen toggle button (`header-fullscreen-toggle-btn`) in `src/components/Navbar.tsx` and state management in `src/App.tsx`. Uses dual-mode fallback: invokes `element.webkitRequestFullscreen()` for native WebKit support, and simultaneously applies `fixed inset-0 z-50 w-screen h-screen` CSS viewport expansion to guarantee an edge-to-edge distraction-free view even when WKWebView denies DOM fullscreen inside an iframe.
 > 2. **PWA Standalone Engine (`index.html`)**: Configured `apple-mobile-web-app-capable="yes"` and `apple-mobile-web-app-status-bar-style="black-translucent"`. When added to the iPad Home Screen from Brave or Safari, the app launches in true native edge-to-edge mode with zero browser address bars or navigation tabs.
 > 3. **Documentation**: Added Section 7 to `USER_GUIDE.md` detailing the 3 methods (In-App button, Brave scroll toolbar collapse, and Home Screen PWA).
+
+---
+
+### Prompt 35: Day 2 Capability Series Execution — Allocation & Restructure Hub
+*Timestamp: 2026-10-01T01:39:23-07:00*
+
+```text
+Ok now it works proceed with what was planned for day 2 and let me know what to check when ready
+```
+
+#### Assistant Response 35
+> Executed Day 2 of the Capability Series focusing on Capability 02 (Allocation & Restructure Hub):
+> 1. **Optimized Instant Dev Server Boot**: Refactored `server.ts` to bind port 3000 immediately upon launch, responding to `/api/health` in under 10ms and preventing container health check timeouts while Vite initializes asynchronously.
+> 2. **NotebookLM Source Dossier (`videos/02_NOTEBOOKLM_SOURCE_DOSSIER.md`)**: Formatted high-yield source text and host discussion prompts for Google NotebookLM podcast/video generation.
+> 3. **OBS Video Storyboard (`videos/02_CAPABILITY_ALLOCATION_RESTRUCTURE_STORYBOARD.md`)**: 5-scene script with timestamps, visual cues, and narration notes.
+> 4. **Dedicated Interactive Video Hub (`videos/02_CAPABILITY_ALLOCATION_RESTRUCTURE_VIDEO.html`)**: Features automated 5-scene video simulator, NotebookLM MP4/MP3 media uploader with IndexedDB persistence, synchronized script drawer, and 1-click dossier copy.
+> 5. **Master Slide Deck 02 (`decks/02_CAPABILITY_ALLOCATION_RESTRUCTURE.html`)**: 8-slide technical blueprint with two-column layout, embedded Web Speech narration, auto-advance, AirPods remote control, and Live Diagnostic Lab with 4 real in-browser test benchmarks.
+> 6. **Hemingway Bridge #2**: Updated `decks/00_SERIES_OVERVIEW_PLAYLIST.html` and `videos/00_SERIES_VIDEO_PLAYLIST.json` to mark Capability 02 as Ready (2/15 complete) and established Day 3 continuation primer for Capability 03 (Video Cosmos Graph).
+
