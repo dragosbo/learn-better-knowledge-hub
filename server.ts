@@ -305,6 +305,17 @@ app.get(['/videos/capability-2', '/videos/capability-02'], (req, res) => {
   }
 });
 
+app.get(['/videos/capability-3', '/videos/capability-03'], (req, res) => {
+  const target = path.join(videosDir, '03_CAPABILITY_VIDEO_COSMOS_GRAPH_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 3 video player not found.');
+  }
+});
+
 
 app.get('/api/decks/manifest', (req, res) => {
   try {

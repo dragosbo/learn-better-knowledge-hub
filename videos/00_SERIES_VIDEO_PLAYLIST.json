@@ -4,10 +4,10 @@
   "generatedDate": "2026-09-30",
   "author": "AI Studio Senior Engineering Engine",
   "totalCapabilities": 15,
-  "completedCapabilities": 2,
+  "completedCapabilities": 3,
   "inProgressCapabilities": 0,
   "pacingStrategy": "Multi-Day Token-Preserving Cadence (2-3 modules per session)",
-  "continuityProtocol": "Hemingway Bridge #2 (Session 2 -> Session 3)",
+  "continuityProtocol": "Hemingway Bridge #3 (Session 3 -> Session 4)",
   "chapters": [
     {
       "chapterNumber": 1,
@@ -81,12 +81,14 @@
       "number": 3,
       "title": "Video Cosmos Graph",
       "chapter": 2,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/03_CAPABILITY_VIDEO_COSMOS_GRAPH.html",
       "storyboardFile": "videos/03_CAPABILITY_VIDEO_COSMOS_GRAPH_STORYBOARD.md",
-      "slideCount": 7,
+      "videoPlayerUrl": "/videos/03_CAPABILITY_VIDEO_COSMOS_GRAPH_VIDEO.html",
+      "notebooklmDossierFile": "videos/03_NOTEBOOKLM_SOURCE_DOSSIER.md",
+      "slideCount": 8,
       "estimatedDurationSec": 260,
-      "summary": "Celestial 2D canvas starfield with category galaxies, constellation trajectory recorder, and star dossiers."
+      "summary": "Celestial 2D canvas starfield with category galaxies, 60 FPS Euler physics, constellation flight recorder, and academic citations."
     },
     {
       "id": "cap-04",
@@ -234,11 +236,11 @@
     }
   ],
   "hemingwayBridge": {
-    "currentSession": 2,
-    "lastCompletedModule": "02_CAPABILITY_ALLOCATION_RESTRUCTURE",
-    "nextModuleToBuild": "03_CAPABILITY_VIDEO_COSMOS_GRAPH",
-    "primerStatus": "Chapter 1 completed (Cap 01 & 02). Chapter 2 spatial visualizations ready for Day 3.",
-    "continuationPrompt": "Proceed with Day 3 of the Capability Series: Build Deck 03 (Video Cosmos Graph) and Deck 04 (Word Cloud & Mind Map Hub).",
-    "overnightDecision": "Should the Video Cosmos Graph slide deck feature live interactive HTML5 Canvas starfield physics inside the slide or focus on the constellation flight recorder mechanics?"
+    "currentSession": 3,
+    "lastCompletedModule": "03_CAPABILITY_VIDEO_COSMOS_GRAPH",
+    "nextModuleToBuild": "04_CAPABILITY_WORDCLOUD_MINDMAP",
+    "primerStatus": "Capability 03 (Video Cosmos Graph) completed. Capability 04 ready for Day 4.",
+    "continuationPrompt": "Proceed with Day 4 of the Capability Series: Build Deck 04 (Word Cloud & Mind Map Hub) and its Video Hub.",
+    "overnightDecision": "Should the Word Cloud slide deck emphasize real-time TF-IDF transcript extraction benchmarks or the 3-tier hierarchical mind map rendering engine?"
   }
 }
