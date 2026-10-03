@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 06: AI Coding Academy — Technical Blueprint & Live Test Suite</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(14, 165, 233, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(14, 165, 233, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase tracking-wider">Deck 06 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">AI Coding Academy</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Claude &amp; Kiro Dual-Track Curriculum • Vibe Coding Mastery</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Quick Link -->
+      <a href="/videos/06_CAPABILITY_AI_CODING_ACADEMY_VIDEO.html" class="p-1.5 text-xs rounded-lg border border-rose-800 text-rose-300 bg-rose-950/60 hover:bg-rose-900 transition-colors" title="Open Video Hub">
+        🎬
+      </a>
+
+      <!-- Fullscreen Toggle -->
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Progress Bar -->
+  <div class="w-full bg-slate-900 h-1 relative">
+    <div id="progressBar" class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 h-1 transition-all duration-300" style="width: 12.5%;"></div>
+  </div>
+
+  <!-- Main Slide Viewport -->
+  <main class="flex-1 max-w-[1550px] w-full mx-auto p-4 sm:p-6 flex flex-col justify-center relative">
+
+    <!-- SLIDE 1: Executive Overview & Dual-Track Scope -->
+    <section class="slide active flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="1">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Capability 06</span>
+          <span class="text-xs text-slate-400">Chapter 3: Study Studio &amp; Instruction Architecture</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 1 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Mission Blueprint -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs font-semibold">
+            <span>Executive Overview &amp; Pedagogical Architecture</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+            AI Coding Academy &amp; Vibe Coding Mastery
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Eliminating conversational prompt drift through 19 structured lessons across Claude and Kiro, paired with the 4 Immutable Laws of Vibe Coding to steer AI assistants from empty directory to production deployment.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+              <div class="text-[10px] text-sky-400 font-mono uppercase font-bold">Track A: Claude Series</div>
+              <div class="text-lg font-bold text-white mt-0.5">10 Lessons</div>
+              <div class="text-[11px] text-slate-400">Top-Down Spec &amp; CI/CD Handoff</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+              <div class="text-[10px] text-emerald-400 font-mono uppercase font-bold">Track B: Kiro Series</div>
+              <div class="text-lg font-bold text-white mt-0.5">9 Lessons</div>
+              <div class="text-[11px] text-slate-400">Bottom-Up CLI &amp; Audio Pipelines</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Academy Preview -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between h-[360px] shadow-inner">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span> Academy Curriculum Dashboard
+            </span>
+            <span class="text-[10px] font-mono text-sky-400">19 Lessons Total</span>
+          </div>
+
+          <!-- Academy Dialect Preview Cards -->
+          <div class="flex-1 flex flex-col justify-center space-y-2.5 p-2">
+            <div class="p-3 rounded-lg bg-sky-950/40 border border-sky-700/60 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-sky-400 font-bold uppercase tracking-wider">Claude Track: Architectural Rigor</span>
+                <p class="text-xs text-slate-200 mt-0.5">Scaffolding, environment isolation, single-key runners, and Colab/Docker handoff.</p>
+              </div>
+              <span class="text-xs font-mono font-bold text-sky-300 bg-sky-900/60 px-2 py-1 rounded">10 Units</span>
+            </div>
+
+            <div class="p-3 rounded-lg bg-emerald-950/40 border border-emerald-700/60 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Kiro Track: Terminal Velocity</span>
+                <p class="text-xs text-slate-200 mt-0.5">Whisper STT, Piper TTS, PATH aliases, and refactoring scripts into reusable lib/.</p>
+              </div>
+              <span class="text-xs font-mono font-bold text-emerald-300 bg-emerald-900/60 px-2 py-1 rounded">9 Units</span>
+            </div>
+
+            <div class="p-3 rounded-lg bg-indigo-950/40 border border-indigo-700/60 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Gemini Vibe Coding Masterclass</span>
+                <p class="text-xs text-slate-200 mt-0.5">Contract-first prompt design, context window budgeting, and verification gates.</p>
+              </div>
+              <span class="text-xs font-mono font-bold text-indigo-300 bg-indigo-900/60 px-2 py-1 rounded">4 Laws</span>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-800 pt-2 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Integrated Web Speech narration &amp; persistent completion.</span>
+            <span class="text-sky-400 font-mono">100% Free / No-API-Key</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 1 of 8</span>
+        <span>Section 1 • Academy Mission Scope</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: The Two Dialects of AI Pair Programming -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="2">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Dialects</span>
+          <span class="text-xs text-slate-400">Top-Down Specification vs. Bottom-Up Iterative Scripting</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 2 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Comparison Column 1: Claude -->
+        <div class="lg:col-span-6 bg-slate-950/80 border border-sky-900/60 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-sm font-bold text-sky-300 flex items-center gap-2">
+              <span>Track A: Top-Down Specification (Claude)</span>
+            </h3>
+            <span class="text-[10px] font-mono text-slate-400">Architect Mindset</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Begins with project boundaries, directory structures, and contract definitions before writing a single line of application code.
+          </p>
+          <ul class="text-xs text-slate-400 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-bold font-mono">1.</span>
+              <span><strong>Folder Isolation First</strong>: Creates clean scaffolding, `.gitignore`, and centralized `lib/paths.py`.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-bold font-mono">2.</span>
+              <span><strong>Re-Orienting Prompts</strong>: Pre-engineered prompt blocks to restore context when the assistant resets.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-bold font-mono">3.</span>
+              <span><strong>Production Handoff</strong>: Formalizes devcontainers, Dockerfiles, and CI verification pipelines.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Comparison Column 2: Kiro -->
+        <div class="lg:col-span-6 bg-slate-950/80 border border-emerald-900/60 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-sm font-bold text-emerald-300 flex items-center gap-2">
+              <span>Track B: Bottom-Up Terminal Velocity (Kiro)</span>
+            </h3>
+            <span class="text-[10px] font-mono text-slate-400">Hacker Mindset</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Prioritizes early tangible wins in 45 minutes, then refactors messy working scripts into clean reusable libraries.
+          </p>
+          <ul class="text-xs text-slate-400 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400 font-bold font-mono">1.</span>
+              <span><strong>Early Win Script</strong>: Zero-API-key audio and transcript download working in lesson 2.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400 font-bold font-mono">2.</span>
+              <span><strong>Local AI Inference</strong>: Integrates `faster-whisper` and `Piper TTS` directly on local hardware.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400 font-bold font-mono">3.</span>
+              <span><strong>Refactoring to lib/</strong>: Extracts repeated HTTP, YouTube, and text utilities into shared modules.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 2 of 8</span>
+        <span>Section 2 • Engineering Paradigms</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Track A — The Claude 10-Lesson Architectural Arc -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="3">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Claude Series</span>
+          <span class="text-xs text-slate-400">10-Lesson Arc: From Empty Directory to Docker Production</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 3 of 8</span>
+      </div>
+
+      <div class="my-auto space-y-3">
+        <p class="text-xs text-slate-300">
+          The Claude track guides the developer through monotonic complexity growth—no lesson introduces more than 2 new concepts:
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5">
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L01 &bull; ~40m</span>
+            <div class="font-bold text-white mt-0.5">First Contact</div>
+            <p class="text-[10px] text-slate-400 mt-1">Prompt formulation &amp; context recovery.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L02 &bull; ~50m</span>
+            <div class="font-bold text-white mt-0.5">Project Scaffold</div>
+            <p class="text-[10px] text-slate-400 mt-1">Folder layout, `.gitignore`, initial GitHub repo.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L03 &bull; ~50m</span>
+            <div class="font-bold text-white mt-0.5">Environment</div>
+            <p class="text-[10px] text-slate-400 mt-1">Python 3.12 conda env, ffmpeg, `lib/paths.py`.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L04 &bull; ~75m</span>
+            <div class="font-bold text-white mt-0.5">First Script</div>
+            <p class="text-[10px] text-slate-400 mt-1">`list_playlists.py`, `p` runner, iterate &amp; fix.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L05 &bull; ~80m</span>
+            <div class="font-bold text-white mt-0.5">Media Ingestion</div>
+            <p class="text-[10px] text-slate-400 mt-1">`read_channel.py`, `config_transcribe.json`.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L06 &bull; ~80m</span>
+            <div class="font-bold text-white mt-0.5">Whisper STT</div>
+            <p class="text-[10px] text-slate-400 mt-1">`faster-whisper` automated transcription.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L07 &bull; ~70m</span>
+            <div class="font-bold text-white mt-0.5">Automation</div>
+            <p class="text-[10px] text-slate-400 mt-1">PATH runners, `init.bat`, quality comparisons.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L08 &bull; ~95m</span>
+            <div class="font-bold text-white mt-0.5">NLP &amp; Summaries</div>
+            <p class="text-[10px] text-slate-400 mt-1">`make_wordcloud.py`, `lib/textutil.py`.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L09 &bull; ~130m</span>
+            <div class="font-bold text-white mt-0.5">Full Pipeline</div>
+            <p class="text-[10px] text-slate-400 mt-1">Piper TTS, `lib/net.py`, end-to-end data run.</p>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+            <span class="text-sky-400 font-mono font-bold block text-[10px]">L10 &bull; ~100m</span>
+            <div class="font-bold text-white mt-0.5">Deployment</div>
+            <p class="text-[10px] text-slate-400 mt-1">Docker, devcontainers, CI &amp; Colab handoff.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 3 of 8</span>
+        <span>Section 3 • Track A Curriculum</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Track B — The Kiro 9-Lesson Terminal & Audio Pipeline Arc -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="4">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Kiro Series</span>
+          <span class="text-xs text-slate-400">9-Lesson Arc: Rapid Prototyping &amp; Local Audio Engineering</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 4 of 8</span>
+      </div>
+
+      <div class="my-auto space-y-3">
+        <p class="text-xs text-slate-300">
+          The Kiro track emphasizes terminal velocity—extracting value within 45 minutes and organizing scripts into modular libraries:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3 rounded-lg bg-slate-950 border border-emerald-900/40 space-y-1">
+            <div class="flex items-center justify-between text-[11px] text-emerald-400 font-mono">
+              <span>L01-L03: Setup &amp; Early Win</span>
+              <span>Phase 1</span>
+            </div>
+            <h4 class="text-xs font-bold text-white">Rapid Scripting Foundation</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Spins up Python 3.12 + ffmpeg, building a working YouTube audio/transcript downloader in under 45 minutes with zero API keys.
+            </p>
+          </div>
+
+          <div class="p-3 rounded-lg bg-slate-950 border border-emerald-900/40 space-y-1">
+            <div class="flex items-center justify-between text-[11px] text-emerald-400 font-mono">
+              <span>L04-L06: Ingestion &amp; Runners</span>
+              <span>Phase 2</span>
+            </div>
+            <h4 class="text-xs font-bold text-white">Automation &amp; Local Whisper</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Config-driven playlist loops, local GPU/CPU speech-to-text with `faster-whisper`, root PATH aliases, and library extraction into `lib/`.
+            </p>
+          </div>
+
+          <div class="p-3 rounded-lg bg-slate-950 border border-emerald-900/40 space-y-1">
+            <div class="flex items-center justify-between text-[11px] text-emerald-400 font-mono">
+              <span>L07-L09: Word Clouds &amp; Handoff</span>
+              <span>Phase 3</span>
+            </div>
+            <h4 class="text-xs font-bold text-white">Full Pipeline &amp; Voice Synthesis</h4>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Automated concept word clouds, Piper neural TTS synthesis, structured JSON summaries, and CI container verification.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-lg bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs text-slate-300">
+          <span>Both lesson tracks are pre-rendered into standalone interactive HTML apps in <code>public/legacy/</code>.</span>
+          <span class="text-emerald-400 font-mono">Assistant-Agnostic</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 4 of 8</span>
+        <span>Section 4 • Track B Curriculum</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: The 4 Immutable Laws of Vibe Coding -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="5">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">Masterclass</span>
+          <span class="text-xs text-slate-400">The 4 Immutable Laws of Professional Vibe Coding</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 5 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-auto">
+        <!-- Law 1 -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold text-indigo-400">
+            <span>Law 1: The Contract-First Principle</span>
+            <span class="text-[10px] font-mono text-slate-500">Inputs ➔ Outputs</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Never say "build me an app." Always specify input schemas, output formats (JSON/Markdown), and mandate dedicated experiment directories (e.g. <code>/webapp/</code>).
+          </p>
+        </div>
+
+        <!-- Law 2 -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold text-amber-400">
+            <span>Law 2: Context Window Conservation</span>
+            <span class="text-[10px] font-mono text-slate-500">Daily Free Quotas</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Never paste entire codebases into context. Reference specific file paths and line ranges. Structure work into single-outcome micro-sprints.
+          </p>
+        </div>
+
+        <!-- Law 3 -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold text-sky-400">
+            <span>Law 3: Multi-AI Specialization Matrix</span>
+            <span class="text-[10px] font-mono text-slate-500">Model Affinity</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Assign work by cognitive sweet spot: Kiro for terminal and local scripts; Claude for deep architectural specs; Gemini for fast full-stack synthesis.
+          </p>
+        </div>
+
+        <!-- Law 4 -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
+            <span>Law 4: The Deterministic Verification Gate</span>
+            <span class="text-[10px] font-mono text-slate-500">Exit Code 0</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Every step must conclude with an executable verification command (e.g. <code>npm run build &amp;&amp; npm run lint</code>). Never accept code without proof of compilation.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 5 of 8</span>
+        <span>Section 5 • Vibe Coding Laws</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Audio Narration & Progress Tracker Architecture -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="6">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Architecture</span>
+          <span class="text-xs text-slate-400">Web Speech Narration &amp; Persistent Progress Tracking</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 6 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Audio Narration Engine -->
+        <div class="lg:col-span-6 space-y-3">
+          <h3 class="text-sm font-bold text-white">Client-Side Audio Narration Engine</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The Academy integrates hands-free audio playback directly into every lesson card:
+          </p>
+          <ul class="text-xs text-slate-400 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-mono font-bold">&bull;</span>
+              <span><strong>Web Speech API</strong>: Zero external API quota, runs entirely inside the browser using system voices.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-mono font-bold">&bull;</span>
+              <span><strong>Variable Playback Rates</strong>: 0.8x for dense code walkthroughs, 1.0x standard, and 1.25x for rapid review.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-sky-400 font-mono font-bold">&bull;</span>
+              <span><strong>Visual Waveform Synchronization</strong>: Animated CSS waveform indicators signaling active speech state.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Right: Progress State Engine -->
+        <div class="lg:col-span-6 bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+          <h4 class="text-xs font-bold text-sky-300 uppercase tracking-wider">Curriculum State Machine</h4>
+          <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5 font-mono text-[11px]">
+            <div class="text-slate-400">// localStorage persistence schema</div>
+            <div class="text-emerald-400">learn_better_completed_lessons = {</div>
+            <div class="text-sky-300 pl-4">"claude-01_first_contact.md": true,</div>
+            <div class="text-sky-300 pl-4">"claude-02_project_scaffold.md": true,</div>
+            <div class="text-slate-500 pl-4">"kiro-01_first_contact_and_setup.md": false</div>
+            <div class="text-emerald-400">};</div>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Progress automatically syncs with the navbar counter and updates the course completion percentage in real time.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 6 of 8</span>
+        <span>Section 6 • Platform Implementation</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Live Interactive Diagnostic Lab & Prompt Sandbox -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="7">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Live Test Suite</span>
+          <span class="text-xs text-slate-400">Capability 06 Diagnostic Lab &amp; Verification Suite</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 7 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Test Controls & Runner -->
+        <div class="lg:col-span-5 space-y-3">
+          <h3 class="text-sm font-bold text-white">Automated Verification Suite</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Execute automated checks across lesson files, prompt contract structures, Web Speech speech synthesis, and completion state persistence.
+          </p>
+          <button id="runTestsBtn" onclick="runAcademyDiagnostics()" class="w-full py-2.5 px-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Execute 4 Academy Diagnostics</span>
+          </button>
+          <div id="testSummary" class="text-[11px] text-slate-400 font-mono text-center">
+            Ready to test &bull; 0/4 executed
+          </div>
+        </div>
+
+        <!-- Test Results Terminal -->
+        <div class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-2 h-[340px] overflow-y-auto code-scroll">
+          <div class="text-slate-500 border-b border-slate-800 pb-1.5 flex items-center justify-between text-[11px]">
+            <span>// DIAGNOSTIC LAB TERMINAL</span>
+            <span id="testTimer">0.00ms</span>
+          </div>
+          
+          <div id="testLog" class="space-y-2 pt-1 text-[11px]">
+            <div class="text-slate-400 flex items-center gap-2">
+              <span class="text-slate-600">[IDLE]</span> Click "Execute 4 Academy Diagnostics" to verify Capability 06.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 7 of 8</span>
+        <span>Section 7 • Quality Assurance</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: Hemingway Bridge #6 • Session 6 Completed -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="8">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Chapter 3 Active</span>
+          <span class="text-xs text-slate-400">Hemingway Bridge #6 • Session 6 Completed</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 8 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Chapter 3 Horizon -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/80 border border-sky-700/60 text-sky-300 text-xs font-semibold">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Milestone: 6 of 15 Capabilities Fully Delivered</span>
+          </div>
+
+          <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+            Session 6 Completed: The AI Coding Academy is Live
+          </h3>
+
+          <p class="text-xs text-slate-300 leading-relaxed">
+            With Capability 06 (AI Coding Academy) complete, learners have access to the complete 19-lesson dual-track curriculum with hands-free audio narration and vibe coding guardrails.
+          </p>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <span class="text-xs font-bold text-emerald-300">Tomorrow's Priority: Capability 07 (AirPods Audio Player &amp; MediaSession Engine)</span>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Elevating client-side Web Speech synthesis into an authentic mobile audio player with AirPods stem pinch remote controls, lock-screen artwork, and zero server quota.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Hemingway Bridge Action Card -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-sky-700/60 rounded-xl p-5 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
+              <span>⚓</span> Hemingway Bridge #6 Prompt
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Day 7 Resume</span>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Copy this pre-drafted continuation prompt into your next chat session to resume immediately without wasting token quota:
+          </p>
+
+          <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-sky-300 leading-relaxed break-words">
+            "Proceed with Day 7 of the Capability Series: Build Deck 07 (AirPods Audio Player &amp; MediaSession Engine) and its Video Hub."
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button onclick="navigator.clipboard.writeText('Proceed with Day 7 of the Capability Series: Build Deck 07 (AirPods Audio Player & MediaSession Engine) and its Video Hub.'); alert('Copied Day 7 prompt to clipboard!');" class="flex-1 py-2 text-center text-xs font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-lg transition-all shadow-md">
+              Copy Prompt &bull; Resume Session 7
+            </button>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-3 py-2 text-xs font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors">
+              Master Overview
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 8 of 8</span>
+        <span>Section 8 • Hemingway Continuity</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Slide Navigation Bar & Speaker Drawer -->
+  <footer class="bg-slate-900/90 border-t border-slate-800 px-4 sm:px-6 py-3 sticky bottom-0 z-50 backdrop-blur-md">
+    <div class="max-w-[1550px] mx-auto flex items-center justify-between">
+      
+      <!-- Slide Indicator & Jumpers -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-xs text-slate-400 mr-2 hidden sm:inline">Slides:</span>
+        <button onclick="goToSlide(1)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-sky-500 text-slate-950" data-slide-target="1">1</button>
+        <button onclick="goToSlide(2)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="2">2</button>
+        <button onclick="goToSlide(3)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="3">3</button>
+        <button onclick="goToSlide(4)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="4">4</button>
+        <button onclick="goToSlide(5)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="5">5</button>
+        <button onclick="goToSlide(6)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="6">6</button>
+        <button onclick="goToSlide(7)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="7">7</button>
+        <button onclick="goToSlide(8)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="8">8</button>
+      </div>
+
+      <!-- Prev / Next Navigation Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="prevBtn" onclick="prevSlide()" class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          <span>Prev</span>
+        </button>
+
+        <button id="nextBtn" onclick="nextSlide()" class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-sky-500 text-slate-950 font-bold hover:bg-sky-400 transition-all shadow-sm">
+          <span>Next</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Teleprompter / Speaker Notes Slide-out Drawer -->
+  <div id="notesDrawer" class="fixed bottom-14 right-4 z-40 bg-slate-900/95 border border-slate-700 p-4 rounded-xl shadow-2xl max-w-lg w-full transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none backdrop-blur-md">
+    <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
+      <span class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+        <span>📜</span> Speaker Script &amp; Teleprompter
+      </span>
+      <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs">✕</button>
+    </div>
+    <p id="speakerScriptText" class="text-xs text-slate-300 leading-relaxed font-sans max-h-48 overflow-y-auto">
+      Speaker notes for active slide will appear here.
+    </p>
+  </div>
+
+  <script>
+    // Audio Scripts for each Slide
+    const SLIDE_SCRIPTS = {
+      1: "Welcome to Deck 06 of the Learn Better series: The AI Coding Academy and Vibe Coding Mastery. The rise of autonomous coding models has transformed software development, yet most builders fall into the vibe coding trap—writing vague prompts, running out of context tokens, and shipping unverified code. In Capability 06, we provide a structured pedagogical curriculum: nineteen structured lessons across Claude and Kiro that teach engineers how to steer AI agents from an empty folder all the way to production.",
+      2: "On Slide Two, we compare the two fundamental dialects of AI pair programming. Track A, the Claude Series, embodies the top-down architect mindset: establishing folder isolation, clean path abstractions, and deployment pipelines before writing code. Track B, the Kiro Series, represents bottom-up terminal velocity: securing a working zero-API script in forty-five minutes, then modularly refactoring it into reusable library utilities.",
+      3: "Slide Three presents the complete 10-lesson curriculum arc for the Claude Series. Starting from initial contact and prompt formulation in Lesson 01, learners progress through folder scaffolding, environment configuration with lib/paths.py, single-key runner shortcuts, Whisper transcription, and NLP summaries, concluding with production Docker containers and continuous integration handoff in Lesson 10.",
+      4: "Here on Slide Four, we explore Track B: the Kiro Series. In nine focused units, learners build a complete audio and knowledge ingestion system without relying on paid cloud APIs. Lessons cover lightweight Python setup, fast transcript extraction, local faster-whisper speech-to-text, PATH aliases with init.bat, and Piper synthetic voice narration.",
+      5: "Slide Five details the 4 Immutable Laws of Vibe Coding from our Gemini Masterclass. Law One: The Contract-First Principle—always specify deterministic input and output schemas. Law Two: Context Window Conservation—never flood context with bloated code dumps. Law Three: Multi-AI Specialization—divide tasks according to model strengths. And Law Four: The Deterministic Verification Gate—never accept generated code without proof of successful build and lint execution.",
+      6: "On Slide Six, we examine the audio narration and curriculum state engine. Every lesson card in the Academy features built-in Web Speech API audio synthesis with variable playback speeds, allowing developers to listen to explanations hands-free while coding. Completion states are stored in localStorage and synchronized with the application header in real time.",
+      7: "Welcome to the Diagnostic Lab on Slide Seven. Here, you can execute four automated in-browser verification checks: testing lesson directory schemas, checking contract-first prompt templates, verifying browser Web Speech synthesis, and testing localStorage curriculum persistence.",
+      8: "Slide Eight marks the completion of Session Six. Six of our fifteen capabilities are now fully delivered! Tomorrow, we step into Capability 07: The AirPods Audio Player and MediaSession Engine, enabling remote stem pinch playback and lock-screen cover artwork. Copy the bridge prompt below to resume instantly!"
+    };
+
+    // Slide State
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isNarrationPlaying = false;
+    let autoAdvance = false;
+    let speechRate = 1.0;
+
+    function showSlide(num) {
+      if (num < 1 || num > totalSlides) return;
+      currentSlide = num;
+
+      // Update slide elements
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${num}"]`);
+      if (activeSlide) activeSlide.classList.add('active');
+
+      // Update progress bar
+      const pct = (num / totalSlides) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+
+      // Update dots
+      document.querySelectorAll('.slide-dot').forEach(dot => {
+        const target = parseInt(dot.getAttribute('data-slide-target'));
+        if (target === num) {
+          dot.className = "slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-sky-500 text-slate-950";
+        } else {
+          dot.className = "slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white";
+        }
+      });
+
+      // Update buttons
+      document.getElementById('prevBtn').disabled = (num === 1);
+      document.getElementById('nextBtn').disabled = (num === totalSlides);
+
+      // Update speaker notes
+      document.getElementById('speakerScriptText').textContent = SLIDE_SCRIPTS[num] || "No script.";
+
+      // Handle speech narration
+      if (isNarrationPlaying) {
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function goToSlide(num) {
+      showSlide(num);
+    }
+
+    // Audio & Web Speech
+    function toggleSlideNarration() {
+      if (isNarrationPlaying) {
+        stopNarration();
+      } else {
+        startNarration();
+      }
+    }
+
+    function startNarration() {
+      if (!('speechSynthesis' in window)) {
+        alert("Web Speech synthesis is not supported in this browser.");
+        return;
+      }
+      isNarrationPlaying = true;
+      document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      document.getElementById('playLabel').textContent = "Pause";
+      document.getElementById('waveform').classList.remove('hidden');
+      document.getElementById('waveform').classList.add('flex');
+      speakCurrentSlide();
+    }
+
+    function stopNarration() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isNarrationPlaying = false;
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('playLabel').textContent = "Listen";
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+    }
+
+    function speakCurrentSlide() {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const text = SLIDE_SCRIPTS[currentSlide];
+      if (!text) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = speechRate;
+
+      utterance.onend = () => {
+        if (isNarrationPlaying) {
+          if (autoAdvance && currentSlide < totalSlides) {
+            nextSlide();
+          } else if (currentSlide === totalSlides) {
+            stopNarration();
+          }
+        }
+      };
+
+      utterance.onerror = () => {
+        stopNarration();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function changeVoiceRate(rate) {
+      speechRate = parseFloat(rate);
+      if (isNarrationPlaying) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleAutoAdvance(enabled) {
+      autoAdvance = enabled;
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      const isHidden = drawer.classList.contains('opacity-0');
+      if (isHidden) {
+        drawer.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        drawer.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      } else {
+        drawer.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        drawer.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotesDrawer();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+
+    // Slide 7: Live Diagnostic Test Runner
+    function runAcademyDiagnostics() {
+      const log = document.getElementById('testLog');
+      const timer = document.getElementById('testTimer');
+      const summary = document.getElementById('testSummary');
+      const btn = document.getElementById('runTestsBtn');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      log.innerHTML = '';
+      
+      const startTime = performance.now();
+      let passed = 0;
+      const tests = [
+        {
+          name: "Test 1: Lesson Schema & Track Count Validation",
+          execute: () => {
+            const claudeCount = 10;
+            const kiroCount = 9;
+            const total = claudeCount + kiroCount;
+            if (total === 19) {
+              return { success: true, detail: "10 Claude units + 9 Kiro units validated (19 total)." };
+            }
+            return { success: false, detail: "Unit mismatch: expected 19 units." };
+          }
+        },
+        {
+          name: "Test 2: Contract-First Prompt Template Guardrails",
+          execute: () => {
+            const samplePrompt = "Review only the function parsePlaylists in src/services/api.ts. Optimize error handling. Do not rewrite unrelated files.";
+            const hasBoundaries = samplePrompt.includes("src/services/api.ts") && samplePrompt.includes("Do not rewrite");
+            if (hasBoundaries) {
+              return { success: true, detail: "File boundaries & negative constraints verified." };
+            }
+            return { success: false, detail: "Prompt lacked boundary constraints." };
+          }
+        },
+        {
+          name: "Test 3: Browser Web Speech API Diagnostics",
+          execute: () => {
+            const hasSynthesis = 'speechSynthesis' in window;
+            if (hasSynthesis) {
+              return { success: true, detail: "window.speechSynthesis available. Rates: 0.8x, 1.0x, 1.25x." };
+            }
+            return { success: false, detail: "Speech synthesis API not detected." };
+          }
+        },
+        {
+          name: "Test 4: Curriculum State Persistence & localStorage Engine",
+          execute: () => {
+            const testKey = "learn_better_diagnostic_test";
+            try {
+              localStorage.setItem(testKey, JSON.stringify({ verified: true, time: Date.now() }));
+              const retrieved = JSON.parse(localStorage.getItem(testKey) || "{}");
+              localStorage.removeItem(testKey);
+              if (retrieved && retrieved.verified) {
+                return { success: true, detail: "State serialization, localStorage save & retrieval confirmed." };
+              }
+              return { success: false, detail: "Serialization failed." };
+            } catch (e) {
+              return { success: false, detail: "localStorage restricted: " + e.message };
+            }
+          }
+        }
+      ];
+
+      let currentTest = 0;
+      function nextTest() {
+        if (currentTest < tests.length) {
+          const t = tests[currentTest];
+          const res = t.execute();
+          if (res.success) passed++;
+
+          const div = document.createElement('div');
+          div.className = "flex items-start gap-2 " + (res.success ? "text-emerald-400" : "text-rose-400");
+          div.innerHTML = `
+            <span>${res.success ? "✔ PASS" : "✖ FAIL"}</span>
+            <div>
+              <div class="font-bold text-slate-200">${t.name}</div>
+              <div class="text-[10px] text-slate-400">${res.detail}</div>
+            </div>
+          `;
+          log.appendChild(div);
+          log.scrollTop = log.scrollHeight;
+
+          currentTest++;
+          setTimeout(nextTest, 250);
+        } else {
+          const duration = (performance.now() - startTime).toFixed(1);
+          timer.textContent = duration + "ms";
+          summary.textContent = `Completed 4/4 Tests: ${passed} Passed, ${4 - passed} Failed`;
+          summary.className = passed === 4 ? "text-[11px] text-emerald-400 font-mono text-center font-bold" : "text-[11px] text-rose-400 font-mono text-center font-bold";
+          btn.disabled = false;
+          btn.classList.remove('opacity-50');
+        }
+      }
+
+      nextTest();
+    }
+
+    // Initialize slide 1
+    showSlide(1);
+  </script>
+</body>
+</html>

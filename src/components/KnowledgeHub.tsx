@@ -109,7 +109,8 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({
   const generateObsidianMarkdown = (): string => {
     if (!currentClip) return '';
     const dateStr = new Date().toISOString().split('T')[0];
-    const tagsList = currentClip.tags.map(t => `#${t.toLowerCase()}`).join(' ');
+    const safeTags = currentClip.tags || [];
+    const tagsList = safeTags.map(t => `#${t.toLowerCase()}`).join(' ');
 
     return `---
 title: "${currentClip.title}"
@@ -117,7 +118,7 @@ source: "https://www.youtube.com/watch?v=${currentClip.id}"
 channel: "${currentClip.channel}"
 status: "${currentClip.status}"
 date: "${dateStr}"
-tags: [${currentClip.tags.map(t => `"${t}"`).join(', ')}]
+tags: [${safeTags.map(t => `"${t}"`).join(', ')}]
 ---
 
 # ${currentClip.title}
@@ -126,7 +127,7 @@ tags: [${currentClip.tags.map(t => `"${t}"`).join(', ')}]
 > - **Channel**: ${currentClip.channel}
 > - **Video Link**: [Watch on YouTube](https://www.youtube.com/watch?v=${currentClip.id})
 > - **Status**: ${currentClip.status}
-> - **Tags**: ${tagsList}
+> - **Tags**: ${tagsList || 'None'}
 
 ## 💡 Key Takeaways & Summaries
 ${matchingSummary ? matchingSummary.oneLineTakeaway : 'Extracted directly via Learn-Better knowledge hub.'}
@@ -188,10 +189,33 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
       {/* Header */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white flex items-center gap-2">
-            <BrainCircuit className="w-5 h-5 text-indigo-400" />
-            Personal Knowledge Hub
-          </h1>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl font-bold text-white flex items-center gap-2">
+              <BrainCircuit className="w-5 h-5 text-indigo-400" />
+              Personal Knowledge Hub
+            </h1>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 uppercase tracking-wider">
+              Capability 05
+            </span>
+            <a
+              href="/decks/05_CAPABILITY_KNOWLEDGE_HUB.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-emerald-400 border border-slate-700 hover:bg-slate-700 hover:text-emerald-300 transition-colors flex items-center gap-1"
+              title="Open Capability 05 Interactive Slide Deck"
+            >
+              <span>Deck 05 ↗</span>
+            </a>
+            <a
+              href="/videos/05_CAPABILITY_KNOWLEDGE_HUB_VIDEO.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-rose-400 border border-slate-700 hover:bg-slate-700 hover:text-rose-300 transition-colors flex items-center gap-1"
+              title="Open Capability 05 Interactive Video Hub Simulator"
+            >
+              <span>🎬 Video ↗</span>
+            </a>
+          </div>
           <p className="text-sm text-slate-400 mt-1">
             Consolidate key takeaways, record questions, draft AI prompts, and export Obsidian-ready study notes.
           </p>
@@ -583,9 +607,12 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
                             <Layers className="w-3.5 h-3.5" /> Core Concepts
                           </h5>
                           <ul className="text-[11px] text-slate-400 list-disc list-inside space-y-1">
-                            {currentClip.tags.map(t => (
+                            {(currentClip.tags || []).map(t => (
                               <li key={t}>{t}</li>
                             ))}
+                            {(!currentClip.tags || currentClip.tags.length === 0) && (
+                              <li className="list-none text-slate-500 italic">No tags assigned</li>
+                            )}
                           </ul>
                         </div>
 

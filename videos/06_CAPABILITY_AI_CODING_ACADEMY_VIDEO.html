@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 06 — AI Coding Academy</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #0c4a6e 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span> Video Hub • Cap 06
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">AI Coding Academy</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">NotebookLM Audio Overview &amp; Interactive Vibe Coding Simulator</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Launchers -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/06_CAPABILITY_AI_CODING_ACADEMY.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+        </svg>
+        <span>Open Deck 06 →</span>
+      </a>
+      <a href="/videos/06_NOTEBOOKLM_SOURCE_DOSSIER.md" target="_blank" class="px-2.5 py-1.5 text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors flex items-center gap-1">
+        <span>📄 Dossier</span>
+      </a>
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport Grid -->
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- Left / Center: Interactive Video Player Viewport (8 Cols) -->
+    <div class="lg:col-span-8 space-y-4">
+      
+      <!-- Video Screen Frame (16:9 Aspect Ratio) -->
+      <div id="videoContainer" class="relative w-full aspect-video studio-bg rounded-2xl border-2 border-slate-800 overflow-hidden shadow-2xl flex flex-col justify-between p-6 select-none group">
+        
+        <!-- Top Overlay Bar -->
+        <div class="flex items-center justify-between z-20">
+          <div class="flex items-center gap-2">
+            <span id="sceneBadge" class="text-xs font-bold px-2.5 py-1 rounded-md bg-sky-500/20 text-sky-300 border border-sky-500/40 uppercase tracking-wider backdrop-blur-sm">
+              Scene 1 of 5
+            </span>
+            <span id="sceneTitleOverlay" class="text-xs text-slate-300 font-medium bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-800 backdrop-blur-sm">
+              The Vibe Coding Crisis
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="videoClock" class="text-xs font-mono text-slate-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800">
+              00:00 / 04:45
+            </span>
+          </div>
+        </div>
+
+        <!-- Center Stage Visual Canvas -->
+        <div id="videoStage" class="my-auto w-full max-w-2xl mx-auto z-10 flex flex-col items-center justify-center text-center transition-all duration-500">
+          <!-- Rendered dynamically by current scene -->
+        </div>
+
+        <!-- Bottom Captions & Waveform Bar -->
+        <div class="z-20 space-y-2">
+          <div id="closedCaptions" class="bg-slate-950/90 border border-slate-800/80 p-3 rounded-xl backdrop-blur-md text-xs sm:text-sm text-slate-200 leading-relaxed text-center min-h-[56px] flex items-center justify-center">
+            <span id="captionText">Initializing Video Hub...</span>
+          </div>
+          
+          <!-- Progress Bar Track -->
+          <div class="w-full bg-slate-900/90 h-1.5 rounded-full overflow-hidden cursor-pointer" onclick="handleScrub(event)">
+            <div id="videoProgress" class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 h-full w-0 transition-all duration-200"></div>
+          </div>
+        </div>
+
+        <!-- Floating Ambient Background Waveform -->
+        <div id="ambientWaveform" class="absolute inset-0 pointer-events-none flex items-center justify-center gap-1.5 opacity-0 transition-opacity duration-500 z-0">
+          <span class="w-1.5 bg-sky-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-sky-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-sky-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-sky-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-sky-500/15 rounded-full waveform-bar"></span>
+        </div>
+      </div>
+
+      <!-- Playback Controls Toolbar -->
+      <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-2">
+          <button id="playPauseBtn" onclick="togglePlayback()" class="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-lg shadow-md transition-all">
+            <svg id="playPauseIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <span id="playButtonText">Play Video</span>
+          </button>
+          
+          <button onclick="prevScene()" class="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" title="Previous Scene">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          <button onclick="nextScene()" class="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" title="Next Scene">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Playback Speed -->
+          <div class="flex items-center gap-1.5 text-xs text-slate-400">
+            <span>Speed:</span>
+            <select id="speedSelect" onchange="changeSpeed(this.value)" class="bg-slate-800 text-slate-200 rounded px-2 py-1 border border-slate-700 outline-none">
+              <option value="0.8">0.8x</option>
+              <option value="1.0" selected>1.0x</option>
+              <option value="1.25">1.25x</option>
+            </select>
+          </div>
+
+          <!-- Audio Voice Source Toggle -->
+          <button id="voiceModeBtn" onclick="toggleVoiceMode()" class="px-2.5 py-1 text-xs font-semibold rounded bg-slate-800 text-sky-400 border border-slate-700 hover:bg-slate-750 transition-colors">
+            SpeechSynthesis
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Scene Playlist & Technical Storyboard Rail (4 Cols) -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+          <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <span>🎬</span> Video Storyboard Chapters
+          </h2>
+          <span class="text-[10px] font-mono text-sky-400">5 Scenes</span>
+        </div>
+
+        <div class="space-y-2">
+          <!-- Scene 1 Nav Card -->
+          <button id="sceneNav0" onclick="jumpToScene(0)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-sky-500/80 bg-sky-950/40 text-sky-200 transition-all shadow-md">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>01. The Vibe Coding Crisis</span>
+              <span class="font-mono text-[10px] text-sky-400">00:00 - 00:55</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Monolithic prompts vs. contract-first deterministic engineering.</p>
+          </button>
+
+          <!-- Scene 2 Nav Card -->
+          <button id="sceneNav1" onclick="jumpToScene(1)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>02. Track A: Claude 10-Lesson Arc</span>
+              <span class="font-mono text-[10px] text-slate-500">00:55 - 01:55</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Top-down architecture: scaffolding, runners, and Docker handoff.</p>
+          </button>
+
+          <!-- Scene 3 Nav Card -->
+          <button id="sceneNav2" onclick="jumpToScene(2)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>03. Track B: Kiro 9-Lesson Arc</span>
+              <span class="font-mono text-[10px] text-slate-500">01:55 - 02:55</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Bottom-up velocity: local Whisper STT, Piper TTS, and lib/ refactoring.</p>
+          </button>
+
+          <!-- Scene 4 Nav Card -->
+          <button id="sceneNav3" onclick="jumpToScene(3)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>04. 4 Laws of Vibe Coding</span>
+              <span class="font-mono text-[10px] text-slate-500">02:55 - 03:55</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Deterministic schemas, context window quotas, and verification gates.</p>
+          </button>
+
+          <!-- Scene 5 Nav Card -->
+          <button id="sceneNav4" onclick="jumpToScene(4)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>05. Audio &amp; The Day 7 Horizon</span>
+              <span class="font-mono text-[10px] text-slate-500">03:55 - 04:45</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Web Speech narration &amp; sneak peek of Capability 07 AirPods Player.</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- NotebookLM Production Guide -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-4 space-y-2 text-xs">
+        <h3 class="font-bold text-slate-200 flex items-center gap-1.5">
+          <span>🎙</span> Google NotebookLM Integration
+        </h3>
+        <p class="text-slate-400 leading-relaxed">
+          Load <code>videos/06_NOTEBOOKLM_SOURCE_DOSSIER.md</code> into NotebookLM to generate the 2-host audio overview. You can also import custom MP3 audio into this video simulator.
+        </p>
+        <div class="pt-2">
+          <input type="file" id="audioUpload" accept="audio/*" onchange="handleAudioUpload(event)" class="hidden">
+          <button onclick="document.getElementById('audioUpload').click()" class="w-full py-1.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg border border-slate-700 transition-colors text-[11px] flex items-center justify-center gap-1.5">
+            <span>Upload NotebookLM MP3</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // 5 Video Scenes Definition
+    const SCENES = [
+      {
+        id: 0,
+        badgeText: "Scene 1 of 5",
+        title: "The Vibe Coding Crisis",
+        timeRange: "00:00 - 00:55",
+        narrationText: "The rise of autonomous coding assistants has created a dangerous paradox. Anyone can type a sentence into an AI chatbot and watch code fly across the screen. But when that code breaks, when context windows overflow, or when files silently overwrite each other, most developers hit a brick wall. That is the vibe coding trap. In Capability 06 of Learn Better, we introduce the AI Coding Academy: an interactive 19-lesson dual-track curriculum that transforms haphazard prompting into disciplined, senior-grade AI software engineering.",
+        renderHtml: `
+          <div class="space-y-4 animate-fadeIn">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-bold uppercase tracking-wider">
+              The Vibe Coding Crisis
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Unstructured Prompting vs. Contract-First Engineering
+            </h2>
+            <div class="grid grid-cols-2 gap-4 max-w-lg mx-auto text-left pt-2">
+              <div class="p-3 rounded-xl bg-rose-950/40 border border-rose-800 text-xs">
+                <span class="text-rose-400 font-bold block">The Vibe Coding Trap</span>
+                <span class="text-slate-400 text-[11px] mt-1 block">"Build me an app" ➔ Hallucinations, lost context, broken dependencies.</span>
+              </div>
+              <div class="p-3 rounded-xl bg-sky-950/40 border border-sky-800 text-xs">
+                <span class="text-sky-400 font-bold block">The Academy Solution</span>
+                <span class="text-slate-400 text-[11px] mt-1 block">Contract-first schemas, isolated folders, and deterministic verification.</span>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 1,
+        badgeText: "Scene 2 of 5",
+        title: "Track A: Claude 10-Lesson Arc",
+        timeRange: "00:55 - 01:55",
+        narrationText: "Track A is the Claude Series: ten comprehensive lessons that walk you from an empty directory all the way to Dockerized production deployment. Claude approaches software through top-down architectural contracts. You learn how to establish clean directory boundaries, how to isolate paths with lib/paths.py, how to write single-key runner shortcuts, and how to recover when an AI assistant stalls or resets its context window. Every lesson features an explicit goal, a tested prompt, and an executable verification command.",
+        renderHtml: `
+          <div class="space-y-4 animate-fadeIn">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40 text-xs font-bold uppercase tracking-wider">
+              Track A &bull; Top-Down Specification
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              The Claude 10-Lesson Architectural Arc
+            </h2>
+            <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 max-w-md mx-auto text-left space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-sky-300">
+                <span>Curriculum Milestones</span>
+                <span class="text-[10px] font-mono text-slate-500">10 Lessons</span>
+              </div>
+              <div class="text-[11px] text-slate-300 space-y-1">
+                <div>&bull; L01-L03: Scaffolding, .gitignore, and <code>lib/paths.py</code></div>
+                <div>&bull; L04-L07: Runners, Faster-Whisper STT, and PATH aliases</div>
+                <div>&bull; L08-L10: Word clouds, Piper TTS, and Docker / CI handoff</div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 2,
+        badgeText: "Scene 3 of 5",
+        title: "Track B: Kiro 9-Lesson Arc",
+        timeRange: "01:55 - 02:55",
+        narrationText: "Complementing Claude is Track B: the Kiro Series. Where Claude focuses on deep system design, Kiro embodies terminal velocity. In nine focused sessions, you build local tools that turn YouTube streams into transcribed audio, word clouds, and synthetic speech without relying on expensive cloud APIs. You master the bottom-up development cycle: getting an early win script working in forty-five minutes, refactoring it into reusable library modules, and wiring it into your system PATH.",
+        renderHtml: `
+          <div class="space-y-4 animate-fadeIn">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold uppercase tracking-wider">
+              Track B &bull; Bottom-Up Velocity
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              The Kiro 9-Lesson Terminal Engine
+            </h2>
+            <div class="grid grid-cols-3 gap-2.5 max-w-lg mx-auto text-left pt-2">
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-emerald-900/60 text-xs">
+                <span class="text-emerald-400 font-bold block text-[11px]">Early Win</span>
+                <span class="text-slate-400 text-[10px] mt-0.5 block">Working script in 45m with zero API keys.</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-emerald-900/60 text-xs">
+                <span class="text-emerald-400 font-bold block text-[11px]">Local AI</span>
+                <span class="text-slate-400 text-[10px] mt-0.5 block">Faster-Whisper STT &amp; Piper TTS on device.</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-emerald-900/60 text-xs">
+                <span class="text-emerald-400 font-bold block text-[11px]">Shared lib/</span>
+                <span class="text-slate-400 text-[10px] mt-0.5 block">Refactoring into textutil.py &amp; net.py.</span>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 3,
+        badgeText: "Scene 4 of 5",
+        title: "4 Laws of Vibe Coding",
+        timeRange: "02:55 - 03:55",
+        narrationText: "To bind these tracks together, the Academy features the Gemini Vibe Coding Masterclass. Here we codify the four immutable laws of AI pair programming: First, always contract inputs and outputs before writing code. Second, never flood your context window—reference exact file lines to maximize free daily token quotas. Third, specialize your models—use Kiro for CLI speed, Claude for architectural rigor, and Gemini for multimodal reasoning. And fourth, never accept code without a deterministic verification command.",
+        renderHtml: `
+          <div class="space-y-4 animate-fadeIn">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs font-bold uppercase tracking-wider">
+              Gemini Masterclass
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              The 4 Immutable Laws of Vibe Coding
+            </h2>
+            <div class="grid grid-cols-2 gap-2.5 max-w-lg mx-auto text-left pt-1">
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+                <span class="text-indigo-400 font-bold text-[11px]">1. Contract-First</span>
+                <p class="text-[10px] text-slate-400">Specify schemas and isolate new code folders.</p>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+                <span class="text-amber-400 font-bold text-[11px]">2. Context Budget</span>
+                <p class="text-[10px] text-slate-400">Target lines &amp; preserve free daily tokens.</p>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+                <span class="text-sky-400 font-bold text-[11px]">3. Model Affinity</span>
+                <p class="text-[10px] text-slate-400">Kiro for CLI, Claude for specs, Gemini for full-stack.</p>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs">
+                <span class="text-emerald-400 font-bold text-[11px]">4. Verification Gate</span>
+                <p class="text-[10px] text-slate-400">Never accept code without build &amp; lint exit 0.</p>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 4,
+        badgeText: "Scene 5 of 5",
+        title: "Audio & The Day 7 Horizon",
+        timeRange: "03:55 - 04:45",
+        narrationText: "Every lesson in the Academy features built-in speech synthesis, allowing you to listen to technical explanations hands-free while your IDE stays focused on the code. With Capability 06, you possess the operational playbook to build any modern AI system with total confidence. Six of our fifteen capabilities are now live. In our next session, we take this audio engine one step further with Capability 07: The AirPods Audio Player with lock-screen MediaSession remote controls. Copy the bridge prompt, and let's keep building!",
+        renderHtml: `
+          <div class="space-y-4 animate-fadeIn">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold uppercase tracking-wider">
+              Milestone &bull; 6 of 15 Capabilities Ready
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Session 6 Completed &bull; Next: Capability 07
+            </h2>
+            <div class="p-4 rounded-xl bg-slate-950/90 border border-emerald-800/60 max-w-md mx-auto text-left space-y-2">
+              <span class="text-xs font-bold text-emerald-300">Upcoming: AirPods Audio Player (Day 7)</span>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Client-side Web Speech synthesis with stem pinch remote controls, lock-screen artwork, and zero server quota.
+              </p>
+              <div class="pt-1">
+                <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="inline-block px-3 py-1.5 bg-emerald-500 text-slate-950 font-bold text-xs rounded-lg shadow">
+                  Curriculum Master Overview &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    // State Variables
+    let currentSceneIndex = 0;
+    let isPlaying = false;
+    let playbackSpeed = 1.0;
+    let customAudioElement = null;
+
+    function renderScene(index) {
+      currentSceneIndex = index;
+      const s = SCENES[index];
+
+      // Update Header Badges
+      document.getElementById('sceneBadge').textContent = s.badgeText;
+      document.getElementById('sceneTitleOverlay').textContent = s.title;
+      document.getElementById('captionText').textContent = s.narrationText;
+
+      // Update Stage Visual
+      document.getElementById('videoStage').innerHTML = s.renderHtml;
+
+      // Update Nav Buttons
+      for (let i = 0; i < SCENES.length; i++) {
+        const btn = document.getElementById('sceneNav' + i);
+        if (i === index) {
+          btn.className = "scene-nav-btn text-left p-2.5 rounded-xl border border-sky-500/80 bg-sky-950/40 text-sky-200 transition-all shadow-md";
+        } else {
+          btn.className = "scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all";
+        }
+      }
+
+      updateProgressBar();
+    }
+
+    function togglePlayback() {
+      if (isPlaying) {
+        pausePlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      isPlaying = true;
+      document.getElementById('playButtonText').textContent = "Pause Video";
+      document.getElementById('ambientWaveform').classList.remove('opacity-0');
+
+      if (customAudioElement) {
+        customAudioElement.play();
+      } else {
+        speakNarration(SCENES[currentSceneIndex].narrationText);
+      }
+    }
+
+    function pausePlayback() {
+      isPlaying = false;
+      document.getElementById('playButtonText').textContent = "Play Video";
+      document.getElementById('ambientWaveform').classList.add('opacity-0');
+
+      if (customAudioElement) {
+        customAudioElement.pause();
+      } else if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function speakNarration(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = playbackSpeed;
+
+      utterance.onend = () => {
+        if (isPlaying) {
+          if (currentSceneIndex < SCENES.length - 1) {
+            jumpToScene(currentSceneIndex + 1);
+            startPlayback();
+          } else {
+            pausePlayback();
+          }
+        }
+      };
+
+      utterance.onerror = () => {
+        pausePlayback();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function jumpToScene(index) {
+      if (index >= 0 && index < SCENES.length) {
+        const wasPlaying = isPlaying;
+        if (isPlaying) {
+          pausePlayback();
+        }
+        renderScene(index);
+        if (wasPlaying) {
+          startPlayback();
+        }
+      }
+    }
+
+    function nextScene() {
+      if (currentSceneIndex < SCENES.length - 1) {
+        jumpToScene(currentSceneIndex + 1);
+      }
+    }
+
+    function prevScene() {
+      if (currentSceneIndex > 0) {
+        jumpToScene(currentSceneIndex - 1);
+      }
+    }
+
+    function changeSpeed(val) {
+      playbackSpeed = parseFloat(val);
+      if (customAudioElement) {
+        customAudioElement.playbackRate = playbackSpeed;
+      }
+      if (isPlaying && !customAudioElement) {
+        speakNarration(SCENES[currentSceneIndex].narrationText);
+      }
+    }
+
+    function updateProgressBar() {
+      const pct = ((currentSceneIndex + 1) / SCENES.length) * 100;
+      document.getElementById('videoProgress').style.width = pct + '%';
+    }
+
+    function handleScrub(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = clickX / rect.width;
+      const targetIndex = Math.floor(ratio * SCENES.length);
+      jumpToScene(Math.min(targetIndex, SCENES.length - 1));
+    }
+
+    function handleAudioUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (customAudioElement) {
+        customAudioElement.pause();
+      }
+
+      customAudioElement = new Audio(URL.createObjectURL(file));
+      customAudioElement.playbackRate = playbackSpeed;
+      document.getElementById('voiceModeBtn').textContent = "NotebookLM MP3";
+      document.getElementById('voiceModeBtn').className = "px-2.5 py-1 text-xs font-semibold rounded bg-emerald-950 text-emerald-300 border border-emerald-700";
+
+      customAudioElement.onended = () => {
+        pausePlayback();
+      };
+
+      if (isPlaying) {
+        customAudioElement.play();
+      }
+    }
+
+    function toggleVoiceMode() {
+      if (customAudioElement) {
+        customAudioElement.pause();
+        customAudioElement = null;
+        document.getElementById('voiceModeBtn').textContent = "SpeechSynthesis";
+        document.getElementById('voiceModeBtn').className = "px-2.5 py-1 text-xs font-semibold rounded bg-slate-800 text-sky-400 border border-slate-700";
+        if (isPlaying) {
+          speakNarration(SCENES[currentSceneIndex].narrationText);
+        }
+      } else {
+        document.getElementById('audioUpload').click();
+      }
+    }
+
+    function toggleFullscreen() {
+      const elem = document.getElementById('videoContainer');
+      if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      if (e.key === ' ' || e.key === 'k') {
+        e.preventDefault();
+        togglePlayback();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextScene();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevScene();
+      } else if (e.key === 'f') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize Scene 0
+    renderScene(0);
+  </script>
+</body>
+</html>

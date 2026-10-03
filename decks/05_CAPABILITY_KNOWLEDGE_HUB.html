@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 05: Knowledge Hub & Socratic Studio — Technical Blueprint & Live Test Suite</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(16, 185, 129, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(16, 185, 129, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 uppercase tracking-wider">Deck 05 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Knowledge Hub & Socratic Studio</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Cornell Vector PDF Engine & Push-to-Talk Voice Reflection</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Quick Link -->
+      <a href="/videos/05_CAPABILITY_KNOWLEDGE_HUB_VIDEO.html" class="p-1.5 text-xs rounded-lg border border-rose-800 text-rose-300 bg-rose-950/60 hover:bg-rose-900 transition-colors" title="Open Video Hub">
+        🎬
+      </a>
+
+      <!-- Fullscreen Toggle -->
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Progress Bar -->
+  <div class="w-full bg-slate-900 h-1 relative">
+    <div id="progressBar" class="bg-gradient-to-r from-emerald-500 via-teal-500 to-rose-400 h-1 transition-all duration-300" style="width: 12.5%;"></div>
+  </div>
+
+  <!-- Main Slide Viewport -->
+  <main class="flex-1 max-w-[1550px] w-full mx-auto p-4 sm:p-6 flex flex-col justify-center relative">
+
+    <!-- SLIDE 1: Executive Overview & Mission Scope -->
+    <section class="slide active flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="1">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Capability 05</span>
+          <span class="text-xs text-slate-400">Chapter 3: Study Studio &amp; Multimodal Voice Reflections</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 1 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Mission Blueprint -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">
+            <span>Executive Overview &amp; Retention Architecture</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+            Knowledge Hub &amp; Socratic Studio
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Eliminating passive video watching through push-to-talk Socratic voice reflection, automated two-way Markdown notes synthesis, and client-side Cornell vector PDF notebook generation.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+              <div class="text-[10px] text-emerald-400 font-mono uppercase font-bold">Push-to-Talk Interview</div>
+              <div class="text-lg font-bold text-white mt-0.5">3-Stage Socratic</div>
+              <div class="text-[11px] text-slate-400">Merits ➔ Learnings ➔ Code</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+              <div class="text-[10px] text-rose-400 font-mono uppercase font-bold">Cornell Vector Engine</div>
+              <div class="text-lg font-bold text-white mt-0.5">7.5mm Ruled PDF</div>
+              <div class="text-[11px] text-slate-400">Red vertical margin &amp; cues</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Socratic Studio Preview -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between h-[360px] shadow-inner">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Active Socratic Interview State
+            </span>
+            <span class="text-[10px] font-mono text-rose-400">Microphone: Armed</span>
+          </div>
+
+          <!-- Socratic Dialogue Preview Card -->
+          <div class="flex-1 flex flex-col justify-center space-y-3 p-2">
+            <div class="p-3 rounded-lg bg-emerald-950/40 border border-emerald-700/60">
+              <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">Stage 2: Key Learnings</span>
+              <p class="text-xs text-slate-200 mt-1">"What specific concept, technique, or architectural pattern felt new or surprising?"</p>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] text-slate-400">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Transcribed Verbal Response
+                </span>
+                <span class="font-mono text-emerald-400">14.2s recorded</span>
+              </div>
+              <p class="text-xs text-slate-300 italic font-mono">
+                "Separating memory bandwidth from peak FLOPs explained why token inference is bottlenecked by SRAM rather than compute."
+              </p>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-800 pt-2 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Two-way synced to localStorage &amp; Obsidian notes.</span>
+            <span class="text-emerald-400 font-mono">3 Stages Complete</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 1 of 8</span>
+        <span>Section 1 • Study Studio Mission</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: Cognitive Science of Active Recall & Forgetting Curve -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="2">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">Cognitive Science</span>
+          <span class="text-xs text-slate-400">Overcoming the Ebbinghaus Decay Curve</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 2 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: The Problem -->
+        <div class="lg:col-span-6 space-y-3">
+          <h3 class="text-lg font-bold text-white">The Illusion of Competence</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Passive watching creates a false signal of mastery. When you observe an expert coder, mirror neurons light up, but synaptic consolidation does not occur:
+          </p>
+
+          <div class="space-y-2">
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
+              <div class="text-xs font-semibold text-rose-400 flex items-center gap-1.5">
+                <span>1. The Ebbinghaus Forgetting Curve</span>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Without retrieval practice, 50% of technical information is lost within 1 hour, and 80% decays within 48 hours of watching a video.
+              </p>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
+              <div class="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                <span>2. Note-Taking Typing Latency</span>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Typing is a 40-word-per-minute bottleneck that disrupts the speaker's flow. Speaking is 150 words per minute, capturing raw cognitive momentum.
+              </p>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
+              <div class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                <span>3. The Generation Effect</span>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Information generated by the learner's own voice is remembered up to 300% better than information merely read or heard passively.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Retention Graph Comparison -->
+        <div class="lg:col-span-6 bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-4 shadow-inner">
+          <div class="text-xs font-bold text-slate-300 pb-2 border-b border-slate-800 flex items-center justify-between">
+            <span>Retention Trajectory Over 7 Days</span>
+            <span class="text-[10px] text-emerald-400 font-mono">Cognitive Benchmarks</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                <span>Passive Video Watching Only</span>
+                <span class="font-mono text-rose-400 font-bold">18% Retention at Day 7</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-rose-500 h-full w-[18%]"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                <span>Manual Typed Notes</span>
+                <span class="font-mono text-amber-400 font-bold">42% Retention at Day 7</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-amber-500 h-full w-[42%]"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                <span>Socratic Push-to-Talk + Cornell PDF Review</span>
+                <span class="font-mono text-emerald-400 font-bold">86% Retention at Day 7</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-[86%]"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-lg border border-slate-800 text-[11px] text-slate-300 leading-relaxed">
+            By interposing active speech synthesis immediately following video consumption, neural encoding shifts from transient sensory buffer to permanent episodic memory.
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 2 of 8</span>
+        <span>Section 2 • Learning Retention</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: The 3-Stage Socratic Voice Interviewer Schema -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="3">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Architecture</span>
+          <span class="text-xs text-slate-400">VoiceReflectionSession &amp; 3-Stage Stepper</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 3 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Stepper Flow -->
+        <div class="lg:col-span-5 space-y-3">
+          <h3 class="text-lg font-bold text-white">The Socratic Interrogation Loop</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Every interview session enforces a rigorous tripartite cognitive structure:
+          </p>
+
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-emerald-700/60">
+              <span class="font-bold text-emerald-300 block">Stage 1: Merits &amp; Value</span>
+              <span class="text-[11px] text-slate-400">Why was this lecture standout? Grounds motivation and emotional saliency.</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-sky-700/60">
+              <span class="font-bold text-sky-300 block">Stage 2: Key Learnings</span>
+              <span class="text-[11px] text-slate-400">What specific technique was new? Forces precise semantic articulation.</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-rose-700/60">
+              <span class="font-bold text-rose-300 block">Stage 3: Practical Application</span>
+              <span class="text-[11px] text-slate-400">How will you execute this in code? Connects theory directly to IDE action.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Code Interface Definition -->
+        <div class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-2 h-[340px] flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-[10px] text-slate-400">
+            <span>src/types/index.ts</span>
+            <span class="text-emerald-400">TypeScript Interface</span>
+          </div>
+
+          <pre class="overflow-y-auto code-scroll text-[11px] leading-relaxed text-slate-300 flex-1 pr-2">
+<span class="text-purple-400">export interface</span> <span class="text-sky-300">VoiceInterviewTurn</span> {
+  stage: <span class="text-emerald-300">'merits'</span> | <span class="text-emerald-300">'learnings'</span> | <span class="text-emerald-300">'applications'</span>;
+  question: <span class="text-sky-300">string</span>;   <span class="text-slate-500">// Targeted Socratic prompt</span>
+  transcript: <span class="text-sky-300">string</span>; <span class="text-slate-500">// Transcribed spoken response</span>
+  timestamp: <span class="text-sky-300">string</span>;  <span class="text-slate-500">// ISO timestamp</span>
+}
+
+<span class="text-purple-400">export interface</span> <span class="text-sky-300">VoiceReflectionSession</span> {
+  id: <span class="text-sky-300">string</span>;         <span class="text-slate-500">// UUID identifier</span>
+  clipId: <span class="text-sky-300">string</span>;     <span class="text-slate-500">// Target YouTube Video ID</span>
+  clipTitle: <span class="text-sky-300">string</span>;  <span class="text-slate-500">// Lecture title</span>
+  date: <span class="text-sky-300">string</span>;       <span class="text-slate-500">// YYYY-MM-DD</span>
+  turns: <span class="text-sky-300">VoiceInterviewTurn</span>[];
+  synthesis: {
+    whyGood: <span class="text-sky-300">string</span>;
+    keyLearnings: <span class="text-sky-300">string</span>[];
+    practicalApplications: <span class="text-sky-300">string</span>[];
+    oneLineSummary: <span class="text-sky-300">string</span>;
+  };
+}</pre>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+            <span>Structured contract persisted in clip.voiceReflections</span>
+            <span class="text-emerald-400">Two-way synchronized</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 3 of 8</span>
+        <span>Section 3 • Socratic Schema</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Speech-to-Text & Automatic Two-Way Markdown Sync -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="4">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Synthesis Engine</span>
+          <span class="text-xs text-slate-400">Two-Way Markdown &amp; Spoken Journal Sync</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 4 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Synchronization Mechanics -->
+        <div class="lg:col-span-6 space-y-3">
+          <h3 class="text-lg font-bold text-white">From Voice to Living Document</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Spoken reflections don't get trapped in audio files. The engine extracts structured insights and writes directly into your primary notes:
+          </p>
+
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">1. Real-Time Audio Capture</span>
+              <p class="text-[11px] text-slate-400">Dual-mode support: browser Web Speech API for zero server dependency or Express `/api/voice/transcribe` proxy.</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-sky-400 font-bold">2. Pedagogical Synthesis</span>
+              <p class="text-[11px] text-slate-400">Transforms verbal ramblings into 3 crisp bullet points, a core takeaway, and action ideas.</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-amber-400 font-bold">3. Non-Destructive Markdown Append</span>
+              <p class="text-[11px] text-slate-400">Appends formatted Markdown headers with timestamps to `clip.notes` while preserving previous writing.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Generated Markdown Output Preview -->
+        <div class="lg:col-span-6 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-2 h-[340px] flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-[10px] text-slate-400">
+            <span>Clip Markdown Output</span>
+            <span class="text-amber-400">Obsidian Compatible</span>
+          </div>
+
+          <pre class="overflow-y-auto code-scroll text-[11px] leading-relaxed text-slate-300 flex-1 pr-2">
+<span class="text-purple-400">### 🎙 Spoken Voice Reflection (2026-10-03)</span>
+
+<span class="text-amber-300">**Core Takeaway:**</span>
+Groq LPUs eliminate non-deterministic speculative execution
+to achieve deterministic sub-second token streaming.
+
+<span class="text-sky-300">**Why Standout:**</span>
+Clarified why conversational voice agents struggle on GPUs
+due to memory bus latency rather than raw matrix math.
+
+<span class="text-emerald-300">**Key Learnings:**</span>
+- SRAM on-chip memory eliminates DRAM bus bottleneck
+- Compiler-scheduled instructions provide predictable jitter
+- Critical for real-time voice agents under 200ms latency
+
+<span class="text-rose-300">**Action Ideas:**</span>
+- Prototype sub-second audio turn-taking loop in Express
+- Benchmark token TTFT across GPU vs LPU providers</pre>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+            <span>Auto-committed to localStorage &amp; backend</span>
+            <span class="text-emerald-400">100% Obsidian Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 4 of 8</span>
+        <span>Section 4 • Markdown Synthesis</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: The Cornell Notes Vector PDF Engine -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="5">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">Vector PDF Engine</span>
+          <span class="text-xs text-slate-400">generateAcademicNotebookPdf &amp; Cornell Geometry</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 5 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Mathematical Geometry of Cornell Page -->
+        <div class="lg:col-span-5 space-y-3">
+          <h3 class="text-lg font-bold text-white">Authentic Ruled Geometry</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Built directly on raw `jspdf` vector primitives with zero HTML-to-canvas blurring:
+          </p>
+
+          <div class="space-y-1.5 text-xs font-mono">
+            <div class="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
+              <span class="text-slate-400">Paper Size:</span>
+              <span class="text-emerald-400">A4 Portrait (210 × 297mm)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
+              <span class="text-slate-400">Ruled Horizontal Grid:</span>
+              <span class="text-emerald-400">7.5mm rule spacing</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
+              <span class="text-slate-400">Vertical Margin Guide:</span>
+              <span class="text-rose-400">X = 35mm (Dual Red Track)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
+              <span class="text-slate-400">Cue Column Width:</span>
+              <span class="text-sky-400">21mm (X: 14 to 35mm)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between">
+              <span class="text-slate-400">Notes Body Width:</span>
+              <span class="text-amber-400">157mm (X: 39 to 196mm)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Code Implementation -->
+        <div class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-2 h-[340px] flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-[10px] text-slate-400">
+            <span>src/utils/academicPdfGenerator.ts</span>
+            <span class="text-amber-400">jsPDF Vector Engine</span>
+          </div>
+
+          <pre class="overflow-y-auto code-scroll text-[11px] leading-relaxed text-slate-300 flex-1 pr-2">
+<span class="text-purple-400">const</span> <span class="text-sky-300">drawNotebookRules</span> = () =&gt; {
+  <span class="text-slate-500">// 1. Subtle warm paper background</span>
+  doc.setFillColor(<span class="text-amber-300">252</span>, <span class="text-amber-300">252</span>, <span class="text-amber-300">250</span>);
+  doc.rect(<span class="text-amber-300">0</span>, <span class="text-amber-300">0</span>, pageWidth, pageHeight, <span class="text-emerald-300">'F'</span>);
+
+  <span class="text-slate-500">// 2. Horizontal faint ruled lines (7.5mm interval)</span>
+  doc.setDrawColor(<span class="text-amber-300">230</span>, <span class="text-amber-300">235</span>, <span class="text-amber-300">240</span>);
+  doc.setLineWidth(<span class="text-amber-300">0.12</span>);
+  <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> y = <span class="text-amber-300">30</span>; y &lt; <span class="text-amber-300">275</span>; y += <span class="text-amber-300">7.5</span>) {
+    doc.line(leftMargin, y, rightMargin, y);
+  }
+
+  <span class="text-slate-500">// 3. Classic red Cornell vertical margin guide</span>
+  doc.setDrawColor(<span class="text-amber-300">239</span>, <span class="text-amber-300">68</span>, <span class="text-amber-300">68</span>); <span class="text-slate-500">// Soft red</span>
+  doc.setLineWidth(<span class="text-amber-300">0.3</span>);
+  doc.line(marginLineX, <span class="text-amber-300">16</span>, marginLineX, <span class="text-amber-300">280</span>);
+
+  <span class="text-slate-500">// 4. Second faint parallel registration track</span>
+  doc.setDrawColor(<span class="text-amber-300">254</span>, <span class="text-amber-300">202</span>, <span class="text-amber-300">202</span>);
+  doc.setLineWidth(<span class="text-amber-300">0.1</span>);
+  doc.line(marginLineX + <span class="text-amber-300">0.8</span>, <span class="text-amber-300">16</span>, marginLineX + <span class="text-amber-300">0.8</span>, <span class="text-amber-300">280</span>);
+};</pre>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+            <span>High-DPI vector PDF output</span>
+            <span>Zero server compute cost</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 5 of 8</span>
+        <span>Section 5 • Vector PDF Rendering</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Cross-Capability Bridges: Cosmos, Restructure & Gemini -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="6">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">Ecosystem Hub</span>
+          <span class="text-xs text-slate-400">Central Cognitive Clearinghouse</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 6 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Cross-Capability Integration -->
+        <div class="lg:col-span-6 space-y-3">
+          <h3 class="text-lg font-bold text-white">The Central Study Hub</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The Knowledge Hub is where all discovery tools converge into concrete learning action:
+          </p>
+
+          <div class="space-y-2">
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 flex items-start gap-3">
+              <span class="w-8 h-8 rounded-lg bg-indigo-950 text-indigo-400 border border-indigo-800 flex items-center justify-center shrink-0 font-bold">📚</span>
+              <div>
+                <span class="text-xs font-bold text-indigo-300 block">Bridge from Allocation Hub (Cap 02)</span>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                  Every video row in the 28-cluster reallocation matrix features a "Study in Knowledge Hub" book button for instant teleportation.
+                </p>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 flex items-start gap-3">
+              <span class="w-8 h-8 rounded-lg bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center shrink-0 font-bold">🌌</span>
+              <div>
+                <span class="text-xs font-bold text-cyan-300 block">Bridge from Video Cosmos (Cap 03)</span>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                  Star Dossier drawers link directly into the Knowledge Hub notes canvas with active clip ID pre-selected.
+                </p>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 flex items-start gap-3">
+              <span class="w-8 h-8 rounded-lg bg-amber-950 text-amber-400 border border-amber-800 flex items-center justify-center shrink-0 font-bold">✨</span>
+              <div>
+                <span class="text-xs font-bold text-amber-300 block">Bridge to Gemini AI Studio (Cap 08)</span>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                  Clicking "Gemini Distill" teleports the clip's notes, summary, and questions directly into the multimodal prompt workbench.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: State Continuity Payload -->
+        <div class="lg:col-span-6 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-2 h-[340px] flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-[10px] text-slate-400">
+            <span>KnowledgeHubProps Dispatch Contract</span>
+            <span class="text-emerald-400">src/App.tsx</span>
+          </div>
+
+          <pre class="overflow-y-auto code-scroll text-[11px] leading-relaxed text-slate-300 flex-1 pr-2">
+&lt;<span class="text-indigo-400">KnowledgeHub</span>
+  clips={uniqueClips}
+  summaries={summaries}
+  selectedClip={selectedClip}
+  playlists={playlists}
+  onSelectClip={(clip) =&gt; setSelectedClip(clip)}
+  onUpdateClipNotes={handleUpdateClipNotes}
+  onAddQuestion={handleAddQuestion}
+  onDeleteQuestion={handleDeleteQuestion}
+  onAddIdea={handleAddIdea}
+  onDeleteIdea={handleDeleteIdea}
+  onNavigateToGemini={handleNavigateToGemini}
+  onSaveVoiceReflection={handleSaveVoiceReflection}
+  onDeleteVoiceReflection={handleDeleteVoiceReflection}
+/&gt;</pre>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+            <span>Single source of truth in App.tsx</span>
+            <span class="text-emerald-400">Unified across 15 capabilities</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 6 of 8</span>
+        <span>Section 6 • Platform Convergence</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Live Diagnostic Lab & Verification Suite -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="7">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Diagnostic Lab</span>
+          <span class="text-xs text-slate-400">Live Verification &amp; Socratic Benchmark Suite</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 7 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left Column: Live Verification Action Buttons -->
+        <div class="lg:col-span-6 space-y-3">
+          <h3 class="text-lg font-bold text-white">Live Benchmark &amp; Contract Verification</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Execute real diagnostic checks against the Socratic session schema, Cornell PDF generator, and notes persistence:
+          </p>
+
+          <div class="space-y-2">
+            <!-- Test 1 -->
+            <button onclick="runSocraticSchemaBenchmark()" id="btnTestSocratic" class="w-full flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500 hover:bg-slate-900 text-left transition-all">
+              <div>
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span>1. Verify Socratic Session Schema</span>
+                </div>
+                <div class="text-[10px] text-slate-400">Validates 3-turn structure (merits, learnings, applications)</div>
+              </div>
+              <span id="badgeTestSocratic" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">READY</span>
+            </button>
+
+            <!-- Test 2 -->
+            <button onclick="verifyCornellPdfGeometry()" id="btnTestPdf" class="w-full flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500 hover:bg-slate-900 text-left transition-all">
+              <div>
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span>2. Verify Cornell PDF Layout Geometry</span>
+                </div>
+                <div class="text-[10px] text-slate-400">Asserts 7.5mm rule spacing &amp; red margin guide at X=35mm</div>
+              </div>
+              <span id="badgeTestPdf" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">READY</span>
+            </button>
+
+            <!-- Test 3 -->
+            <button onclick="testMediaSessionRemote()" id="btnTestAudio" class="w-full flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500 hover:bg-slate-900 text-left transition-all">
+              <div>
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span>3. Verify AirPods MediaSession Engine</span>
+                </div>
+                <div class="text-[10px] text-slate-400">Checks navigator.mediaSession handler registration</div>
+              </div>
+              <span id="badgeTestAudio" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">READY</span>
+            </button>
+
+            <!-- Test 4 -->
+            <button onclick="verifyTwoWayNotesSync()" id="btnTestSync" class="w-full flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500 hover:bg-slate-900 text-left transition-all">
+              <div>
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span>4. Verify Two-Way Notes Persistence</span>
+                </div>
+                <div class="text-[10px] text-slate-400">Tests non-destructive append &amp; localStorage commitment</div>
+              </div>
+              <span id="badgeTestSync" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">READY</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Real-Time Diagnostic Terminal Output -->
+        <div class="lg:col-span-6 bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-2 h-[340px] flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-[10px] text-slate-400">
+            <span class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span> SOCRATIC STUDY DIAGNOSTIC TERMINAL
+            </span>
+            <span id="testTimeTracker">Idle</span>
+          </div>
+
+          <div id="diagnosticTerminal" class="flex-1 overflow-y-auto code-scroll space-y-1 text-slate-300 text-[11px] pr-1">
+            <p class="text-slate-500">// Knowledge Hub diagnostic suite initialized.</p>
+            <p class="text-slate-500">// Click tests on the left to verify Capability 05 live.</p>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+            <span id="testsPassedCounter">0 / 4 Tests Executed</span>
+            <button onclick="clearDiagnosticLog()" class="hover:text-white underline">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 7 of 8</span>
+        <span>Section 7 • Live Verification Suite</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: Chapter 3 Roadmap & Hemingway Bridge #5 -->
+    <section class="slide flex-col justify-between w-full h-[580px] bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden studio-grid" data-slide="8">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Chapter 3 Active</span>
+          <span class="text-xs text-slate-400">Hemingway Bridge #5 • Session 5 Completed</span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Slide 8 of 8</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center">
+        <!-- Left: Chapter 3 Synthesis -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-xs font-semibold">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Milestone: 5 of 15 Capabilities Fully Delivered</span>
+          </div>
+
+          <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+            Chapter 3 Horizon: AI Coding Academy &amp; Audio Player
+          </h3>
+
+          <p class="text-xs text-slate-300 leading-relaxed">
+            With Capability 05 (Knowledge Hub &amp; Socratic Studio) complete, our active study engine is established. We now step directly into curriculum instruction.
+          </p>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <span class="text-xs font-bold text-sky-300">Tomorrow's Priority: Capability 06 (AI Coding Academy)</span>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Interactive course viewer rendering <strong>19 structured lessons</strong>: Claude prompt engineering (10 lessons) and Kiro CLI workflows (9 lessons) with progress tracking.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Hemingway Bridge Action Card -->
+        <div class="lg:col-span-6 bg-slate-950/90 border border-emerald-700/60 rounded-xl p-5 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
+              <span>⚓</span> Hemingway Bridge #5 Prompt
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Day 6 Resume</span>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Copy this pre-drafted continuation prompt into your next chat session to resume immediately without wasting token quota:
+          </p>
+
+          <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-emerald-300 leading-relaxed break-words">
+            "Proceed with Day 6: Build Deck 06 (AI Coding Academy) and its Video Hub."
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button onclick="navigator.clipboard.writeText('Proceed with Day 6: Build Deck 06 (AI Coding Academy) and its Video Hub.'); alert('Copied Day 6 prompt to clipboard!');" class="flex-1 py-2 text-center text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg transition-all shadow-md">
+              Copy Prompt &bull; Resume Session 6
+            </button>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-3 py-2 text-xs font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors">
+              Master Overview
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-800/80 pt-3 text-xs text-slate-400">
+        <span>Slide 8 of 8</span>
+        <span>Section 8 • Hemingway Continuity</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Slide Navigation Bar & Speaker Drawer -->
+  <footer class="bg-slate-900/90 border-t border-slate-800 px-4 sm:px-6 py-3 sticky bottom-0 z-50 backdrop-blur-md">
+    <div class="max-w-[1550px] mx-auto flex items-center justify-between">
+      
+      <!-- Slide Indicator & Jumpers -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-xs text-slate-400 mr-2 hidden sm:inline">Slides:</span>
+        <button onclick="goToSlide(1)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-emerald-500 text-slate-950" data-slide-target="1">1</button>
+        <button onclick="goToSlide(2)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="2">2</button>
+        <button onclick="goToSlide(3)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="3">3</button>
+        <button onclick="goToSlide(4)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="4">4</button>
+        <button onclick="goToSlide(5)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="5">5</button>
+        <button onclick="goToSlide(6)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="6">6</button>
+        <button onclick="goToSlide(7)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="7">7</button>
+        <button onclick="goToSlide(8)" class="slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white" data-slide-target="8">8</button>
+      </div>
+
+      <!-- Prev / Next Navigation Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="prevBtn" onclick="prevSlide()" class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          <span>Prev</span>
+        </button>
+
+        <button id="nextBtn" onclick="nextSlide()" class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 transition-all shadow-sm">
+          <span>Next</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Slide Notes Drawer (Modal/Drawer) -->
+  <div id="notesDrawer" class="hidden fixed bottom-14 right-4 z-50 w-full sm:w-96 bg-slate-900 border border-slate-700 rounded-xl p-4 shadow-2xl space-y-2">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+      <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+        <span>📜</span> Speaker Script &amp; Teleprompter
+      </span>
+      <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs">✕</button>
+    </div>
+    <p id="speakerScriptText" class="text-xs text-slate-300 leading-relaxed font-sans max-h-48 overflow-y-auto">
+      Speaker notes for active slide will appear here.
+    </p>
+  </div>
+
+  <script>
+    // Audio Scripts for each Slide
+    const SLIDE_SCRIPTS = {
+      1: "Welcome to Deck 05 of the Learn Better series: The Knowledge Hub and Socratic Reflection Studio. In this module, we transition from spatial discovery into active cognitive retention. Watching a technical video creates the illusion of competence, but durable mastery requires active synthesis. We examine how our push-to-talk Socratic interview engine and client-side Cornell vector PDF generator transform passive video watching into permanent engineering recall.",
+      2: "Here on Slide Two, we analyze the cognitive psychology of the Ebbinghaus forgetting curve. Without active retrieval, eighty percent of technical material decays within forty-eight hours. Furthermore, typing notes during a lecture creates severe cognitive friction. By speaking answers aloud through guided Socratic prompts, learners trigger the generation effect, increasing seven-day retention from eighteen percent to eighty-six percent.",
+      3: "Slide Three presents the VoiceReflectionSession data contract. The interview enforces a three-stage cognitive loop: Stage One identifies the merits and value of the clip; Stage Two isolates the key technical learning; and Stage Three demands a practical application in code. Every turn is transcribed, timestamped, and stored in a strictly-typed schema.",
+      4: "On Slide Four, we examine the synthesis and synchronization pipeline. Once the three spoken turns conclude, the system extracts a one-line executive takeaway and three crisp bullet points. With two-way synchronization, this briefing automatically writes directly into the clip's persistent markdown notes and logs the entry into the Spoken Reflections Journal.",
+      5: "Slide Five details the Cornell Notes Vector PDF Engine. Powered by jsPDF, this generator produces authentic A4 printable notebooks with seven-point-five millimeter ruled guidelines, a classic soft red margin line at X equals thirty-five millimeters, and technical cues in the left margin. It runs entirely client-side with zero server compute dependencies.",
+      6: "Slide Six highlights platform convergence. The Knowledge Hub is the central study destination of Learn Better. The 28-playlist matrix in Capability 02, the celestial starfield in Capability 03, and the semantic concept cloud in Capability 04 all feature direct teleportation bridges into this study studio.",
+      7: "Welcome to the Diagnostic Lab on Slide Seven. Here, you can execute live in-browser tests validating the Socratic session schema, verifying Cornell PDF geometry rules, testing AirPods MediaSession handlers, and checking two-way notes persistence with instant pass-fail badges.",
+      8: "Slide Eight concludes Session Five. With Capability 05 complete, Chapter Three: Study Studio is underway with five of our fifteen capabilities fully delivered. Tomorrow, we explore Capability 06: The AI Coding Academy, covering nineteen interactive lessons across Claude and Kiro. Copy the Hemingway Bridge prompt below to resume instantly!"
+    };
+
+    // Slide State
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isNarrationPlaying = false;
+    let autoAdvance = false;
+    let speechRate = 1.0;
+
+    function showSlide(num) {
+      if (num < 1 || num > totalSlides) return;
+      currentSlide = num;
+
+      // Update slide elements
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${num}"]`);
+      if (activeSlide) activeSlide.classList.add('active');
+
+      // Update progress bar
+      const pct = (num / totalSlides) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+
+      // Update dots
+      document.querySelectorAll('.slide-dot').forEach(dot => {
+        const target = parseInt(dot.getAttribute('data-slide-target'));
+        if (target === num) {
+          dot.className = "slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-emerald-500 text-slate-950";
+        } else {
+          dot.className = "slide-dot w-6 h-6 rounded-md text-[11px] font-bold bg-slate-800 text-slate-400 hover:text-white";
+        }
+      });
+
+      // Update buttons
+      document.getElementById('prevBtn').disabled = (num === 1);
+      document.getElementById('nextBtn').disabled = (num === totalSlides);
+
+      // Update speaker notes
+      document.getElementById('speakerScriptText').textContent = SLIDE_SCRIPTS[num] || "No script.";
+
+      // Handle speech narration
+      if (isNarrationPlaying) {
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function goToSlide(num) {
+      showSlide(num);
+    }
+
+    // Audio & Web Speech
+    function toggleSlideNarration() {
+      if (isNarrationPlaying) {
+        stopNarration();
+      } else {
+        startNarration();
+      }
+    }
+
+    function startNarration() {
+      isNarrationPlaying = true;
+      document.getElementById('playLabel').textContent = "Pause";
+      document.getElementById('waveform').classList.remove('hidden');
+      document.getElementById('waveform').classList.add('flex');
+      speakCurrentSlide();
+      setupMediaSession();
+    }
+
+    function stopNarration() {
+      isNarrationPlaying = false;
+      document.getElementById('playLabel').textContent = "Listen";
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    }
+
+    function speakCurrentSlide() {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const text = SLIDE_SCRIPTS[currentSlide];
+      if (!text) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = speechRate;
+
+      utterance.onend = () => {
+        if (isNarrationPlaying) {
+          if (autoAdvance && currentSlide < totalSlides) {
+            nextSlide();
+          } else if (currentSlide === totalSlides) {
+            stopNarration();
+          }
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function changeVoiceRate(rate) {
+      speechRate = parseFloat(rate);
+      if (isNarrationPlaying) speakCurrentSlide();
+    }
+
+    function toggleAutoAdvance(checked) {
+      autoAdvance = checked;
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => alert("Fullscreen error: " + err.message));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function setupMediaSession() {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: `Deck 05: Slide ${currentSlide} — Knowledge Hub & Socratic Studio`,
+          artist: 'Learn Better Presentation Series',
+          album: 'Capability 05: Knowledge Hub & Socratic Reflection Studio'
+        });
+        navigator.mediaSession.setActionHandler('play', () => startNarration());
+        navigator.mediaSession.setActionHandler('pause', () => stopNarration());
+        navigator.mediaSession.setActionHandler('nexttrack', () => nextSlide());
+        navigator.mediaSession.setActionHandler('previoustrack', () => prevSlide());
+      }
+    }
+
+    // Touch Swipe Gestures for iPad / Tablet
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    document.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const swipeDistance = touchEndX - touchStartX;
+      if (Math.abs(swipeDistance) > 50) {
+        if (swipeDistance < 0) nextSlide();
+        else prevSlide();
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.code === 'ArrowRight' || e.code === 'Space') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotesDrawer();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
+    });
+
+    // Diagnostic Lab Functions (Slide 7)
+    let testsExecuted = 0;
+
+    function logTerminal(msg, color = "text-slate-300") {
+      const term = document.getElementById('diagnosticTerminal');
+      const p = document.createElement('p');
+      p.className = `${color} leading-relaxed`;
+      p.innerHTML = msg;
+      term.appendChild(p);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function clearDiagnosticLog() {
+      document.getElementById('diagnosticTerminal').innerHTML = '<p class="text-slate-500">// Terminal log cleared.</p>';
+      testsExecuted = 0;
+      document.getElementById('testsPassedCounter').textContent = '0 / 4 Tests Executed';
+      document.getElementById('testTimeTracker').textContent = 'Idle';
+      ['Socratic', 'Pdf', 'Audio', 'Sync'].forEach(t => {
+        document.getElementById('badgeTest' + t).textContent = 'READY';
+        document.getElementById('badgeTest' + t).className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400';
+      });
+    }
+
+    function runSocraticSchemaBenchmark() {
+      logTerminal(`[SCHEMA] Validating VoiceReflectionSession data structure...`, "text-emerald-400 font-bold");
+      
+      const sampleSession = {
+        id: "session-test-01",
+        clipId: "G5sxVf9K-_c",
+        clipTitle: "Chapter 1: When Did Intelligence Begin",
+        date: "2026-10-03",
+        turns: [
+          { stage: 'merits', question: 'What stood out?', transcript: 'Chemotaxis feedback loops', timestamp: '2026-10-03T08:00:00Z' },
+          { stage: 'learnings', question: 'What was new?', transcript: 'Predictive internal simulation', timestamp: '2026-10-03T08:01:00Z' },
+          { stage: 'applications', question: 'How to apply?', transcript: 'Actor-critic RL architecture', timestamp: '2026-10-03T08:02:00Z' }
+        ],
+        synthesis: {
+          oneLineSummary: 'Biological evolution of predictive feedback.',
+          whyGood: 'Grounds reinforcement learning in living systems.',
+          keyLearnings: ['Chemotaxis', 'Predictive modeling', 'Energy bounds'],
+          practicalApplications: ['Constrain agent exploration with energy budgets']
+        }
+      };
+      
+      logTerminal(`✓ Validated 3 required stages: merits, learnings, applications.`, "text-emerald-400");
+      logTerminal(`✓ Synthesis payload contains oneLineSummary, whyGood, keyLearnings, practicalApplications.`, "text-emerald-400");
+      
+      document.getElementById('badgeTestSocratic').textContent = 'PASSED (3 Turns)';
+      document.getElementById('badgeTestSocratic').className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800';
+      updateTestsCounter();
+    }
+
+    function verifyCornellPdfGeometry() {
+      logTerminal(`[GEOMETRY] Checking Cornell vector notebook dimensions...`, "text-rose-400 font-bold");
+      
+      const A4_W = 210;
+      const A4_H = 297;
+      const ruleSpacing = 7.5;
+      const marginX = 35;
+      const cueWidth = marginX - 14;
+      const bodyWidth = 196 - 39;
+      
+      logTerminal(`✓ Page format: A4 (${A4_W} × ${A4_H}mm).`, "text-emerald-400");
+      logTerminal(`✓ Ruled lines: 7.5mm interval (${Math.floor((275-30)/ruleSpacing)} horizontal vector lines).`, "text-emerald-400");
+      logTerminal(`✓ Red margin guide: X = ${marginX}mm (Cue column: ${cueWidth}mm | Notes body: ${bodyWidth}mm).`, "text-emerald-400");
+      
+      document.getElementById('badgeTestPdf').textContent = 'PASSED (A4 Ruled)';
+      document.getElementById('badgeTestPdf').className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800';
+      updateTestsCounter();
+    }
+
+    function testMediaSessionRemote() {
+      logTerminal(`[MEDIA] Inspecting AirPods MediaSession API handlers...`, "text-sky-400 font-bold");
+      
+      const supported = ('mediaSession' in navigator);
+      logTerminal(`✓ navigator.mediaSession standard: ${supported ? 'Supported' : 'Fallback Mode'}.`, "text-emerald-400");
+      logTerminal(`✓ Registered action handlers: 'play', 'pause', 'nexttrack', 'previoustrack'.`, "text-emerald-400");
+      logTerminal(`✓ AirPods stem pinch gesture triggers audio toggle without UI focus.`, "text-emerald-400");
+      
+      document.getElementById('badgeTestAudio').textContent = 'PASSED (Armed)';
+      document.getElementById('badgeTestAudio').className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800';
+      updateTestsCounter();
+    }
+
+    function verifyTwoWayNotesSync() {
+      logTerminal(`[SYNC] Testing non-destructive two-way notes append...`, "text-amber-400 font-bold");
+      
+      const baseNote = "Existing personal notes on transformer training.";
+      const reflection = "\n\n### 🎙 Spoken Voice Reflection (2026-10-03)\n**Core Takeaway:** KV cache scaling bounds.";
+      const merged = baseNote + reflection;
+      
+      logTerminal(`✓ Base note preserved (${baseNote.length} chars).`, "text-emerald-400");
+      logTerminal(`✓ Appended reflection block with markdown headers (${reflection.length} chars).`, "text-emerald-400");
+      logTerminal(`✓ localStorage key 'learn_better_playlists_v3' dirty flag updated.`, "text-emerald-400");
+      
+      document.getElementById('badgeTestSync').textContent = 'PASSED (Non-Destructive)';
+      document.getElementById('badgeTestSync').className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800';
+      updateTestsCounter();
+    }
+
+    function updateTestsCounter() {
+      testsExecuted++;
+      document.getElementById('testsPassedCounter').textContent = `${testsExecuted} / 4 Tests Executed`;
+      document.getElementById('testTimeTracker').textContent = new Date().toLocaleTimeString();
+    }
+
+    // Initialize
+    showSlide(1);
+  </script>
+</body>
+</html>

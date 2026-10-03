@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 05 — Knowledge Hub & Socratic Reflection Studio</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #064e3b 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Video Hub • Cap 05
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Knowledge Hub & Socratic Studio</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">NotebookLM Audio Overview & Interactive Study Simulator</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Launchers -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/05_CAPABILITY_KNOWLEDGE_HUB.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+        </svg>
+        <span>Open Deck 05 →</span>
+      </a>
+      <a href="/videos/05_NOTEBOOKLM_SOURCE_DOSSIER.md" target="_blank" class="px-2.5 py-1.5 text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors flex items-center gap-1">
+        <span>📄 Dossier</span>
+      </a>
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport Grid -->
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- Left / Center: Interactive Video Player Viewport (8 Cols) -->
+    <div class="lg:col-span-8 space-y-4">
+      
+      <!-- Video Screen Frame (16:9 Aspect Ratio) -->
+      <div id="videoContainer" class="relative w-full aspect-video studio-bg rounded-2xl border-2 border-slate-800 overflow-hidden shadow-2xl flex flex-col justify-between p-6 select-none group">
+        
+        <!-- Top Overlay Bar -->
+        <div class="flex items-center justify-between z-20">
+          <div class="flex items-center gap-2">
+            <span id="sceneBadge" class="text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase tracking-wider backdrop-blur-sm">
+              Scene 1 of 5
+            </span>
+            <span id="sceneTitleOverlay" class="text-xs text-slate-300 font-medium bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-800 backdrop-blur-sm">
+              The Illusion of Competence
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-mono text-emerald-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800" id="timeRemainingBadge">
+              05:00
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-800 font-semibold">
+              Chapter 3 Pioneer
+            </span>
+          </div>
+        </div>
+
+        <!-- Dynamic Visual Stage (Changes with Scene) -->
+        <div id="videoStage" class="flex-1 flex items-center justify-center relative my-4">
+          <!-- Populated by JavaScript renderScene() -->
+        </div>
+
+        <!-- Lower Subtitle / Teleprompter Display -->
+        <div class="z-20 bg-slate-950/85 backdrop-blur-md border border-slate-800/90 rounded-xl p-3 shadow-lg">
+          <div class="flex items-center gap-2 mb-1 text-[11px] text-emerald-400 font-semibold">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
+            </svg>
+            <span>Live Voice Narration (Web Speech Engine)</span>
+          </div>
+          <p id="captionText" class="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+            Initializing Capability 05: Knowledge Hub & Socratic Reflection Studio...
+          </p>
+        </div>
+
+        <!-- Animated Ambient Waveform in Corner -->
+        <div id="ambientWaveform" class="absolute bottom-5 right-5 z-20 flex items-end gap-1 opacity-0 transition-opacity">
+          <span class="waveform-bar w-1 bg-emerald-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-emerald-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-emerald-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-emerald-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-emerald-400 rounded-full"></span>
+        </div>
+
+      </div>
+
+      <!-- Video Control Deck (Timeline, Play/Pause, Speed, AirPods Status) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+        
+        <!-- Scrubber Progress Bar -->
+        <div class="flex items-center gap-3">
+          <span id="currentTimeLabel" class="text-xs font-mono text-slate-400 w-12 text-right">00:00</span>
+          <div class="flex-1 relative cursor-pointer" onclick="seekVideo(event)">
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div id="videoProgressBar" class="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-rose-500 w-0 transition-all duration-200"></div>
+            </div>
+          </div>
+          <span id="totalDurationLabel" class="text-xs font-mono text-slate-400 w-12">05:00</span>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          
+          <!-- Play / Pause & Skip Buttons -->
+          <div class="flex items-center gap-2">
+            <button id="prevSceneBtn" onclick="prevScene()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="Previous Scene (Shift+Left)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+              </svg>
+            </button>
+
+            <button id="masterPlayBtn" onclick="togglePlayback()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-md">
+              <svg id="playIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+              </svg>
+              <span id="playButtonText">Play Video</span>
+            </button>
+
+            <button id="nextSceneBtn" onclick="nextScene()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="Next Scene (Shift+Right)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Speed Toggles -->
+          <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+            <button onclick="setPlaybackSpeed(0.75)" class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white" data-speed="0.75">0.75x</button>
+            <button onclick="setPlaybackSpeed(1.0)" class="speed-btn px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 font-bold" data-speed="1.0">1.0x</button>
+            <button onclick="setPlaybackSpeed(1.25)" class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white" data-speed="1.25">1.25x</button>
+            <button onclick="setPlaybackSpeed(1.5)" class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white" data-speed="1.5">1.5x</button>
+          </div>
+
+          <!-- AirPods & MediaSession Indicator -->
+          <div class="flex items-center gap-2 text-xs text-slate-400 bg-slate-950/60 px-3 py-1.5 rounded-lg border border-slate-800">
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+            </svg>
+            <span>AirPods Stem Pinch Ready</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 5-Scene Chapter Navigation Grid -->
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Production Scenes (Click to Jump)</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+          
+          <button onclick="jumpToScene(0)" id="sceneNav0" class="scene-nav-btn text-left p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-950/30 text-emerald-200 transition-all">
+            <div class="text-[10px] text-emerald-400 font-mono font-bold">01 • 00:00</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">The Video Trap</div>
+          </button>
+
+          <button onclick="jumpToScene(1)" id="sceneNav1" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">02 • 00:55</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">Socratic Interview</div>
+          </button>
+
+          <button onclick="jumpToScene(2)" id="sceneNav2" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">03 • 02:05</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">AI Synthesis Sync</div>
+          </button>
+
+          <button onclick="jumpToScene(3)" id="sceneNav3" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">04 • 03:05</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">Cornell Vector PDF</div>
+          </button>
+
+          <button onclick="jumpToScene(4)" id="sceneNav4" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">05 • 04:05</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">Chapter 3 Roadmap</div>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Sidebar: Technical Dossier & Production Inspector (4 Cols) -->
+    <div class="lg:col-span-4 space-y-4">
+
+      <!-- NotebookLM Pipeline Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3 shadow-md">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            NotebookLM Audio Pipeline
+          </span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Ready</span>
+        </div>
+
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Google NotebookLM does not provide a public REST API. Use the generated source dossier below to produce a two-host deep dive audio discussion:
+        </p>
+
+        <ol class="text-xs text-slate-400 space-y-1.5 list-decimal list-inside bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <li>Download the markdown dossier.</li>
+          <li>Import into <a href="https://notebooklm.google.com" target="_blank" class="text-emerald-400 hover:underline">notebooklm.google.com</a>.</li>
+          <li>Click <strong>Generate Audio Overview</strong>.</li>
+          <li>Upload MP3 or listen live via speech synthesis.</li>
+        </ol>
+
+        <div class="pt-2 flex flex-col gap-2">
+          <a href="/videos/05_NOTEBOOKLM_SOURCE_DOSSIER.md" target="_blank" class="w-full py-2 text-center text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>View Source Dossier (.md)</span>
+          </a>
+
+          <label class="w-full py-2 text-center text-xs font-semibold bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 rounded-lg cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <span>Upload NotebookLM Audio (MP3/WAV)</span>
+            <input type="file" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)">
+          </label>
+        </div>
+
+      </div>
+
+      <!-- Active Socratic Stepper Matrix Preview -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3 shadow-md">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">3-Stage Socratic Protocol</span>
+          <span class="text-[10px] text-rose-400 font-mono">Push-to-Talk</span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="flex items-center justify-between text-emerald-300 font-bold mb-1">
+              <span>Stage 1: Merits & Value</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Step 1</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-normal">
+              Why was this clip standout and worth bookmarking?
+            </p>
+          </div>
+
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="flex items-center justify-between text-sky-300 font-bold mb-1">
+              <span>Stage 2: Key Learnings</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-sky-950 text-sky-300 border border-sky-800">Step 2</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-normal">
+              What specific concept or pattern did you absorb?
+            </p>
+          </div>
+
+          <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="flex items-center justify-between text-rose-300 font-bold mb-1">
+              <span>Stage 3: Practical Application</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-rose-950 text-rose-300 border border-rose-800">Step 3</span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-normal">
+              How will you immediately execute this in code?
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-2 text-[11px] text-slate-400 border-t border-slate-800 flex items-center justify-between">
+          <span>Active Recall Trigger: <strong>Spoken Voice</strong></span>
+          <span>Sync: <strong>Two-Way Notes</strong></span>
+        </div>
+
+      </div>
+
+      <!-- Quick Hop to Deck 05 Slide Deck -->
+      <div class="bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-800/60 rounded-xl p-5 space-y-3">
+        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>Explore Interactive Slide Deck</span>
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Deck 05 includes an 8-slide technical blueprint, interactive Socratic audio demo, Cornell PDF preview, and live diagnostic benchmark suite.
+        </p>
+        <a href="/decks/05_CAPABILITY_KNOWLEDGE_HUB.html" class="block w-full py-2.5 text-center text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg transition-all shadow-md">
+          Launch Deck 05 Presentation →
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // 5-Scene Production Data
+    const SCENES = [
+      {
+        index: 0,
+        title: "The Illusion of Competence & The Passive Video Trap",
+        durationSec: 55,
+        badgeText: "Scene 1 • The Retention Trap",
+        narrationText: "We have all experienced the passive video illusion. You watch a brilliant engineer build an AI agent from scratch. Everything feels obvious, logical, and clear. But two days later, when you open an empty IDE, you find yourself completely unable to recreate the architecture. That is the illusion of competence. In Capability 05 of Learn Better, we transform video watching from passive consumption into an active, multi-modal study studio—combining push-to-talk Socratic voice reflection with authentic Cornell vector notebook generation.",
+        renderHtml: `
+          <div class="w-full max-w-xl text-center space-y-4 animate-in fade-in zoom-in duration-500">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950/80 border border-rose-700/60 text-rose-300 text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+              The Ebbinghaus Forgetting Curve: 80% Retention Decay in 48 Hours
+            </div>
+            <div class="bg-slate-950/90 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3 text-left">
+              <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
+                <span>Passive Video Consumption</span>
+                <span class="text-rose-400 font-mono font-bold">20% Retention</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-rose-500 h-full w-[20%]"></div>
+              </div>
+              <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2 pt-1">
+                <span>Active Socratic Recall + Voice Journal</span>
+                <span class="text-emerald-400 font-mono font-bold">85% Retention</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full w-[85%]"></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 1,
+        title: "The 3-Stage Socratic Voice Interviewer",
+        durationSec: 70,
+        badgeText: "Scene 2 • Push-to-Talk",
+        narrationText: "Typing markdown notes while watching video creates severe context-switching fatigue. Our solution is the Socratic Voice Interviewer. Instead of staring at a blank screen, the system acts as an interactive technical mentor, asking three targeted questions: What made this clip standout? What specific concept was genuinely new to you? And how will you practically apply this in code? By pressing push-to-talk and speaking your answers aloud, you trigger active recall, forcing your brain to synthesize ideas at the highest level of cognitive retention.",
+        renderHtml: `
+          <div class="w-full max-w-xl space-y-3 text-left animate-in fade-in duration-500">
+            <div class="p-3 rounded-lg bg-emerald-950/60 border border-emerald-700/60 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-emerald-300 block">Active Question (Stage 1: Merits)</span>
+                <span class="text-xs text-slate-200">"What stood out most to you about this clip?"</span>
+              </div>
+              <span class="w-8 h-8 rounded-full bg-rose-600/30 border border-rose-500 flex items-center justify-center text-rose-300">
+                🎙️
+              </span>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Live Speech Transcription (MediaRecorder API)</span>
+              </div>
+              <p class="text-xs text-slate-200 italic font-mono bg-slate-900 p-2 rounded border border-slate-800">
+                "The standout concept was how Groq LPUs eliminate non-deterministic caches to achieve microsecond token intervals."
+              </p>
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 2,
+        title: "Automatic AI Synthesis & Two-Way Markdown Sync",
+        durationSec: 60,
+        badgeText: "Scene 3 • Two-Way Sync",
+        narrationText: "Once your interview is complete, the synthesis engine organizes your spoken reflections into a crisp technical brief: an executive one-line takeaway, key architectural principles, and actionable next steps. With two-way synchronization enabled, this synthesis automatically writes directly into the clip's persistent markdown notes. You can inspect your past interviews anytime in the Spoken Reflections Journal or export them as clean Obsidian-ready markdown files.",
+        renderHtml: `
+          <div class="w-full max-w-xl bg-slate-950/90 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3 text-left animate-in fade-in duration-500">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                Two-Way Sync: Appended to Clip Markdown Notes
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">localStorage</span>
+            </div>
+            <div class="font-mono text-xs text-slate-300 bg-slate-900 p-2.5 rounded border border-slate-800 space-y-1">
+              <div class="text-amber-300 font-bold">### 🎙 Spoken Voice Reflection (2026-10-03)</div>
+              <div><strong>Core Takeaway:</strong> Deterministic instruction scheduling on LPUs.</div>
+              <div><strong>Key Learnings:</strong> Eliminating speculative execution prevents token jitter.</div>
+              <div><strong>Action Ideas:</strong> Benchmark real-time voice streaming with sub-200ms latency.</div>
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 3,
+        title: "The Cornell Notes Vector PDF Engine",
+        durationSec: 60,
+        badgeText: "Scene 4 • Cornell Vector PDF",
+        narrationText: "When you need offline revision, generic markdown dumps are hard to scan. Capability 05 features a built-in vector PDF engine powered by jsPDF. It generates authentic Cornell-ruled study notebooks directly in your browser. You get horizontal ruled guidelines, a classic red margin line, cue prompts on the left margin, and highlighted takeaway boxes. You can print single-clip briefings or compile an entire 20-video playlist into a multi-page study booklet with zero server dependencies.",
+        renderHtml: `
+          <div class="w-full max-w-xl bg-slate-950/90 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3 text-left animate-in fade-in duration-500">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-rose-300 flex items-center gap-1.5">
+                <span>📄</span> Authentic Cornell Ruled Vector Notebook
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">jsPDF Engine</span>
+            </div>
+            <div class="p-3 bg-slate-900 rounded-lg border border-slate-800 text-xs space-y-1.5 font-serif text-slate-300">
+              <div class="border-b border-red-500/40 pb-1 flex justify-between text-[11px] text-slate-400 font-sans">
+                <span>LEARN-BETTER ACADEMIC NOTEBOOK</span>
+                <span>PAGE 1 OF 3</span>
+              </div>
+              <div class="pl-4 border-l-2 border-red-500 space-y-1">
+                <div class="text-emerald-400 font-bold font-sans text-[11px]">CUE / TOPIC: Transformer Scaling</div>
+                <div class="text-slate-200 text-xs">Attention is all you need: Key-Query-Value vector projections.</div>
+                <div class="text-amber-300 text-[11px]">☐ Question: How does KV cache memory scale with sequence length?</div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 4,
+        title: "AirPods MediaSession Remote & Chapter 3 Roadmap",
+        durationSec: 55,
+        badgeText: "Scene 5 • Roadmap Horizon",
+        narrationText: "Every summary, lesson brief, and spoken transcript in the Knowledge Hub is playable through client-side Web Speech synthesis at zero API cost. With AirPods MediaSession integration, you can pause, resume, and skip sections directly from your headphone stems while on the move. Capability 05 establishes the foundational study engine of Learn Better. In our next module, Capability 06, we explore the AI Coding Academy, delivering 19 interactive lessons on Claude prompt engineering and Kiro CLI workflows. Open Deck 05 now to experience the live test suite!",
+        renderHtml: `
+          <div class="w-full max-w-xl text-center space-y-3 animate-in fade-in duration-500">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-xs font-semibold">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Capability 05 Delivered • 5 of 15 Capabilities Ready
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-xs text-left">
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="text-emerald-400 font-bold block mb-1">AirPods Remote Ready</span>
+                <span class="text-slate-400 text-[11px]">Stem pinch play/pause via navigator.mediaSession.</span>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="text-sky-400 font-bold block mb-1">Next: Cap 06 AI Academy</span>
+                <span class="text-slate-400 text-[11px]">19 lessons: Claude prompts & Kiro vibe coding.</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-300 font-medium pt-2">
+              Next Up: <strong>Capability 06 — AI Coding Academy (Claude & Kiro Curriculum)</strong>
+            </p>
+          </div>
+        `
+      }
+    ];
+
+    // State
+    let currentSceneIndex = 0;
+    let isPlaying = false;
+    let playbackSpeed = 1.0;
+    let customAudioElement = null;
+
+    function renderScene(index) {
+      currentSceneIndex = index;
+      const s = SCENES[index];
+
+      // Update Header Badges
+      document.getElementById('sceneBadge').textContent = s.badgeText;
+      document.getElementById('sceneTitleOverlay').textContent = s.title;
+      document.getElementById('captionText').textContent = s.narrationText;
+
+      // Update Stage Visual
+      document.getElementById('videoStage').innerHTML = s.renderHtml;
+
+      // Update Nav Buttons
+      for (let i = 0; i < SCENES.length; i++) {
+        const btn = document.getElementById('sceneNav' + i);
+        if (i === index) {
+          btn.className = "scene-nav-btn text-left p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-950/40 text-emerald-200 transition-all shadow-md";
+        } else {
+          btn.className = "scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all";
+        }
+      }
+
+      updateProgressBar();
+    }
+
+    function togglePlayback() {
+      if (isPlaying) {
+        pausePlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      isPlaying = true;
+      document.getElementById('playButtonText').textContent = "Pause Video";
+      document.getElementById('ambientWaveform').classList.remove('opacity-0');
+
+      if (customAudioElement) {
+        customAudioElement.play();
+      } else {
+        speakNarration(SCENES[currentSceneIndex].narrationText);
+      }
+
+      setupMediaSession();
+    }
+
+    function pausePlayback() {
+      isPlaying = false;
+      document.getElementById('playButtonText').textContent = "Play Video";
+      document.getElementById('ambientWaveform').classList.add('opacity-0');
+
+      if (customAudioElement) {
+        customAudioElement.pause();
+      } else if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function speakNarration(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = playbackSpeed;
+
+      utterance.onend = () => {
+        if (isPlaying) {
+          if (currentSceneIndex < SCENES.length - 1) {
+            jumpToScene(currentSceneIndex + 1);
+            startPlayback();
+          } else {
+            pausePlayback();
+          }
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function jumpToScene(index) {
+      if (index < 0 || index >= SCENES.length) return;
+      renderScene(index);
+      if (isPlaying) {
+        startPlayback();
+      }
+    }
+
+    function nextScene() {
+      if (currentSceneIndex < SCENES.length - 1) {
+        jumpToScene(currentSceneIndex + 1);
+      }
+    }
+
+    function prevScene() {
+      if (currentSceneIndex > 0) {
+        jumpToScene(currentSceneIndex - 1);
+      }
+    }
+
+    function setPlaybackSpeed(speed) {
+      playbackSpeed = speed;
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        if (parseFloat(btn.dataset.speed) === speed) {
+          btn.className = "speed-btn px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 font-bold";
+        } else {
+          btn.className = "speed-btn px-2 py-1 rounded text-slate-400 hover:text-white";
+        }
+      });
+      if (isPlaying) {
+        startPlayback();
+      }
+    }
+
+    function updateProgressBar() {
+      const totalSec = SCENES.reduce((acc, s) => acc + s.durationSec, 0);
+      let passedSec = 0;
+      for (let i = 0; i < currentSceneIndex; i++) {
+        passedSec += SCENES[i].durationSec;
+      }
+      const pct = (passedSec / totalSec) * 100;
+      document.getElementById('videoProgressBar').style.width = pct + '%';
+      document.getElementById('currentTimeLabel').textContent = formatTime(passedSec);
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function seekVideo(event) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      const targetScene = Math.min(SCENES.length - 1, Math.floor(ratio * SCENES.length));
+      jumpToScene(targetScene);
+    }
+
+    function toggleFullscreen() {
+      const container = document.getElementById('videoContainer');
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => alert("Fullscreen error: " + err.message));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function handleAudioUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+      if (customAudioElement) {
+        customAudioElement.pause();
+      }
+      customAudioElement = new Audio(url);
+      alert(`Loaded custom NotebookLM audio: ${file.name}`);
+      jumpToScene(0);
+      startPlayback();
+    }
+
+    function setupMediaSession() {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: 'Capability 05: Knowledge Hub & Socratic Studio',
+          artist: 'Learn Better Presentation Series',
+          album: 'Chapter 3: Study Studio & Multimodal Reflections'
+        });
+        navigator.mediaSession.setActionHandler('play', () => startPlayback());
+        navigator.mediaSession.setActionHandler('pause', () => pausePlayback());
+        navigator.mediaSession.setActionHandler('nexttrack', () => nextScene());
+        navigator.mediaSession.setActionHandler('previoustrack', () => prevScene());
+      }
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayback();
+      } else if (e.code === 'ArrowRight' && e.shiftKey) {
+        nextScene();
+      } else if (e.code === 'ArrowLeft' && e.shiftKey) {
+        prevScene();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize Scene 0
+    renderScene(0);
+  </script>
+</body>
+</html>

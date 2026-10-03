@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 04 — Word Cloud & Mind Map Hub</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .semantic-bg {
+      background: radial-gradient(circle at center, #312e81 0%, #0f172a 65%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Video Hub • Cap 04
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Word Cloud & Mind Map Hub</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">NotebookLM Audio Overview & Interactive Video Simulator</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Launchers -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/04_CAPABILITY_WORDCLOUD_MINDMAP.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+        </svg>
+        <span>Open Deck 04 →</span>
+      </a>
+      <a href="/videos/04_NOTEBOOKLM_SOURCE_DOSSIER.md" target="_blank" class="px-2.5 py-1.5 text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors flex items-center gap-1">
+        <span>📄 Dossier</span>
+      </a>
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport Grid -->
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- Left / Center: Interactive Video Player Viewport (8 Cols) -->
+    <div class="lg:col-span-8 space-y-4">
+      
+      <!-- Video Screen Frame (16:9 Aspect Ratio) -->
+      <div id="videoContainer" class="relative w-full aspect-video semantic-bg rounded-2xl border-2 border-slate-800 overflow-hidden shadow-2xl flex flex-col justify-between p-6 select-none group">
+        
+        <!-- Top Overlay Bar (Current Scene Tag & Chapter Indicator) -->
+        <div class="flex items-center justify-between z-20">
+          <div class="flex items-center gap-2">
+            <span id="sceneBadge" class="text-xs font-bold px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wider backdrop-blur-sm">
+              Scene 1 of 5
+            </span>
+            <span id="sceneTitleOverlay" class="text-xs text-slate-300 font-medium bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-800 backdrop-blur-sm">
+              The Curse of Lexical Blindness
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-mono text-amber-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800" id="timeRemainingBadge">
+              04:40
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800 font-semibold">
+              Chapter 2 Final
+            </span>
+          </div>
+        </div>
+
+        <!-- Dynamic Visual Stage (Changes with Scene) -->
+        <div id="videoStage" class="flex-1 flex items-center justify-center relative my-4">
+          <!-- Populated by JavaScript renderScene() -->
+        </div>
+
+        <!-- Lower Subtitle / Teleprompter Display -->
+        <div class="z-20 bg-slate-950/85 backdrop-blur-md border border-slate-800/90 rounded-xl p-3 shadow-lg">
+          <div class="flex items-center gap-2 mb-1 text-[11px] text-amber-400 font-semibold">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
+            </svg>
+            <span>Live Voice Narration (Web Speech Engine)</span>
+          </div>
+          <p id="captionText" class="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+            Initializing Capability 04: Word Cloud & Mind Map Hub...
+          </p>
+        </div>
+
+        <!-- Animated Ambient Waveform in Corner -->
+        <div id="ambientWaveform" class="absolute bottom-5 right-5 z-20 flex items-end gap-1 opacity-0 transition-opacity">
+          <span class="waveform-bar w-1 bg-amber-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-amber-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-amber-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-amber-400 rounded-full"></span>
+          <span class="waveform-bar w-1 bg-amber-400 rounded-full"></span>
+        </div>
+
+      </div>
+
+      <!-- Video Control Deck (Timeline, Play/Pause, Speed, AirPods Status) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-md">
+        
+        <!-- Scrubber Progress Bar -->
+        <div class="flex items-center gap-3">
+          <span id="currentTimeLabel" class="text-xs font-mono text-slate-400 w-12 text-right">00:00</span>
+          <div class="flex-1 relative cursor-pointer" onclick="seekVideo(event)">
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div id="videoProgressBar" class="h-full bg-gradient-to-r from-amber-500 to-indigo-500 w-0 transition-all duration-200"></div>
+            </div>
+          </div>
+          <span id="totalDurationLabel" class="text-xs font-mono text-slate-400 w-12">04:40</span>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          
+          <!-- Play / Pause & Skip Buttons -->
+          <div class="flex items-center gap-2">
+            <button id="prevSceneBtn" onclick="prevScene()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="Previous Scene (Shift+Left)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+              </svg>
+            </button>
+
+            <button id="masterPlayBtn" onclick="togglePlayback()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-md">
+              <svg id="playIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+              </svg>
+              <span id="playButtonText">Play Video</span>
+            </button>
+
+            <button id="nextSceneBtn" onclick="nextScene()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" title="Next Scene (Shift+Right)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Speed Toggles -->
+          <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+            <button onclick="setPlaybackSpeed(0.75)" class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white" data-speed="0.75">0.75x</button>
+            <button onclick="setPlaybackSpeed(1.0)" class="speed-btn px-2 py-1 rounded bg-amber-500/20 text-amber-300 font-bold" data-speed="1.0">1.0x</button>
+            <button onclick="setPlaybackSpeed(1.25)" class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white" data-speed="1.25">1.25x</button>
+            <button onclick="setPlaybackSpeed(1.5)" class="speed-btn px-2 py-1 rounded text-slate-400 hover:text-white" data-speed="1.5">1.5x</button>
+          </div>
+
+          <!-- AirPods & MediaSession Indicator -->
+          <div class="flex items-center gap-2 text-xs text-slate-400 bg-slate-950/60 px-3 py-1.5 rounded-lg border border-slate-800">
+            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+            </svg>
+            <span>Stem Pinch Remote Ready</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 5-Scene Chapter Navigation Grid -->
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Production Scenes (Click to Jump)</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+          
+          <button onclick="jumpToScene(0)" id="sceneNav0" class="scene-nav-btn text-left p-2.5 rounded-xl border border-amber-500/80 bg-amber-950/30 text-amber-200 transition-all">
+            <div class="text-[10px] text-amber-400 font-mono font-bold">01 • 00:00</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">Lexical Blindness</div>
+          </button>
+
+          <button onclick="jumpToScene(1)" id="sceneNav1" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">02 • 00:50</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">Tokenization NLP</div>
+          </button>
+
+          <button onclick="jumpToScene(2)" id="sceneNav2" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">03 • 01:55</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">3-Tier Mind Map</div>
+          </button>
+
+          <button onclick="jumpToScene(3)" id="sceneNav3" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">04 • 03:00</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">Concept Inspection</div>
+          </button>
+
+          <button onclick="jumpToScene(4)" id="sceneNav4" class="scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="text-[10px] text-slate-500 font-mono font-bold">05 • 03:55</div>
+            <div class="text-xs font-semibold mt-0.5 line-clamp-1">Chapter 2 Bridge</div>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Sidebar: Technical Dossier & Production Inspector (4 Cols) -->
+    <div class="lg:col-span-4 space-y-4">
+
+      <!-- NotebookLM Pipeline Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3 shadow-md">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            NotebookLM Audio Pipeline
+          </span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Ready</span>
+        </div>
+
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Google NotebookLM does not provide a public REST API. Use the generated source dossier below to produce a two-host deep dive audio discussion:
+        </p>
+
+        <ol class="text-xs text-slate-400 space-y-1.5 list-decimal list-inside bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <li>Download the markdown dossier.</li>
+          <li>Import into <a href="https://notebooklm.google.com" target="_blank" class="text-amber-400 hover:underline">notebooklm.google.com</a>.</li>
+          <li>Click <strong>Generate Audio Overview</strong>.</li>
+          <li>Upload MP3 or listen live via speech synthesis.</li>
+        </ol>
+
+        <div class="pt-2 flex flex-col gap-2">
+          <a href="/videos/04_NOTEBOOKLM_SOURCE_DOSSIER.md" target="_blank" class="w-full py-2 text-center text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>View Source Dossier (.md)</span>
+          </a>
+
+          <label class="w-full py-2 text-center text-xs font-semibold bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded-lg cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <span>Upload NotebookLM Audio (MP3/WAV)</span>
+            <input type="file" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)">
+          </label>
+        </div>
+
+      </div>
+
+      <!-- Live Topic Frequency Matrix Preview -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3 shadow-md">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Top Concept Density</span>
+          <span class="text-[10px] text-slate-400 font-mono">Curriculum: Intelligence</span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+              <span class="font-medium text-slate-200">intelligence</span>
+            </div>
+            <span class="font-mono text-indigo-400 font-bold">248 occurrences</span>
+          </div>
+
+          <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+              <span class="font-medium text-slate-200">neural / models</span>
+            </div>
+            <span class="font-mono text-cyan-400 font-bold">413 combined</span>
+          </div>
+
+          <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span class="font-medium text-slate-200">transformer / attention</span>
+            </div>
+            <span class="font-mono text-emerald-400 font-bold">242 combined</span>
+          </div>
+
+          <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span class="font-medium text-slate-200">groq / tpu / silicon</span>
+            </div>
+            <span class="font-mono text-amber-400 font-bold">150 combined</span>
+          </div>
+        </div>
+
+        <div class="pt-2 text-[11px] text-slate-400 border-t border-slate-800 flex items-center justify-between">
+          <span>Corpus Tokens: <strong>42,680</strong></span>
+          <span>Unique Words: <strong>3,840</strong></span>
+        </div>
+
+      </div>
+
+      <!-- Quick Hop to Deck 04 Slide Deck -->
+      <div class="bg-gradient-to-br from-indigo-950/60 to-slate-900 border border-indigo-800/60 rounded-xl p-5 space-y-3">
+        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>Explore Interactive Slide Deck</span>
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Deck 04 includes an 8-slide technical blueprint, interactive term visualizer, 3-tier radial tree demo, and live diagnostic benchmark suite.
+        </p>
+        <a href="/decks/04_CAPABILITY_WORDCLOUD_MINDMAP.html" class="block w-full py-2.5 text-center text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg transition-all shadow-md">
+          Launch Deck 04 Presentation →
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // 5-Scene Production Data
+    const SCENES = [
+      {
+        index: 0,
+        title: "The Curse of Lexical Blindness",
+        durationSec: 50,
+        badgeText: "Scene 1 • Lexical Trap",
+        narrationText: "When you study technical subjects through video, you inevitably hit the wall of lexical blindness. YouTube search only works if you already know the exact phrasing the creator used in their title. A student searching for 'reasoning algorithms' will easily miss a masterclass on 'test-time compute' or 'MCTS tree search'. In this fourth capability of the Learn Better series, we explore how semantic NLP transforms raw video metadata into an interactive concept word cloud and a synchronized three-tier mind map—giving you instant topological clarity over what you are about to learn.",
+        renderHtml: `
+          <div class="w-full max-w-xl text-center space-y-4 animate-in fade-in zoom-in duration-500">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950/80 border border-rose-700/60 text-rose-300 text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+              The Problem: Lexical Mismatch & Exact Substring Traps
+            </div>
+            <div class="bg-slate-950/90 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3 text-left">
+              <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
+                <span>Traditional YouTube Query</span>
+                <span class="text-rose-400 font-mono">0 Hits Found</span>
+              </div>
+              <div class="font-mono text-sm text-slate-300 bg-slate-900 p-2.5 rounded border border-slate-800">
+                search: "synthetic cognition & reasoning"
+              </div>
+              <p class="text-xs text-slate-400">
+                Misses: <em>"nanoGPT from scratch"</em>, <em>"Groq LPU architecture"</em>, <em>"SwiGLU activation dynamics"</em>.
+              </p>
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 1,
+        title: "The Top 50 Concept Cloud & Tokenization",
+        durationSec: 65,
+        badgeText: "Scene 2 • NLP Tokenizer",
+        narrationText: "At the core of Capability 04 is an automated tokenization pipeline. In our flagship Intelligence curriculum, the system ingests over 42,000 text tokens across twelve lectures. It strips syntactic noise and video platform boilerplate like 'subscribe' and 'watch', calculating relative frequency weights for every technical term. The result is this interactive Top-50 Word Cloud. You can filter by category with a single click—isolating hardware constraints like Groq LPUs and memory bandwidth walls from mathematical optimization algorithms like AdamW and SwiGLU.",
+        renderHtml: `
+          <div class="w-full max-w-2xl text-center space-y-4 animate-in fade-in duration-500">
+            <div class="flex flex-wrap items-center justify-center gap-2 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-indigo-900/80 text-indigo-200 border border-indigo-700 text-lg font-bold">intelligence (248)</span>
+              <span class="px-2 py-0.5 rounded-full bg-sky-900/80 text-sky-200 border border-sky-700 text-base font-semibold">neural (215)</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-900/80 text-emerald-200 border border-emerald-700 text-base font-semibold">transformer (128)</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-900/80 text-amber-200 border border-amber-700 text-sm">groq (54)</span>
+              <span class="px-2 py-0.5 rounded-full bg-purple-900/80 text-purple-200 border border-purple-700 text-sm">reasoning (109)</span>
+              <span class="px-2 py-0.5 rounded-full bg-rose-900/80 text-rose-200 border border-rose-700 text-xs">economics (58)</span>
+              <span class="px-2 py-0.5 rounded-full bg-cyan-900/80 text-cyan-200 border border-cyan-700 text-sm">attention (114)</span>
+              <span class="px-2 py-0.5 rounded-full bg-teal-900/80 text-teal-200 border border-teal-700 text-xs">genetics (76)</span>
+            </div>
+            <div class="text-[11px] font-mono text-amber-300 bg-slate-950/80 p-2 rounded-lg border border-slate-800">
+              Pipeline: Ingestion (42,680) ➔ Stopword Pruning ➔ Frequency Weighting ➔ Categorization
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 2,
+        title: "The 3-Tier Hierarchical Mind Map",
+        durationSec: 65,
+        badgeText: "Scene 3 • 3-Tier Mind Map",
+        narrationText: "While a word cloud reveals what concepts dominate a curriculum, it cannot explain how those concepts relate. For that, we switch to the Three-Tier Mind Map. At Tier One sits the root learning objective. Tier Two branches into five foundational pillars. And at Tier Three, concrete video lectures are anchored directly to their conceptual parents. Instead of wondering why a lecture on evolutionary biology belongs in an AI playlist, the mind map explicitly diagrams how cellular feedback loops provided the evolutionary blueprint for modern reinforcement learning.",
+        renderHtml: `
+          <div class="w-full max-w-xl space-y-3 text-left animate-in fade-in duration-500">
+            <div class="p-2.5 rounded-lg bg-indigo-950 border border-indigo-700 text-indigo-200 text-xs font-bold text-center">
+              Tier 1: Intelligence (Biological to Synthetic)
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-[10px] text-center">
+              <div class="p-2 rounded bg-emerald-950 border border-emerald-800 text-emerald-300">
+                Pillar 1: Origins & Biology
+              </div>
+              <div class="p-2 rounded bg-sky-950 border border-sky-800 text-sky-300">
+                Pillar 2: Neural Math & Transf.
+              </div>
+              <div class="p-2 rounded bg-amber-950 border border-amber-800 text-amber-300">
+                Pillar 3: Silicon & Hardware
+              </div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+              <div>
+                <span class="text-amber-400 font-mono text-[10px] block">Tier 3 Leaf Lecture:</span>
+                <span class="font-medium text-slate-100">Cellular Chemotaxis to Neural Simulation</span>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 bg-slate-800 text-slate-400 rounded">The Symbiont (18:24)</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 3,
+        title: "Interactive Concept Inspection",
+        durationSec: 55,
+        badgeText: "Scene 4 • Deep Dive Drawer",
+        narrationText: "Clicking any term opens its deep-dive concept dossier. Here, you see its precise occurrence frequency across the playlist, a formal pedagogical definition, and every specific video lecture where that concept is taught. You can toggle between the fluid visual cloud and an analytical table view, sortable by frequency, category, or clip coverage, giving you complete mastery over the curriculum's semantic density before you watch a single minute of video.",
+        renderHtml: `
+          <div class="w-full max-w-xl bg-slate-950/90 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3 text-left animate-in fade-in duration-500">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                Concept: "transformer" (Weight: 128)
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">NLP & LLMs</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong>Context:</strong> Causal self-attention, encoder-decoder, and nanoGPT implemented from first-principles.
+            </p>
+            <div class="text-[11px] text-slate-400 pt-1 space-y-1">
+              <div>• Referenced in 6 video lectures across the playlist.</div>
+              <div>• Top related keywords: <em>attention</em>, <em>tokens</em>, <em>weights</em>, <em>layers</em>.</div>
+            </div>
+          </div>
+        `
+      },
+      {
+        index: 4,
+        title: "Cross-Capability Bridges & Chapter 2 Synthesis",
+        durationSec: 45,
+        badgeText: "Scene 5 • Teleportation",
+        narrationText: "Every node in the mind map is a live bridge to the rest of Learn Better. Click 'Study in Knowledge Hub' to teleport the clip into the Cornell notes editor. Click 'Locate in Video Cosmos' to watch the celestial camera center on its exact star. With Capability 03 and Capability 04 delivered, Chapter Two: Spatial and Cognitive Visualizations is officially complete. In Chapter Three, we step into the active study studio, starting with Capability 05: The Knowledge Hub and Socratic Reflection Studio. Launch Deck 04 now to explore the interactive diagnostic lab!",
+        renderHtml: `
+          <div class="w-full max-w-xl text-center space-y-3 animate-in fade-in duration-500">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-xs font-semibold">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Chapter 2 Complete (Video Cosmos + Word Cloud)
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-xs text-left">
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="text-sky-400 font-bold block mb-1">Bridge 1: Video Cosmos</span>
+                <span class="text-slate-400 text-[11px]">Center 2D celestial camera on exact star node.</span>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="text-amber-400 font-bold block mb-1">Bridge 2: Knowledge Hub</span>
+                <span class="text-slate-400 text-[11px]">Teleport clip to Cornell notes and Socratic interview.</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-300 font-medium pt-2">
+              Next Up: <strong>Chapter 3 — Study Studio (Cap 05: Knowledge Hub)</strong>
+            </p>
+          </div>
+        `
+      }
+    ];
+
+    // State
+    let currentSceneIndex = 0;
+    let isPlaying = false;
+    let playbackSpeed = 1.0;
+    let customAudioElement = null;
+    let sceneTimer = null;
+    let elapsedSecondsInScene = 0;
+
+    function renderScene(index) {
+      currentSceneIndex = index;
+      const s = SCENES[index];
+
+      // Update Header Badges
+      document.getElementById('sceneBadge').textContent = s.badgeText;
+      document.getElementById('sceneTitleOverlay').textContent = s.title;
+      document.getElementById('captionText').textContent = s.narrationText;
+
+      // Update Stage Visual
+      document.getElementById('videoStage').innerHTML = s.renderHtml;
+
+      // Update Nav Buttons
+      for (let i = 0; i < SCENES.length; i++) {
+        const btn = document.getElementById('sceneNav' + i);
+        if (i === index) {
+          btn.className = "scene-nav-btn text-left p-2.5 rounded-xl border border-amber-500/80 bg-amber-950/40 text-amber-200 transition-all shadow-md";
+        } else {
+          btn.className = "scene-nav-btn text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all";
+        }
+      }
+
+      updateProgressBar();
+    }
+
+    function togglePlayback() {
+      if (isPlaying) {
+        pausePlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      isPlaying = true;
+      document.getElementById('playButtonText').textContent = "Pause Video";
+      document.getElementById('ambientWaveform').classList.remove('opacity-0');
+
+      if (customAudioElement) {
+        customAudioElement.play();
+      } else {
+        speakNarration(SCENES[currentSceneIndex].narrationText);
+      }
+
+      setupMediaSession();
+    }
+
+    function pausePlayback() {
+      isPlaying = false;
+      document.getElementById('playButtonText').textContent = "Play Video";
+      document.getElementById('ambientWaveform').classList.add('opacity-0');
+
+      if (customAudioElement) {
+        customAudioElement.pause();
+      } else if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function speakNarration(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = playbackSpeed;
+
+      utterance.onend = () => {
+        if (isPlaying) {
+          if (currentSceneIndex < SCENES.length - 1) {
+            jumpToScene(currentSceneIndex + 1);
+            startPlayback();
+          } else {
+            pausePlayback();
+          }
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function jumpToScene(index) {
+      if (index < 0 || index >= SCENES.length) return;
+      renderScene(index);
+      if (isPlaying) {
+        startPlayback();
+      }
+    }
+
+    function nextScene() {
+      if (currentSceneIndex < SCENES.length - 1) {
+        jumpToScene(currentSceneIndex + 1);
+      }
+    }
+
+    function prevScene() {
+      if (currentSceneIndex > 0) {
+        jumpToScene(currentSceneIndex - 1);
+      }
+    }
+
+    function setPlaybackSpeed(speed) {
+      playbackSpeed = speed;
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        if (parseFloat(btn.dataset.speed) === speed) {
+          btn.className = "speed-btn px-2 py-1 rounded bg-amber-500/20 text-amber-300 font-bold";
+        } else {
+          btn.className = "speed-btn px-2 py-1 rounded text-slate-400 hover:text-white";
+        }
+      });
+      if (isPlaying) {
+        startPlayback();
+      }
+    }
+
+    function updateProgressBar() {
+      const totalSec = SCENES.reduce((acc, s) => acc + s.durationSec, 0);
+      let passedSec = 0;
+      for (let i = 0; i < currentSceneIndex; i++) {
+        passedSec += SCENES[i].durationSec;
+      }
+      const pct = (passedSec / totalSec) * 100;
+      document.getElementById('videoProgressBar').style.width = pct + '%';
+      document.getElementById('currentTimeLabel').textContent = formatTime(passedSec);
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function seekVideo(event) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      const targetScene = Math.min(SCENES.length - 1, Math.floor(ratio * SCENES.length));
+      jumpToScene(targetScene);
+    }
+
+    function toggleFullscreen() {
+      const container = document.getElementById('videoContainer');
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => alert("Fullscreen error: " + err.message));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function handleAudioUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+      if (customAudioElement) {
+        customAudioElement.pause();
+      }
+      customAudioElement = new Audio(url);
+      alert(`Loaded custom NotebookLM audio: ${file.name}`);
+      jumpToScene(0);
+      startPlayback();
+    }
+
+    function setupMediaSession() {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: 'Capability 04: Word Cloud & Mind Map Hub',
+          artist: 'Learn Better Presentation Series',
+          album: 'Chapter 2: Spatial & Cognitive Visualizations'
+        });
+        navigator.mediaSession.setActionHandler('play', () => startPlayback());
+        navigator.mediaSession.setActionHandler('pause', () => pausePlayback());
+        navigator.mediaSession.setActionHandler('nexttrack', () => nextScene());
+        navigator.mediaSession.setActionHandler('previoustrack', () => prevScene());
+      }
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayback();
+      } else if (e.code === 'ArrowRight' && e.shiftKey) {
+        nextScene();
+      } else if (e.code === 'ArrowLeft' && e.shiftKey) {
+        prevScene();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize Scene 0
+    renderScene(0);
+  </script>
+</body>
+</html>

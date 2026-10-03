@@ -4,10 +4,10 @@
   "generatedDate": "2026-09-30",
   "author": "AI Studio Senior Engineering Engine",
   "totalCapabilities": 15,
-  "completedCapabilities": 3,
+  "completedCapabilities": 6,
   "inProgressCapabilities": 0,
   "pacingStrategy": "Multi-Day Token-Preserving Cadence (2-3 modules per session)",
-  "continuityProtocol": "Hemingway Bridge #3 (Session 3 -> Session 4)",
+  "continuityProtocol": "Hemingway Bridge #6 (Session 6 -> Session 7)",
   "chapters": [
     {
       "chapterNumber": 1,
@@ -95,21 +95,25 @@
       "number": 4,
       "title": "Word Cloud & Mind Map Hub",
       "chapter": 2,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/04_CAPABILITY_WORDCLOUD_MINDMAP.html",
       "storyboardFile": "videos/04_CAPABILITY_WORDCLOUD_MINDMAP_STORYBOARD.md",
-      "slideCount": 7,
-      "estimatedDurationSec": 250,
-      "summary": "Frequency-weighted concept bubbles, 3-tier hierarchical mind maps, and live keyword filtering."
+      "videoPlayerUrl": "/videos/04_CAPABILITY_WORDCLOUD_MINDMAP_VIDEO.html",
+      "notebooklmDossierFile": "videos/04_NOTEBOOKLM_SOURCE_DOSSIER.md",
+      "slideCount": 8,
+      "estimatedDurationSec": 280,
+      "summary": "Frequency-weighted concept bubbles, 3-tier hierarchical mind maps, dynamic NLP tokenization, and live keyword filtering."
     },
     {
       "id": "cap-05",
       "number": 5,
       "title": "Knowledge Hub & Socratic Reflection Studio",
       "chapter": 3,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/05_CAPABILITY_KNOWLEDGE_HUB.html",
       "storyboardFile": "videos/05_CAPABILITY_KNOWLEDGE_HUB_STORYBOARD.md",
+      "videoPlayerUrl": "/videos/05_CAPABILITY_KNOWLEDGE_HUB_VIDEO.html",
+      "notebooklmDossierFile": "videos/05_NOTEBOOKLM_SOURCE_DOSSIER.md",
       "slideCount": 8,
       "estimatedDurationSec": 320,
       "summary": "Markdown notes editor, Cornell academic vector PDF generator, push-to-talk Socratic voice reflection, and spoken journal."
@@ -119,11 +123,13 @@
       "number": 6,
       "title": "AI Coding Academy",
       "chapter": 3,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/06_CAPABILITY_AI_CODING_ACADEMY.html",
       "storyboardFile": "videos/06_CAPABILITY_AI_CODING_ACADEMY_STORYBOARD.md",
-      "slideCount": 7,
-      "estimatedDurationSec": 280,
+      "videoPlayerUrl": "/videos/06_CAPABILITY_AI_CODING_ACADEMY_VIDEO.html",
+      "notebooklmDossierFile": "videos/06_NOTEBOOKLM_SOURCE_DOSSIER.md",
+      "slideCount": 8,
+      "estimatedDurationSec": 285,
       "summary": "Claude (10 lessons) and Kiro (9 lessons) interactive curriculum for prompt engineering and vibe coding."
     },
     {
@@ -236,11 +242,11 @@
     }
   ],
   "hemingwayBridge": {
-    "currentSession": 3,
-    "lastCompletedModule": "03_CAPABILITY_VIDEO_COSMOS_GRAPH",
-    "nextModuleToBuild": "04_CAPABILITY_WORDCLOUD_MINDMAP",
-    "primerStatus": "Capability 03 (Video Cosmos Graph) completed. Capability 04 ready for Day 4.",
-    "continuationPrompt": "Proceed with Day 4 of the Capability Series: Build Deck 04 (Word Cloud & Mind Map Hub) and its Video Hub.",
-    "overnightDecision": "Should the Word Cloud slide deck emphasize real-time TF-IDF transcript extraction benchmarks or the 3-tier hierarchical mind map rendering engine?"
+    "currentSession": 4,
+    "lastCompletedModule": "04_CAPABILITY_WORDCLOUD_MINDMAP",
+    "nextModuleToBuild": "05_CAPABILITY_KNOWLEDGE_HUB",
+    "primerStatus": "Chapter 2 completed (Cap 03 Video Cosmos + Cap 04 Word Cloud). Chapter 3 ready for Day 5 (Cap 05 Knowledge Hub & Socratic Reflection Studio).",
+    "continuationPrompt": "Proceed with Day 5 of the Capability Series: Build Deck 05 (Knowledge Hub & Socratic Reflection Studio) and its Video Hub.",
+    "overnightDecision": "Should Deck 05 focus on browser-side SpeechSynthesis voice reflection audio journaling or the multi-page Cornell notes vector PDF generation pipeline?"
   }
 }

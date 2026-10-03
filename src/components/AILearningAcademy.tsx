@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { LessonItem } from '../types';
 import { AudioLessonPlayer } from './AudioLessonPlayer';
+import { DEFAULT_CLAUDE_LESSONS, DEFAULT_KIRO_LESSONS } from '../data/defaultLessonsData';
 
 interface AILearningAcademyProps {
   claudeLessons: LessonItem[];
@@ -37,7 +38,10 @@ export const AILearningAcademy: React.FC<AILearningAcademyProps> = ({
   });
   const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(null);
 
-  const currentLessons = activeSeries === 'claude' ? claudeLessons : kiroLessons;
+  const effectiveClaudeLessons = claudeLessons && claudeLessons.length > 0 ? claudeLessons : DEFAULT_CLAUDE_LESSONS;
+  const effectiveKiroLessons = kiroLessons && kiroLessons.length > 0 ? kiroLessons : DEFAULT_KIRO_LESSONS;
+
+  const currentLessons = activeSeries === 'claude' ? effectiveClaudeLessons : effectiveKiroLessons;
   const activeLesson = currentLessons.find(l => l.id === selectedLessonId) || currentLessons[0];
 
   const toggleLessonCompletion = (id: string) => {
@@ -113,12 +117,32 @@ git commit -m "Add Gemini Knowledge Hub webapp and AI vibe coding guide"`,
       {/* Academy Banner */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-sky-400" />
-            <h1 className="text-xl font-bold text-white">AI Vibe Coding Academy</h1>
-            <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">
-              Steer & Verify
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl font-bold text-white flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-sky-400" />
+              AI Vibe Coding Academy
+            </h1>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase tracking-wider">
+              Capability 06
             </span>
+            <a
+              href="/decks/06_CAPABILITY_AI_CODING_ACADEMY.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-sky-400 border border-slate-700 hover:bg-slate-700 hover:text-sky-300 transition-colors flex items-center gap-1"
+              title="Open Capability 06 Interactive Slide Deck"
+            >
+              <span>Deck 06 ↗</span>
+            </a>
+            <a
+              href="/videos/06_CAPABILITY_AI_CODING_ACADEMY_VIDEO.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-rose-400 border border-slate-700 hover:bg-slate-700 hover:text-rose-300 transition-colors flex items-center gap-1"
+              title="Open Capability 06 Interactive Video Hub Simulator"
+            >
+              <span>🎬 Video ↗</span>
+            </a>
           </div>
           <p className="text-sm text-slate-400 mt-1">
             Reconstruct real software and master the art of collaborating with AI coding assistants.
@@ -133,7 +157,7 @@ git commit -m "Add Gemini Knowledge Hub webapp and AI vibe coding guide"`,
               activeSeries === 'claude' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'
             }`}
           >
-            Claude Series ({claudeLessons.length})
+            Claude Series ({effectiveClaudeLessons.length})
           </button>
           <button
             onClick={() => { setActiveSeries('kiro'); setSelectedLessonId(''); }}
@@ -141,7 +165,7 @@ git commit -m "Add Gemini Knowledge Hub webapp and AI vibe coding guide"`,
               activeSeries === 'kiro' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'
             }`}
           >
-            Kiro Series ({kiroLessons.length})
+            Kiro Series ({effectiveKiroLessons.length})
           </button>
           <button
             onClick={() => setActiveSeries('gemini')}

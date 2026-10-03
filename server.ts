@@ -82,8 +82,12 @@ app.get('/api/content/summaries', (req, res) => {
 // 3. Fetch lessons from imported_repo (Claude & Kiro series)
 app.get('/api/content/lessons', (req, res) => {
   try {
-    const claudeDir = path.resolve(rootDir, 'lessons_Claude');
-    const kiroDir = path.resolve(rootDir, 'lessons_Kiro');
+    const claudeDir = fs.existsSync(path.resolve(rootDir, 'lessons_Claude'))
+      ? path.resolve(rootDir, 'lessons_Claude')
+      : path.resolve(rootDir, 'public/legacy/lessons_Claude');
+    const kiroDir = fs.existsSync(path.resolve(rootDir, 'lessons_Kiro'))
+      ? path.resolve(rootDir, 'lessons_Kiro')
+      : path.resolve(rootDir, 'public/legacy/lessons_Kiro');
 
     const readLessons = (dir: string, seriesName: 'Claude' | 'Kiro') => {
       if (!fs.existsSync(dir)) return [];
@@ -313,6 +317,17 @@ app.get(['/videos/capability-3', '/videos/capability-03'], (req, res) => {
     res.sendFile(target);
   } else {
     res.status(404).send('Capability 3 video player not found.');
+  }
+});
+
+app.get(['/videos/capability-4', '/videos/capability-04'], (req, res) => {
+  const target = path.join(videosDir, '04_CAPABILITY_WORDCLOUD_MINDMAP_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 4 video player not found.');
   }
 });
 
