@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Playlist, YouTubeClip, SummaryData, LessonItem, ActiveTab, VoiceReflectionSession } from './types';
 import { INITIAL_PLAYLISTS } from './data/initialData';
-import { fetchHealth, fetchSummaries, fetchLessons, fetchLogs, fetchPlaylists, syncYouTubePlaylists, savePlaylists } from './services/api';
+import { fetchHealth, fetchSummaries, fetchLessons, fetchLogs, fetchPlaylists, syncYouTubePlaylists, savePlaylists, fetchPrerequisites } from './services/api';
 import { Navbar } from './components/Navbar';
 import { PlaylistManager } from './components/PlaylistManager';
 import { KnowledgeHub } from './components/KnowledgeHub';
@@ -17,6 +17,7 @@ import { GeminiDevelopmentChat } from './components/GeminiDevelopmentChat';
 import { RoadmapHub } from './components/RoadmapHub';
 import { VideoCosmosGraph } from './components/VideoCosmosGraph';
 import { AnalysisHub } from './components/AnalysisHub';
+import { PrerequisitesModal } from './components/PrerequisitesModal';
 import { buildRestructuredPlaylists } from './data/playlistRestructureData';
 
 export default function App() {
@@ -59,6 +60,8 @@ export default function App() {
   const [suggestionsLog, setSuggestionsLog] = useState<string>('');
   const [userGuideLog, setUserGuideLog] = useState<string>('');
   const [hasGeminiKey, setHasGeminiKey] = useState<boolean>(false);
+  const [isPrerequisitesOpen, setIsPrerequisitesOpen] = useState<boolean>(false);
+  const [prerequisitesContent, setPrerequisitesContent] = useState<string>('');
 
   // Cross-Tab Selected Context
   const [selectedClip, setSelectedClip] = useState<YouTubeClip | null>(null);
@@ -127,6 +130,9 @@ export default function App() {
       setSuggestionsLog(logs.suggestions || '');
       setUserGuideLog(logs.userGuide || '');
 
+      const prereq = await fetchPrerequisites();
+      if (prereq) setPrerequisitesContent(prereq);
+
       // Load all 70 playlists from backend if local copy was stale or small
       try {
         const plRes = await fetchPlaylists();
@@ -150,6 +156,8 @@ export default function App() {
     setFeedbackLog(logs.feedback);
     setSuggestionsLog(logs.suggestions || '');
     setUserGuideLog(logs.userGuide || '');
+    const prereq = await fetchPrerequisites();
+    if (prereq) setPrerequisitesContent(prereq);
   };
 
   const handleSyncYouTube = async () => {
@@ -516,6 +524,7 @@ export default function App() {
         totalNotes={totalNotesCount}
         isFullscreen={isFullscreen}
         onToggleFullscreen={toggleFullscreen}
+        onOpenPrerequisites={() => setIsPrerequisitesOpen(true)}
       />
 
       {/* Main Tab Views */}
@@ -636,6 +645,7 @@ export default function App() {
         {activeTab === 'guide' && (
           <UserGuideViewer
             guideContent={userGuideLog}
+            onOpenPrerequisites={() => setIsPrerequisitesOpen(true)}
           />
         )}
 
@@ -648,6 +658,13 @@ export default function App() {
         )}
       </main>
 
+      {/* Prerequisites & Technical Evaluation Modal */}
+      <PrerequisitesModal
+        isOpen={isPrerequisitesOpen}
+        onClose={() => setIsPrerequisitesOpen(false)}
+        markdownContent={prerequisitesContent}
+      />
+
       {/* Footer */}
       {activeTab !== 'video-cosmos' && (
         <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
@@ -656,6 +673,14 @@ export default function App() {
               learn-better &bull; Personal Knowledge Hub &amp; Multi-AI Vibe Coding Platform
             </span>
             <div className="flex items-center gap-4 flex-wrap">
+              <button
+                onClick={() => setIsPrerequisitesOpen(true)}
+                className="text-indigo-400 hover:text-indigo-300 underline font-semibold cursor-pointer flex items-center gap-1"
+                title="View Technical Prerequisites, 10-Tier Expertise Matrix & Polyglot Architecture"
+              >
+                <span>📚 Prerequisites (L1–L10)</span>
+              </button>
+              <span className="text-slate-600 hidden sm:inline">&bull;</span>
               <button
                 onClick={() => setActiveTab('analysis')}
                 className="text-sky-400 hover:text-sky-300 underline font-semibold cursor-pointer flex items-center gap-1"

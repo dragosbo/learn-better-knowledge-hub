@@ -19,9 +19,13 @@ import { generateStyledGuideHtml } from '../utils/guideHtmlFormatter';
 
 interface UserGuideViewerProps {
   guideContent: string;
+  onOpenPrerequisites?: () => void;
 }
 
-export const UserGuideViewer: React.FC<UserGuideViewerProps> = ({ guideContent }) => {
+export const UserGuideViewer: React.FC<UserGuideViewerProps> = ({ 
+  guideContent,
+  onOpenPrerequisites 
+}) => {
   const [copied, setCopied] = useState(false);
   const [viewMode, setViewMode] = useState<'formatted' | 'raw'>('formatted');
 
@@ -157,6 +161,17 @@ export const UserGuideViewer: React.FC<UserGuideViewerProps> = ({ guideContent }
             <Printer className="w-3.5 h-3.5" />
             <span>Save as PDF</span>
           </button>
+
+          {onOpenPrerequisites && (
+            <button
+              onClick={onOpenPrerequisites}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-indigo-950 hover:bg-indigo-900 text-indigo-300 hover:text-white text-xs font-semibold border border-indigo-700/80 transition-colors shadow-sm"
+              title="Evaluate Level 1 to Level 10 codebase expertise & polyglot architecture"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Prerequisites (L1–L10)</span>
+            </button>
+          )}
         </div>
       </div>
 

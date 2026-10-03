@@ -18,7 +18,8 @@ import {
   FileSearch,
   Maximize2,
   Minimize2,
-  Presentation
+  Presentation,
+  BookOpen
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -30,6 +31,7 @@ interface NavbarProps {
   totalNotes: number;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
+  onOpenPrerequisites?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,6 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   totalNotes,
   isFullscreen,
   onToggleFullscreen,
+  onOpenPrerequisites,
 }) => {
   const navItems: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     {
@@ -205,6 +208,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Manual
               </span>
             </button>
+
+            {/* Prerequisites & Expertise Evaluation Button */}
+            {onOpenPrerequisites && (
+              <button
+                id="header-prerequisites-btn"
+                onClick={onOpenPrerequisites}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border bg-indigo-950/70 text-indigo-300 border-indigo-700/80 hover:bg-indigo-900/80 hover:text-white transition-all shadow-sm"
+                title="Evaluate Level 1 to Level 10 codebase expertise & polyglot architecture (prerequisite.md)"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Prerequisites</span>
+                <span className="hidden md:inline text-[10px] px-1 py-0.2 bg-indigo-900/90 text-indigo-200 rounded">
+                  L1–L10
+                </span>
+              </button>
+            )}
 
             {/* Capability Slide Decks & Videos Launcher Button */}
             <a

@@ -114,6 +114,20 @@ export async function fetchLogs(): Promise<{ prompts: string; feedback: string; 
   }
 }
 
+export async function fetchPrerequisites(): Promise<string> {
+  try {
+    const res = await fetch('/api/content/prerequisites');
+    if (!res.ok) return '';
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) return '';
+    const data = await res.json();
+    return data.content || '';
+  } catch (err) {
+    console.warn('Failed to fetch prerequisites', err);
+    return '';
+  }
+}
+
 export async function fetchLegacyApps(): Promise<LegacyApp[]> {
   try {
     const res = await fetch('/api/content/legacy-apps');

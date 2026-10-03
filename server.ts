@@ -141,6 +141,30 @@ app.get('/api/content/logs', (req, res) => {
   }
 });
 
+// 4a. Read prerequisites & expertise evaluation document
+app.get('/api/content/prerequisites', (req, res) => {
+  try {
+    const filePath = path.resolve(rootDir, 'prerequisite.md');
+    const content = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
+    res.json({ content });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/prerequisite.md', (req, res) => {
+  const filePath = path.resolve(rootDir, 'prerequisite.md');
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('prerequisite.md not found');
+  }
+});
+
+app.get('/prerequisite', (req, res) => {
+  res.redirect('/prerequisite.md');
+});
+
 // 4b. Legacy apps static serving and catalog
 const legacyDir = fs.existsSync(path.resolve(rootDir, 'imported_repo'))
   ? path.resolve(rootDir, 'imported_repo')
