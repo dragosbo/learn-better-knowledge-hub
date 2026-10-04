@@ -804,3 +804,109 @@ Proceed with deck 4
 > 4. **Master Slide Deck 04 (`decks/04_CAPABILITY_WORDCLOUD_MINDMAP.html`)**: 8-slide technical blueprint with two-column layout (code vs architecture visuals), embedded Web Speech narration, auto-advance, AirPods remote controls, touch swipe support, and a Live Diagnostic Lab with 4 in-memory verification tests.
 > 5. **Hemingway Bridge #4**: Updated `decks/00_SERIES_OVERVIEW_PLAYLIST.html` and `videos/00_SERIES_VIDEO_PLAYLIST.json` to mark Capability 04 as Ready (bringing total progress to 4 of 15 capabilities complete, Chapter 2 fully delivered) and anchored the Session 5 continuation primer for Capability 05 (Knowledge Hub & Socratic Reflection Studio).
 
+---
+
+### Prompt 38: Day 5 Capability Series Execution — Knowledge Hub & Socratic Studio
+*Timestamp: 2026-10-03T04:20:10-07:00*
+
+```text
+Proceed with deck 5
+```
+
+#### Assistant Response 38
+> Executed Day 5 of the Capability Series, opening Chapter 3 (Knowledge Engineering & Study Studios) with Capability 05 (Knowledge Hub & Socratic Voice Studio):
+> 1. **NotebookLM Source Dossier (`videos/05_NOTEBOOKLM_SOURCE_DOSSIER.md`)**: Comprehensive source text and podcast dialogue prompts detailing active study retention, Cornell ruled margin vector PDF generation, push-to-talk Socratic probing, and Obsidian Markdown interoperability.
+> 2. **OBS Video Storyboard (`videos/05_CAPABILITY_KNOWLEDGE_HUB_STORYBOARD.md`)**: 5-scene technical production script (5m 20s runtime) detailing the friction of passive learning, rich markdown notes, vector PDF export, and audio debriefs.
+> 3. **Dedicated Interactive Video Hub (`videos/05_CAPABILITY_KNOWLEDGE_HUB_VIDEO.html`)**: Video theater with automated 5-scene visualizer, real-time Web Speech audio narration, and NotebookLM media dropzone.
+> 4. **Master Slide Deck 05 (`decks/05_CAPABILITY_KNOWLEDGE_HUB.html`)**: 8-slide technical blueprint with interactive Cornell PDF demo and Live Diagnostic Lab with 4 in-memory verification tests.
+> 5. **Hemingway Bridge #5**: Updated master overview playlist marking Capability 05 as Ready (5/15 complete).
+
+---
+
+### Prompt 39: Day 6 Capability Series Execution — AI Coding Academy
+*Timestamp: 2026-10-03T07:12:45-07:00*
+
+```text
+Proceed with deck 6
+```
+
+#### Assistant Response 39
+> Executed Day 6 of the Capability Series, delivering Capability 06 (AI Coding Academy):
+> 1. **NotebookLM Source Dossier (`videos/06_NOTEBOOKLM_SOURCE_DOSSIER.md`)**: Comprehensive source text analyzing prompt engineering foundations, Claude 10-lesson syllabus, Kiro 9-lesson syllabus, YAML frontmatter AST extraction, and anti-pattern avoidance.
+> 2. **OBS Video Storyboard (`videos/06_CAPABILITY_AI_CODING_ACADEMY_STORYBOARD.md`)**: 5-scene production script (4m 45s runtime).
+> 3. **Interactive Video Hub (`videos/06_CAPABILITY_AI_CODING_ACADEMY_VIDEO.html`)**: Interactive video simulator with audio playback.
+> 4. **Master Slide Deck 06 (`decks/06_CAPABILITY_AI_CODING_ACADEMY.html`)**: 8-slide technical blueprint with interactive lesson viewer and Live Diagnostic Lab.
+> 5. **Hemingway Bridge #6**: Updated master overview playlist marking Capability 06 as Ready (6/15 complete).
+
+---
+
+### Prompt 40: AI Studio Speech-to-Text Platform Diagnostics
+*Timestamp: 2026-10-03T09:15:20-07:00*
+
+```text
+The button speech to text in ai studio does not work or I do not know how to use it. Please investigate and explain. I do not refer to my app I refer to ai studio itself
+```
+
+#### Assistant Response 40
+> Investigated Google AI Studio's host IDE microphone audio input button:
+> 1. Explained architecture of the host prompt STT button relying on browser Web Speech Recognition / WebRTC.
+> 2. Analyzed common root causes: microphone browser permissions, OS-level security policies (macOS/iPadOS), Brave Shields blocking audio fingerprinting, and silence timeout thresholds.
+> 3. Provided concrete resolution steps for Chrome, Brave, and Safari/iPadOS.
+
+---
+
+### Prompt 41: Codebase Complexity & Technical Prerequisites Evaluation
+*Timestamp: 2026-10-03T10:55:00-07:00*
+
+```text
+Evaluate the level of expertise required to understand completly the code of this app. Put them into a table with level1 absolute beginner and level 10 top expert. List all the programming languages used, discuss how do they interact and why they are used as is. Create a markdown file called prerequisite and put it in the root containing this info. It should also be accessible with a button
+```
+
+#### Assistant Response 41
+> Authored root `prerequisite.md` (and copy `prerequisite`) containing the complete architectural prerequisites:
+> 1. Complete Level 1 (Absolute Beginner) to Level 10 (Distributed Systems Architect) matrix.
+> 2. Complete language breakdown and interactions for all 10 project languages.
+> 3. Engineered `src/components/PrerequisitesModal.tsx` and persistent access buttons in `Navbar.tsx`, `UserGuideViewer.tsx`, and page footer.
+
+---
+
+### Prompt 42: Per-Language Knowledge Level Calibration
+*Timestamp: 2026-10-03T11:06:35-07:00*
+
+```text
+Not bad but I want an evaluation of the required level of knowledge for each programming language. Let’s say for python I need level 7 for example. Update the documentation to contain this info
+```
+
+#### Assistant Response 42
+> Calibrated each language on a precise 1-to-10 scale based on actual codebase complexity:
+> - TypeScript 5.x: Level 8 (Strict Static Typing, AST transforms, React state unions)
+> - Python 3.12: Level 7 (YouTube continuation token scraping, regex JSON extraction)
+> - JavaScript ES2024: Level 6 (Hardware MediaSession, Web Speech API, HTML5 Canvas)
+> - CSS & Tailwind v4: Level 5 (Responsive layouts, print media pagination)
+> - Dockerfile DSL: Level 5 (Dual-runtime Node/Python base images, layer caching)
+> - SQL: Level 4 (Relational normalization, Drizzle ORM)
+> - Bash: Level 3 (Safe mirror automation, CLI pipelines)
+> - Windows Batch: Level 3 (Delayed expansion, cross-platform CLI)
+> - JSON & Schema: Level 2 (Declarative catalogs)
+> - Markdown & GFM: Level 2 (Obsidian wikilinks, LLM dossiers)
+> Updated `prerequisite.md` and upgraded `PrerequisitesModal.tsx` with interactive difficulty meters and category filters.
+
+---
+
+### Prompt 43: Capability 07 Delivery & GitHub API Service Integration
+*Timestamp: 2026-10-04T00:30:15-07:00*
+
+```text
+Proceed with deck 7
+Create a new service in `src/services/githubApi.ts` that allows the application to authenticate with GitHub and fetch specific file paths or folders from a repository to populate the KnowledgeHub datasets.
+```
+
+#### Assistant Response 43
+> 1. Delivered Capability 07 (AirPods Audio Player): `decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html`, `videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_VIDEO.html`, storyboard, and dossier.
+> 2. Implemented `src/services/githubApi.ts`:
+>    - Personal Access Token (PAT) authentication & rate limit management.
+>    - Git Trees API (`fetchRepositoryTree`), `fetchSpecificFiles`, folder traversal, and UTF-8 Base64 decoding.
+>    - Conversion into `YouTubeClip` and `SummaryData` for KnowledgeHub.
+>    - Enhanced `GitHubImportModal.tsx` with folder and selective file picking modes, and added "Import from GitHub" button in `KnowledgeHub.tsx`.
+
+

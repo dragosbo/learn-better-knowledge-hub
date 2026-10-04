@@ -19,7 +19,8 @@ import {
   Maximize2,
   Minimize2,
   Presentation,
-  BookOpen
+  BookOpen,
+  Cpu
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -32,6 +33,7 @@ interface NavbarProps {
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
   onOpenPrerequisites?: () => void;
+  onOpenIpadAnalysis?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -43,6 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   isFullscreen,
   onToggleFullscreen,
   onOpenPrerequisites,
+  onOpenIpadAnalysis,
 }) => {
   const navItems: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     {
@@ -127,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'analysis',
       label: 'Analysis',
       icon: <FileSearch className="w-4 h-4 text-sky-400" />,
-      badge: 'Phases 1-3 • System Map',
+      badge: 'Phases 1-4 • System Map',
     },
   ];
 
@@ -155,6 +158,22 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Actions & Status */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* iPad vs Cloud Processing Analysis Button */}
+            {onOpenIpadAnalysis && (
+              <button
+                id="header-ipad-cloud-btn"
+                onClick={onOpenIpadAnalysis}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border bg-gradient-to-r from-cyan-950 to-indigo-950 text-cyan-300 border-cyan-600/80 hover:bg-cyan-900 hover:text-white transition-all shadow-sm"
+                title="View iPad vs. Cloud Compute Breakdown: FLOPs, 95% dev vs 68% runtime"
+              >
+                <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+                <span>iPad vs Cloud %</span>
+                <span className="hidden md:inline text-[10px] px-1.5 py-0.2 bg-cyan-900/90 text-cyan-200 rounded font-semibold border border-cyan-700/60">
+                  95% / 68%
+                </span>
+              </button>
+            )}
+
             {/* Analysis Button - Prominent for Transition Review */}
             <button
               id="header-analysis-btn"
@@ -164,12 +183,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-sky-950/60 ring-2 ring-sky-400/40'
                   : 'bg-sky-950/80 text-sky-300 border-sky-600/80 hover:bg-sky-900 hover:text-white'
               }`}
-              title="Open the System Architecture, Capability Matrix & Agent Protocol (Phases 1-3)"
+              title="Open the System Architecture, Capability Matrix, Agent Protocol & iPad vs Cloud Compute (Phases 1-4)"
             >
               <FileSearch className="w-3.5 h-3.5 text-sky-300" />
               <span>Analysis</span>
               <span className="hidden md:inline text-[10px] px-1.5 py-0.2 bg-sky-900/90 text-sky-200 rounded font-semibold border border-sky-700/60">
-                Phases 1-3
+                Phases 1-4
               </span>
             </button>
 

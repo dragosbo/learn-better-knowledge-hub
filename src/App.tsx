@@ -18,6 +18,7 @@ import { RoadmapHub } from './components/RoadmapHub';
 import { VideoCosmosGraph } from './components/VideoCosmosGraph';
 import { AnalysisHub } from './components/AnalysisHub';
 import { PrerequisitesModal } from './components/PrerequisitesModal';
+import { IpadVsCloudAnalysisModal } from './components/IpadVsCloudAnalysisModal';
 import { buildRestructuredPlaylists } from './data/playlistRestructureData';
 
 export default function App() {
@@ -62,6 +63,8 @@ export default function App() {
   const [hasGeminiKey, setHasGeminiKey] = useState<boolean>(false);
   const [isPrerequisitesOpen, setIsPrerequisitesOpen] = useState<boolean>(false);
   const [prerequisitesContent, setPrerequisitesContent] = useState<string>('');
+  const [isIpadAnalysisOpen, setIsIpadAnalysisOpen] = useState<boolean>(false);
+  const [ipadAnalysisContent, setIpadAnalysisContent] = useState<string>('');
 
   // Cross-Tab Selected Context
   const [selectedClip, setSelectedClip] = useState<YouTubeClip | null>(null);
@@ -132,6 +135,16 @@ export default function App() {
 
       const prereq = await fetchPrerequisites();
       if (prereq) setPrerequisitesContent(prereq);
+
+      try {
+        const ipadRes = await fetch('/analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md');
+        if (ipadRes.ok) {
+          const txt = await ipadRes.text();
+          setIpadAnalysisContent(txt);
+        }
+      } catch (err) {
+        console.warn('Failed to load iPad analysis document', err);
+      }
 
       // Load all 70 playlists from backend if local copy was stale or small
       try {
@@ -513,6 +526,54 @@ export default function App() {
     }
   };
 
+  const handleImportGitHubData = (newClips: YouTubeClip[], newSummaries: SummaryData[]) => {
+    // 1. Update or create the GitHub Knowledge Base playlist
+    setPlaylists((prev) => {
+      let ghPlaylist = prev.find((p) => p.id === 'PL_github_knowledge_imported');
+      if (!ghPlaylist) {
+        ghPlaylist = {
+          id: 'PL_github_knowledge_imported',
+          title: 'GitHub Knowledge Base',
+          category: 'GitHub Imported Lessons & Repositories',
+          description: 'Markdown lessons, dossiers, and engineering guides imported dynamically from GitHub.',
+          clipCount: 0,
+          clips: [],
+        };
+        prev = [ghPlaylist, ...prev];
+      }
+
+      const existingClipIds = new Set(ghPlaylist.clips.map((c) => c.id));
+      const freshClips = newClips.filter((c) => !existingClipIds.has(c.id));
+      const updatedClips = [...freshClips, ...ghPlaylist.clips];
+
+      const updatedPlaylists = prev.map((pl) =>
+        pl.id === 'PL_github_knowledge_imported'
+          ? { ...pl, clips: updatedClips, clipCount: updatedClips.length }
+          : pl
+      );
+
+      try {
+        localStorage.setItem('learn_better_playlists_v3', JSON.stringify(updatedPlaylists));
+        savePlaylists(updatedPlaylists).catch((err) => console.warn('Failed to persist imported playlists', err));
+      } catch (err) {
+        console.warn('Storage error', err);
+      }
+      return updatedPlaylists;
+    });
+
+    // 2. Update summaries
+    setSummaries((prev) => {
+      const existingIds = new Set(prev.map((s) => s.id));
+      const fresh = newSummaries.filter((s) => !existingIds.has(s.id));
+      return [...fresh, ...prev];
+    });
+
+    // 3. Focus on first imported clip
+    if (newClips.length > 0) {
+      setSelectedClip(newClips[0]);
+    }
+  };
+
   return (
     <div className={`min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white ${isFullscreen ? 'fixed inset-0 z-50 overflow-y-auto w-screen h-screen' : ''}`}>
       {/* Top Navigation */}
@@ -525,6 +586,7 @@ export default function App() {
         isFullscreen={isFullscreen}
         onToggleFullscreen={toggleFullscreen}
         onOpenPrerequisites={() => setIsPrerequisitesOpen(true)}
+        onOpenIpadAnalysis={() => setIsIpadAnalysisOpen(true)}
       />
 
       {/* Main Tab Views */}
@@ -602,6 +664,7 @@ export default function App() {
             onNavigateToGemini={handleNavigateToGemini}
             onSaveVoiceReflection={handleSaveVoiceReflection}
             onDeleteVoiceReflection={handleDeleteVoiceReflection}
+            onImportGitHubData={handleImportGitHubData}
           />
         )}
 
@@ -665,6 +728,13 @@ export default function App() {
         markdownContent={prerequisitesContent}
       />
 
+      {/* iPad Client vs Cloud Processing Modal */}
+      <IpadVsCloudAnalysisModal
+        isOpen={isIpadAnalysisOpen}
+        onClose={() => setIsIpadAnalysisOpen(false)}
+        markdownContent={ipadAnalysisContent}
+      />
+
       {/* Footer */}
       {activeTab !== 'video-cosmos' && (
         <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500">
@@ -673,6 +743,14 @@ export default function App() {
               learn-better &bull; Personal Knowledge Hub &amp; Multi-AI Vibe Coding Platform
             </span>
             <div className="flex items-center gap-4 flex-wrap">
+              <button
+                onClick={() => setIsIpadAnalysisOpen(true)}
+                className="text-cyan-400 hover:text-cyan-300 underline font-semibold cursor-pointer flex items-center gap-1"
+                title="View iPad vs. Cloud Compute Breakdown: FLOPs, 95% dev vs 68% runtime"
+              >
+                <span>⚡ iPad vs Cloud %</span>
+              </button>
+              <span className="text-slate-600 hidden sm:inline">&bull;</span>
               <button
                 onClick={() => setIsPrerequisitesOpen(true)}
                 className="text-indigo-400 hover:text-indigo-300 underline font-semibold cursor-pointer flex items-center gap-1"

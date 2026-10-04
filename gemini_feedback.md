@@ -320,3 +320,36 @@ As systems scale through "vibe coding", they must become inspectable by both hum
    - Exposed `GET /api/agent/tools` and `POST /api/agent/execute-tool` in `server.ts`.
    - Allows external agents to safely query playlists, inspect capability matrices, extract clip summaries, and update study notes via structured JSON tool calls.
 
+---
+
+## 16. Codebase Complexity Matrix & Multi-Language Calibration
+
+### Context & Need
+Engineers and learners onboarding to `learn-better` required a rigorous assessment of the exact competencies needed to comprehend, modify, and audit each subsystem, alongside clear interaction rationale across the 10 programming and markup languages in the repository.
+
+### Architectural Solution
+1. **10-Level Cognitive Scale (L1 to L10)**:
+   - Grounded each level in specific codebase files (e.g. Level 7 for Euler canvas physics in `VideoCosmosGraph.tsx`; Level 8 for TypeScript discriminating unions & MediaSession remote handlers in `AudioLessonPlayer.tsx`).
+   - Defined entry level vs. required mastery level for every language.
+2. **Interactive In-App Matrix (`PrerequisitesModal.tsx`)**:
+   - Built interactive filter tabs with dynamic meters, search, and instant raw Markdown export (`/prerequisite.md`).
+   - Embedded persistent access buttons in `Navbar.tsx`, `UserGuideViewer.tsx`, and universal footer navigation.
+
+---
+
+## 17. Client-Side GitHub API Selective File Ingestion & Git Trees Architecture
+
+### Context & Need
+Learners needed to import Markdown documentation, research dossiers, and coding lessons from arbitrary GitHub repositories into the KnowledgeHub without manual copy-pasting or server-side OAuth redirect dependencies.
+
+### Architectural Solution
+1. **Dual-Tier Rate Limit & Token Management (`src/services/githubApi.ts`)**:
+   - Supports both public unauthenticated fetching (60 req/hr) and fine-grained Personal Access Tokens (5,000 req/hr) stored in `localStorage`.
+   - Token validation via `/user` endpoint extracting granted scopes and remaining hourly quota.
+2. **Git Trees API & Controlled Batching**:
+   - Implemented `fetchRepositoryTree()` utilizing GitHub's Git Trees API (`GET /repos/:owner/:repo/git/trees/:branch?recursive=1`) to discover all repository files in a single network roundtrip.
+   - Implemented `fetchSpecificFiles()` with concurrency chunking (5 requests/batch) to avoid overwhelming rate limits.
+3. **Automated KnowledgeHub Synthesis**:
+   - Automatically parses YAML frontmatter, title headings, `#tags`, open questions (`?`), and actionable takeaways from Markdown files into `YouTubeClip` and `SummaryData` datasets.
+
+

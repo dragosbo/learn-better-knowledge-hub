@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 08 — Gemini AI Studio &amp; Multi-Model Cascade</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #451a03 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Video Hub • Cap 08
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Gemini AI Studio &amp; Multi-Model Cascade</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">NotebookLM Audio Overview &amp; Interactive AI Studio Simulator</p>
+      </div>
+    </div>
+
+    <!-- Action Links -->
+    <div class="flex items-center gap-2">
+      <a href="/decks/08_CAPABILITY_GEMINI_AI_STUDIO.html" class="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+        <span>Slide Deck 08 →</span>
+      </a>
+      <a href="/videos/08_NOTEBOOKLM_SOURCE_DOSSIER.md" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs border border-slate-700 transition-colors hidden md:inline-block">
+        NotebookLM Dossier
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Video Screen Simulator & Player -->
+    <div class="lg:col-span-8 space-y-4">
+      
+      <!-- Video Screen Visualizer Canvas -->
+      <div class="relative aspect-video rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-2xl flex flex-col justify-between studio-bg p-5 sm:p-7">
+        
+        <!-- Live Scene Header Overlay -->
+        <div class="flex items-center justify-between text-xs z-10">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+            <span id="sceneBadge" class="font-mono text-[11px] font-bold text-amber-300 uppercase tracking-wider bg-slate-900/80 px-2 py-0.5 rounded border border-amber-800/80">
+              SCENE 1 • COGNITIVE INVERSION
+            </span>
+          </div>
+          <div class="text-[11px] font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">
+            <span id="currentTimeDisplay">0:00</span> / <span id="totalTimeDisplay">4:25</span>
+          </div>
+        </div>
+
+        <!-- Center Stage: Animated Graphic / UI Mockup -->
+        <div class="flex-1 flex flex-col items-center justify-center my-4 text-center z-10 px-4 space-y-3">
+          <div id="centerIcon" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-amber-600 to-orange-500 p-0.5 shadow-2xl animate-pulse-ring flex items-center justify-center">
+            <div class="w-full h-full bg-slate-950 rounded-2xl flex items-center justify-center text-amber-400">
+              <svg class="w-8 h-8 sm:w-10 sm:h-10 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="space-y-1 max-w-lg">
+            <h2 id="sceneTitle" class="text-lg sm:text-xl font-extrabold text-white tracking-tight">
+              The Cognitive Inversion: Turning Videos Into Verified Code
+            </h2>
+            <p id="sceneSubtitle" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Passive tutorial watching is passive entertainment. Gemini AI Studio activates deep retrieval practice with structured synthesis and anti-slop prompt directives.
+            </p>
+          </div>
+
+          <!-- Scene Code / Visual Badge -->
+          <div id="sceneBadgeBox" class="text-[11px] font-mono px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-700 text-amber-300 max-w-md truncate shadow-sm">
+            gemini-3.8-flash &bull; multi-model cascade &bull; zero 503 errors
+          </div>
+        </div>
+
+        <!-- Bottom Overlay: Active Narration Caption -->
+        <div class="bg-slate-900/90 border border-slate-800/90 rounded-xl p-3 z-10 backdrop-blur-md">
+          <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-0.5">Narration Audio Transcript</div>
+          <p id="activeCaption" class="text-xs text-slate-200 leading-snug truncate">
+            Welcome to Capability 08. In this video briefing, we explore the Gemini AI Studio and multi-model cascade engine.
+          </p>
+        </div>
+      </div>
+
+      <!-- Playback Controls Bar -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-lg">
+        <div class="flex items-center gap-2">
+          <button id="mainPlayBtn" onclick="togglePlayback()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg transition-all shadow-md flex items-center gap-1.5">
+            <svg id="mainPlayIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <span id="mainPlayLabel">Play Simulator</span>
+          </button>
+          
+          <button onclick="restartVideo()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition-colors" title="Restart from 0:00">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+
+          <!-- Waveform Indicator -->
+          <div id="videoWaveform" class="hidden items-center gap-0.5 px-2 h-5">
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          </div>
+        </div>
+
+        <!-- Narration Engine Selector -->
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400 text-[11px]">Audio Source:</span>
+          <select id="audioSourceSelect" onchange="changeAudioSource(this.value)" class="bg-slate-950 text-slate-200 border border-slate-700 rounded-lg px-2 py-1 text-xs outline-none">
+            <option value="synthetic">Web Speech Synthesis (Live)</option>
+            <option value="notebooklm">NotebookLM MP3 Dropzone</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- NotebookLM Dropzone Card (Visible if notebooklm source selected) -->
+      <div id="dropzoneContainer" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-white">NotebookLM Audio Overview Dropzone</span>
+          <span class="text-[10px] text-slate-400 font-mono">IndexedDB Storage</span>
+        </div>
+        <p class="text-[11px] text-slate-400">
+          Upload the podcast MP3/WAV audio overview generated by Google NotebookLM from <code>08_NOTEBOOKLM_SOURCE_DOSSIER.md</code> to replace the synthetic speech engine with authentic AI host voices.
+        </p>
+        <input type="file" id="audioFileInput" accept="audio/*" onchange="handleAudioUpload(this)" class="block w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-500 cursor-pointer"/>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Storyboard Timeline -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col h-[580px] shadow-xl">
+        <div class="mb-3 pb-2 border-b border-slate-800 flex items-center justify-between">
+          <div>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Video Storyboard Timeline</h3>
+            <p class="text-[11px] text-slate-400">5 Scenes &bull; 4m 25s Total Runtime</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
+            OBS Ready
+          </span>
+        </div>
+
+        <!-- Scrollable Scene Cards -->
+        <div class="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+          
+          <!-- Scene 1 -->
+          <div onclick="jumpToScene(1)" class="scene-card p-3 rounded-xl border text-xs cursor-pointer transition-all bg-amber-950/40 border-amber-600/80 text-white" data-scene="1">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-amber-300">Scene 1: Cognitive Inversion</span>
+              <span class="text-[10px] text-slate-400 font-mono">0:00 - 0:45</span>
+            </div>
+            <p class="text-[11px] text-slate-300 line-clamp-2">
+              The paradox of tutorial hell. Shifting from passive watching to active generative synthesis.
+            </p>
+          </div>
+
+          <!-- Scene 2 -->
+          <div onclick="jumpToScene(2)" class="scene-card p-3 rounded-xl border text-xs cursor-pointer transition-all bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/50" data-scene="2">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-white">Scene 2: Multi-Model Cascade</span>
+              <span class="text-[10px] text-slate-400 font-mono">0:45 - 1:40</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">
+              Surviving HTTP 503 high demand: gemini-3.8-flash failover to flash-latest and 2.5-flash.
+            </p>
+          </div>
+
+          <!-- Scene 3 -->
+          <div onclick="jumpToScene(3)" class="scene-card p-3 rounded-xl border text-xs cursor-pointer transition-all bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/50" data-scene="3">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-white">Scene 3: Knowledge Distillation</span>
+              <span class="text-[10px] text-slate-400 font-mono">1:40 - 2:35</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">
+              Typed JSON schema contracts extracting takeaways, self-test questions, and vibe prompt starters.
+            </p>
+          </div>
+
+          <!-- Scene 4 -->
+          <div onclick="jumpToScene(4)" class="scene-card p-3 rounded-xl border text-xs cursor-pointer transition-all bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/50" data-scene="4">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-white">Scene 4: Anti-Slop Prompt Optimizer</span>
+              <span class="text-[10px] text-slate-400 font-mono">2:35 - 3:30</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">
+              Stripping conversational filler words and producing token-dense directives for autonomous coding agents.
+            </p>
+          </div>
+
+          <!-- Scene 5 -->
+          <div onclick="jumpToScene(5)" class="scene-card p-3 rounded-xl border text-xs cursor-pointer transition-all bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/50" data-scene="5">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-white">Scene 5: Bi-Directional Note Sync</span>
+              <span class="text-[10px] text-slate-400 font-mono">3:30 - 4:25</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">
+              Hydrating video notes, syncing to localStorage and disk, and crossing the Hemingway Bridge to Deck 09.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Quick 1-Click Copy Dossier Button -->
+        <div class="pt-3 border-t border-slate-800">
+          <button onclick="copyDossierPrompt()" id="copyDossierBtn" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <span id="copyDossierLabel">Copy NotebookLM Prompt</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Scene Script Definitions
+    const scenes = {
+      1: {
+        title: "The Cognitive Inversion: Turning Videos Into Verified Code",
+        subtitle: "Passive tutorial watching creates an illusion of competence. Gemini AI Studio activates deep retrieval practice.",
+        badge: "gemini-3.8-flash • multi-model cascade • zero 503 errors",
+        timeRange: "0:00 - 0:45",
+        startTime: 0,
+        endTime: 45,
+        narration: "Welcome to Capability 08: Gemini AI Studio and Multi-Model Cascade Engine. In this video briefing, we examine the cognitive inversion—turning hundreds of hours of passive video consumption into active, structured knowledge synthesis, concept self-testing, and anti-slop coding directives."
+      },
+      2: {
+        title: "The Multi-Model Cascade: Surviving HTTP 503 High Demand",
+        subtitle: "Production AI systems cannot fail during traffic spikes. Automated failovers ensure unbroken continuity.",
+        badge: "Tier 1: 3.8-flash → Tier 2: flash-latest → Tier 3: 2.5-flash",
+        timeRange: "0:45 - 1:40",
+        startTime: 45,
+        endTime: 100,
+        narration: "When popular AI models experience sudden global demand surges, API gateways return HTTP 503 or 429 rate limit exceptions. Learn Better implements a 3-tier cascade in server.ts: seamlessly falling over from Gemini 3.8 Flash to Gemini Flash Latest and Gemini 2.5 Flash without dropping user work."
+      },
+      3: {
+        title: "Structured Knowledge Distillation: From Transcript to Verified Schema",
+        subtitle: "Enforcing TypeScript schema contracts: 3-5 core takeaways, Socratic self-test questions, and prompt starters.",
+        badge: "POST /api/gemini/analyze → GeminiInsightResult",
+        timeRange: "1:40 - 2:35",
+        startTime: 100,
+        endTime: 155,
+        narration: "Unstructured conversational output is messy and difficult for software to render safely. Learn Better enforces a strict JSON schema contract, extracting 3 to 5 core takeaways, probing Socratic self-test questions, and token-dense prompt starters."
+      },
+      4: {
+        title: "The Anti-AI Slop Engine: Formatting Prompts for Autonomous Agents",
+        subtitle: "Stripping preamble pleasantries and conversational filler to produce token-dense engineering directives.",
+        badge: "POST /api/gemini/vibe-pilot → 70% token savings",
+        timeRange: "2:35 - 3:30",
+        startTime: 155,
+        endTime: 210,
+        narration: "Amateur vibe coding produces fluffy conversational prompts like 'Please kindly write me a nice app'. Our Vibe-Pilot optimizer strips pleasantries, injects explicit file paths, defines negative constraints, and formats directives that autonomous agents can execute reliably."
+      },
+      5: {
+        title: "Bi-Directional State Flow: Seamless Knowledge Hydration",
+        subtitle: "1-click injection of extracted insights into video study notes, synced to localStorage and disk.",
+        badge: "localStorage + POST /api/playlists → Permanent Knowledge",
+        timeRange: "3:30 - 4:25",
+        startTime: 210,
+        endTime: 265,
+        narration: "Gemini Studio directly synchronizes with the user's permanent study catalog. With one click, extracted insights are appended into the video's notes, user questions are registered, and data is persisted to disk and localStorage. Capability 08 is delivered!"
+      }
+    };
+
+    let activeSceneId = 1;
+    let isPlaying = false;
+    let currentSeconds = 0;
+    let playbackInterval = null;
+    let currentUtterance = null;
+
+    function jumpToScene(id) {
+      activeSceneId = id;
+      const scene = scenes[id];
+      currentSeconds = scene.startTime;
+      updateVisuals();
+      if (isPlaying) {
+        speakSceneNarration();
+      }
+    }
+
+    function updateVisuals() {
+      const scene = scenes[activeSceneId];
+      document.getElementById('sceneBadge').textContent = `SCENE ${activeSceneId} • ${scene.title.split(':')[0].toUpperCase()}`;
+      document.getElementById('sceneTitle').textContent = scene.title;
+      document.getElementById('sceneSubtitle').textContent = scene.subtitle;
+      document.getElementById('sceneBadgeBox').textContent = scene.badge;
+      document.getElementById('activeCaption').textContent = scene.narration;
+
+      // Update timer
+      const mins = Math.floor(currentSeconds / 60);
+      const secs = Math.floor(currentSeconds % 60);
+      document.getElementById('currentTimeDisplay').textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+      // Update sidebar scene cards
+      document.querySelectorAll('.scene-card').forEach(card => {
+        const cId = parseInt(card.getAttribute('data-scene'));
+        if (cId === activeSceneId) {
+          card.className = 'scene-card p-3 rounded-xl border text-xs cursor-pointer transition-all bg-amber-950/40 border-amber-600/80 text-white';
+        } else {
+          card.className = 'scene-card p-3 rounded-xl border text-xs cursor-pointer transition-all bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/50';
+        }
+      });
+    }
+
+    function togglePlayback() {
+      if (isPlaying) {
+        pausePlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      isPlaying = true;
+      document.getElementById('mainPlayIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      document.getElementById('mainPlayLabel').textContent = 'Pause Simulator';
+      document.getElementById('videoWaveform').classList.remove('hidden');
+      document.getElementById('videoWaveform').classList.add('flex');
+
+      speakSceneNarration();
+
+      clearInterval(playbackInterval);
+      playbackInterval = setInterval(() => {
+        currentSeconds++;
+        const scene = scenes[activeSceneId];
+        if (currentSeconds >= scene.endTime) {
+          if (activeSceneId < 5) {
+            jumpToScene(activeSceneId + 1);
+          } else {
+            pausePlayback();
+          }
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function pausePlayback() {
+      isPlaying = false;
+      document.getElementById('mainPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('mainPlayLabel').textContent = 'Play Simulator';
+      document.getElementById('videoWaveform').classList.remove('flex');
+      document.getElementById('videoWaveform').classList.add('hidden');
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      clearInterval(playbackInterval);
+    }
+
+    function restartVideo() {
+      pausePlayback();
+      currentSeconds = 0;
+      activeSceneId = 1;
+      updateVisuals();
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(currentSeconds / 60);
+      const secs = Math.floor(currentSeconds % 60);
+      document.getElementById('currentTimeDisplay').textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function speakSceneNarration() {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const text = scenes[activeSceneId].narration;
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = 1.0;
+      window.speechSynthesis.speak(currentUtterance);
+    }
+
+    function changeAudioSource(val) {
+      const container = document.getElementById('dropzoneContainer');
+      if (val === 'notebooklm') {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+
+    function copyDossierPrompt() {
+      const text = `NotebookLM Source Dossier: Capability 08 (Gemini AI Studio & Multi-Model Cascade). Located at: /videos/08_NOTEBOOKLM_SOURCE_DOSSIER.md`;
+      navigator.clipboard.writeText(text);
+      const btnLabel = document.getElementById('copyDossierLabel');
+      btnLabel.textContent = 'Dossier Path Copied!';
+      setTimeout(() => {
+        btnLabel.textContent = 'Copy NotebookLM Prompt';
+      }, 2000);
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateVisuals();
+    });
+  </script>
+</body>
+</html>

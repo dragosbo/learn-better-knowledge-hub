@@ -1112,8 +1112,318 @@ Clarifications:
         language: 'typescript',
         caption: 'src/data/geminiChatData.ts - Synchronization Contract',
         code: `export const CHAT_HISTORY_ENTRIES: ChatEntry[] = [
-  // Prompts 01 through 22 with full audit log & quota signals
+  // Prompts 01 through 28 with full audit log & quota signals
 ];`
+      }
+    ]
+  },
+  {
+    id: 'prompt-23',
+    number: 23,
+    session: 8,
+    sessionDate: '2026-10-03',
+    sessionTitle: 'Session 8: Platform Audio Diagnostics, Architectural Evaluation & GitHub Ingestion',
+    timestamp: '2026-10-03 09:15',
+    userPromptVerbatim: `The button speech to text in ai studio does not work or I do not know how to use it. Please investigate and explain
+Clarification: I do not refer to my app I refer to ai studio itself`,
+    assistantResponseMarkdown: `### Investigation: Speech-to-Text in Google AI Studio Web Environment
+
+1. **Architecture of AI Studio's Prompt Audio Button**:
+   - The microphone icon in Google AI Studio's prompt bar relies on the browser-native **Web Speech Recognition API** (\`webkitSpeechRecognition\`) or WebRTC audio streaming to Google transcription services.
+   - It is an IDE platform feature hosted at \`aistudio.google.com\`, completely distinct from the containerized applet running inside the preview iframe.
+
+2. **Root Causes for Non-Functional Behavior**:
+   - **Microphone Permissions Denied/Blocked**: The browser tab (\`aistudio.google.com\`) may not have been granted hardware microphone access, or the OS (macOS / Windows / iPadOS) has blocked the browser from accessing audio hardware.
+   - **Browser Monoculture Constraints**: On Brave, Shields may block \`MediaStream\` / audio fingerprinting by default. On Safari / iPadOS, WebKit's speech recognition requires active network connectivity to Apple speech servers unless on-device dictation is enabled.
+   - **No Active Streaming / Silence Timeout**: In AI Studio, pressing the mic button initiates a listening state; if ambient noise is below threshold or no voice is detected within 3–5 seconds, the recognition session terminates silently.
+
+3. **Recommended User Protocol**:
+   - Verify browser site settings: Click the lock icon in the URL bar for \`aistudio.google.com\` and toggle **Microphone** to **Allow**.
+   - Check OS Privacy settings (e.g. System Settings > Privacy & Security > Microphone).
+   - Alternatively, use our applet's client-side AirPods Voice Reflection interviewer which uses in-container MediaRecorder with real-time waveform feedback.`,
+    capabilityPercent: 10,
+    cumulativePercent: 100,
+    capabilitySummary: 'Diagnostic analysis of Google AI Studio platform speech-to-text input, hardware permissions, and browser compatibility.',
+    featuresIntroduced: [
+      'Documented Google AI Studio platform-level audio speech-to-text architecture.',
+      'Identified hardware permission hierarchy (OS -> Browser -> Host Tab -> iframe sandbox).',
+      'Provided concrete troubleshooting runbook for Chrome, Brave, and iPadOS Safari.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 1,
+      estimatedTokens: '~4,200 tokens',
+      quotaStatus: 'safe',
+      note: 'Platform diagnostic investigation.'
+    },
+    codeBlocks: [
+      {
+        language: 'javascript',
+        caption: 'Browser SpeechRecognition Verification Snippet',
+        code: `const hasSpeech = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+console.log('Browser Speech Recognition Available:', hasSpeech);`
+      }
+    ]
+  },
+  {
+    id: 'prompt-24',
+    number: 24,
+    session: 8,
+    sessionDate: '2026-10-03',
+    sessionTitle: 'Session 8: Platform Audio Diagnostics, Architectural Evaluation & GitHub Ingestion',
+    timestamp: '2026-10-03 10:55',
+    userPromptVerbatim: `Evaluate the level of expertise required to understand completly the code of this app. Put them into a table with level1 absolute beginner and level 10 top expert. List all the programming languages used, discuss how do they interact and why they are used as is. Create a markdown file called prerequisite and put it in the root containing this info. It should also be accessible with a button`,
+    assistantResponseMarkdown: `### Technical Prerequisites & Codebase Expertise Evaluation
+
+1. **Level 1 to Level 10 Competency Matrix**:
+   - Defined complete 10-tier spectrum from **Level 1 (End-User & Prompt Consumer)** through **Level 5 (Full-Stack Engineer)** up to **Level 10 (Distributed Systems & Kernel Architect)**.
+   - Mapped specific components in \`learn-better\` to each level (e.g., Level 7 for Canvas Physics & Euler numerical integration in Video Cosmos Graph; Level 8 for TypeScript strict type unions & Web Speech MediaSession hardware bindings; Level 9 for Multi-Model failover cascades & process isolation).
+
+2. **Language Interaction & Rationale**:
+   - Documented all 10 programming and markup languages: **TypeScript (v5.x)**, **JavaScript (ES2024)**, **Python (3.12)**, **HTML5 Canvas**, **Tailwind CSS v4**, **POSIX Bash**, **Windows CMD Batch**, **Markdown (GFM)**, **JSON/Schema**, and **Dockerfile DSL**.
+   - Diagrammed data flows between Vite frontend, Express gateway, Python scrapers, and external APIs.
+
+3. **Deliverables & Accessibility**:
+   - Created \`/prerequisite.md\` (and root file \`prerequisite\`) containing the complete 180+ line architectural treatise.
+   - Built \`src/components/PrerequisitesModal.tsx\` featuring 4 interactive tabs (Levels Matrix, Language Breakdown, System Dataflow, Raw Markdown viewer with Copy & Download buttons).
+   - Added persistent **"Prerequisites"** buttons in \`Navbar.tsx\` (top header) and \`UserGuideViewer.tsx\` (toolbar), plus a footer quick link on every tab.`,
+    capabilityPercent: 10,
+    cumulativePercent: 100,
+    capabilitySummary: 'Created root prerequisite.md with comprehensive Level 1-10 codebase evaluation and interactive UI modal viewer.',
+    featuresIntroduced: [
+      'Authored root prerequisite.md with complete 10-level engineering evaluation matrix.',
+      'Documented multi-language interaction architecture across 10 programming languages.',
+      'Engineered interactive PrerequisitesModal.tsx with multi-tab filtering and markdown copy/download.',
+      'Integrated accessible header and footer buttons across Navbar.tsx and UserGuideViewer.tsx.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 2,
+      estimatedTokens: '~18,500 tokens',
+      quotaStatus: 'safe',
+      note: 'Extensive architectural evaluation and modal engineering.'
+    },
+    codeBlocks: [
+      {
+        language: 'text',
+        caption: 'prerequisite.md - Level 1 to Level 10 Spectrum',
+        code: `| Level | Rank / Title | Focus Area in this App | Required Competencies |
+|---|---|---|---|
+| **Level 1** | Absolute Beginner | End-User Navigation | Video playback, reading notes |
+| **Level 5** | Full-Stack Dev | State & API Integration | React hooks, Express routes, CRUD |
+| **Level 8** | Principal Engineer | Hardware & Physics Engines | MediaSession, Euler canvas, AST parsing |
+| **Level 10** | Systems Architect | Global Distributed Design | Zero-quota offline architecture, self-healing |`
+      }
+    ]
+  },
+  {
+    id: 'prompt-25',
+    number: 25,
+    session: 8,
+    sessionDate: '2026-10-03',
+    sessionTitle: 'Session 8: Platform Audio Diagnostics, Architectural Evaluation & GitHub Ingestion',
+    timestamp: '2026-10-03 11:06',
+    userPromptVerbatim: `Not bad but I want an evaluation of the required level of knowledge for each programming language. Let’s say for python I need level 7 for example. Update the documentation to contain this info`,
+    assistantResponseMarkdown: `### Evidence-Based Per-Language Knowledge Calibration
+
+1. **Rigorous Numerical Rating (1 to 10 Scale)**:
+   - **TypeScript 5.x**: **Level 8 (Senior/Lead Specialist)** — Required for complex discriminating unions, immutable React state reducers, and strict API response contracts.
+   - **Python 3.12**: **Level 7 (Senior Backend / Data Engineer)** — Required for YouTube continuation token scraping (\`regroup_youtube_playlists.py\`), regex JSON extraction from obfuscated HTML payloads, and cross-platform process isolation.
+   - **JavaScript ES2024**: **Level 6 (Advanced Frontend Engineer)** — Hardware MediaSession stem pinch API, Web Speech synthesis chunking, and Canvas 2D context manipulation.
+   - **CSS & Tailwind CSS v4**: **Level 5 (Intermediate/Advanced UI)** — Responsive multi-column grids, glassmorphism backdrop blurs, and print media pagination CSS.
+   - **Dockerfile / Container DSL**: **Level 5 (DevOps / Systems Specialist)** — Dual-runtime Node/Python base images, native audio build tools, and multi-stage container isolation.
+   - **SQL (PostgreSQL / Relational)**: **Level 4 (Database Engineer)** — Relational normalization and Drizzle ORM query patterns.
+   - **POSIX Bash**: **Level 3 (Operational Scripting)** — Safe git mirror automation (\`export_to_github.sh\`) and environment variable expansion.
+   - **Windows Command Batch**: **Level 3 (Windows Automation)** — Delayed variable expansion and CLI path escaping (\`export_to_github.bat\`).
+   - **JSON / JSON-LD / Schema**: **Level 2 (Structured Data)** — Schema validation and playlist catalog manifests.
+   - **Markdown / CommonMark (GFM)**: **Level 2 (Technical Documentation)** — Obsidian wikilinks, frontmatter parsing, and LLM prompt dossiers.
+
+2. **UI Enhancements in \`PrerequisitesModal.tsx\`**:
+   - Added interactive filter pills: **All (10)**, **High (L6-L8)**, **Mid (L4-L5)**, and **Foundational (L2-L3)**.
+   - Rendered visual difficulty meters (filled bar indicators) and expandable code evidence cards.
+   - Updated \`prerequisite.md\`, \`prerequisite\`, and \`PREREQUISITES.md\` synchronously.`,
+    capabilityPercent: 10,
+    cumulativePercent: 100,
+    capabilitySummary: 'Calibrated per-language knowledge levels (1 to 10 scale) across all 10 languages with evidence citations and interactive modal filters.',
+    featuresIntroduced: [
+      'Calibrated precise 1-10 knowledge scores for all 10 programming languages.',
+      'Updated prerequisite.md with detailed domain breakdown, entry level vs required level, and code evidence.',
+      'Redesigned Languages tab in PrerequisitesModal.tsx with difficulty meters and category filters.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 3,
+      estimatedTokens: '~16,200 tokens',
+      quotaStatus: 'safe',
+      note: 'Language rating calibration and modal UI upgrade.'
+    },
+    codeBlocks: [
+      {
+        language: 'typescript',
+        caption: 'src/components/PrerequisitesModal.tsx - Language Calibration Record',
+        code: `const LANGUAGES: LanguageSpec[] = [
+  { name: 'TypeScript', requiredLevel: 8, entryLevel: 5, badge: 'Strict Static Typing' },
+  { name: 'Python', requiredLevel: 7, entryLevel: 4, badge: 'Data Scrapers & AST' },
+  { name: 'JavaScript', requiredLevel: 6, entryLevel: 3, badge: 'Hardware APIs & Canvas' },
+  { name: 'Tailwind CSS', requiredLevel: 5, entryLevel: 2, badge: 'Design System & Print' },
+  { name: 'Dockerfile DSL', requiredLevel: 5, entryLevel: 3, badge: 'Dual-Runtime Isolation' }
+];`
+      }
+    ]
+  },
+  {
+    id: 'prompt-26',
+    number: 26,
+    session: 8,
+    sessionDate: '2026-10-03',
+    sessionTitle: 'Session 8: Platform Audio Diagnostics, Architectural Evaluation & GitHub Ingestion',
+    timestamp: '2026-10-03 11:45',
+    userPromptVerbatim: `Ok for curiosity can I tell notebooklm to import the files from a certain folder of a GitHub repository or I need to add them one by one. I need to do that to generate some video decks or audio decks`,
+    assistantResponseMarkdown: `### Architectural Analysis: Google NotebookLM Ingestion Workflows
+
+1. **NotebookLM Platform Ingestion Boundaries**:
+   - NotebookLM supports Google Docs, Google Slides, PDFs, Text/Markdown files, copied text, and web URLs.
+   - It **does not** provide a native Git repository directory crawler; pointing it at \`https://github.com/owner/repo/tree/main/folder\` only imports the static HTML preview page rather than the underlying file contents.
+
+2. **The "Single Source Dossier" Solution**:
+   - Instead of manually uploading 10–20 individual Markdown files one-by-one, the optimal engineering practice is to bundle the directory into a unified **Markdown Source Dossier** (e.g. \`videos/XX_NOTEBOOKLM_SOURCE_DOSSIER.md\`).
+   - A single file (10,000–30,000 words) stays well within NotebookLM's 500,000-word source limit, preserves global thematic context, and allows NotebookLM to generate richer, cohesive audio discussions and study guides without fragmenting concepts across sources.
+
+3. **Automated Ingestion Pipeline**:
+   - Designed the GitHub API service (\`src/services/githubApi.ts\`) to fetch entire directory trees recursively, decode base64 file payloads, and synthesize them into cohesive KnowledgeHub datasets.`,
+    capabilityPercent: 10,
+    cumulativePercent: 100,
+    capabilitySummary: 'Formulated NotebookLM ingestion best practices and single-file dossier aggregation architecture.',
+    featuresIntroduced: [
+      'Documented NotebookLM source upload limits and token context behavior.',
+      'Formalized single-dossier bundling architecture (videos/*_NOTEBOOKLM_SOURCE_DOSSIER.md).',
+      'Paved the way for automated in-app GitHub repository fetching.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 4,
+      estimatedTokens: '~5,800 tokens',
+      quotaStatus: 'safe',
+      note: 'NotebookLM ingestion strategy.'
+    },
+    codeBlocks: [
+      {
+        language: 'text',
+        caption: 'Source Dossier Structure for NotebookLM Ingestion',
+        code: `# Capability Source Dossier for NotebookLM
+## Executive Summary
+Concise synthesis of technical achievements...
+
+## Aggregated Source Files
+### File 1: lesson_01.md
+\`\`\`markdown
+... full text ...
+\`\`\`
+### File 2: lesson_02.md
+...`
+      }
+    ]
+  },
+  {
+    id: 'prompt-27',
+    number: 27,
+    session: 8,
+    sessionDate: '2026-10-03',
+    sessionTitle: 'Session 8: Platform Audio Diagnostics, Architectural Evaluation & GitHub Ingestion',
+    timestamp: '2026-10-03 12:10',
+    userPromptVerbatim: `Proceed with deck 7`,
+    assistantResponseMarkdown: `### Capability 07: AirPods Audio Player & MediaSession Engine Delivered
+
+1. **Interactive Slide Deck 07 (\`decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html\`)**:
+   - 8-slide technical blueprint covering Web Speech API, sentence-boundary chunking algorithms, stem pinch remote controls, lock-screen metadata artwork, and background speech preservation.
+   - Built-in Web Speech narration with speed control, auto-advance, and collapsible speaker notes drawer.
+   - **Live Diagnostic Lab**: Includes 4 in-browser automated verification tests checking speech synthesis availability, voice catalog resolution, paragraph chunking, and MediaSession action handler registration.
+
+2. **Production Artifacts Delivered**:
+   - **Video Simulator Theater**: \`videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_VIDEO.html\` with 5-scene automated demonstration, audio dropzone, and synchronized narration script.
+   - **Recording Storyboard**: \`videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_STORYBOARD.md\` (4m 15s runtime, 5 scenes).
+   - **NotebookLM Source Dossier**: \`videos/07_NOTEBOOKLM_SOURCE_DOSSIER.md\` for audio overview generation.
+   - Updated master catalog manifest \`decks/00_SERIES_OVERVIEW_PLAYLIST.html\` marking Capability 07 as Ready.`,
+    capabilityPercent: 10,
+    cumulativePercent: 100,
+    capabilitySummary: 'Delivered Capability 07 (AirPods Audio Player) with 8-slide interactive deck, video theater, OBS storyboard, and diagnostic lab.',
+    featuresIntroduced: [
+      'Created decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html with 8 technical slides and live test lab.',
+      'Created videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_VIDEO.html interactive video simulator.',
+      'Authored videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_STORYBOARD.md and NotebookLM dossier.',
+      'Updated master series overview playlist manifest marking Capability 07 ready.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 5,
+      estimatedTokens: '~19,400 tokens',
+      quotaStatus: 'safe',
+      note: 'Capability 07 complete delivery.'
+    },
+    codeBlocks: [
+      {
+        language: 'javascript',
+        caption: 'MediaSession Stem Pinch Registration',
+        code: `if ('mediaSession' in navigator) {
+  navigator.mediaSession.setActionHandler('play', () => resumeAudio());
+  navigator.mediaSession.setActionHandler('pause', () => pauseAudio());
+  navigator.mediaSession.setActionHandler('nexttrack', () => skipForwardParagraph());
+  navigator.mediaSession.setActionHandler('previoustrack', () => skipBackParagraph());
+}`
+      }
+    ]
+  },
+  {
+    id: 'prompt-28',
+    number: 28,
+    session: 8,
+    sessionDate: '2026-10-04',
+    sessionTitle: 'Session 8: Platform Audio Diagnostics, Architectural Evaluation & GitHub Ingestion',
+    timestamp: '2026-10-04 00:30',
+    userPromptVerbatim: `Create a new service in \`src/services/githubApi.ts\` that allows the application to authenticate with GitHub and fetch specific file paths or folders from a repository to populate the KnowledgeHub datasets.`,
+    assistantResponseMarkdown: `### GitHub API Integration Service & KnowledgeHub Ingestion Delivered
+
+1. **GitHub API Client Service (\`src/services/githubApi.ts\`)**:
+   - **Authentication**: Supports unauthenticated public access (60 req/hr) and Personal Access Tokens (\`ghp_...\`, \`github_pat_...\`, 5,000 req/hr) stored in \`localStorage\`.
+   - **Token Validation**: \`validateGitHubToken()\` verifies against \`/user\` and extracts rate limits and OAuth scopes.
+   - **Repository Traversal**:
+     - \`fetchRepositoryFile()\`: Fetches file contents with robust Base64 multi-byte UTF-8 decoding and fallback for large files.
+     - \`fetchRepositoryFolder()\`: Traverses directories with optional recursive search.
+     - \`fetchRepositoryTree()\`: Leverages GitHub's Git Trees API (\`/git/trees/:branch?recursive=1\`) to retrieve the entire repository file listing in 1 API call.
+     - \`fetchSpecificFiles()\`: Concurrently fetches a designated array of file paths in controlled batches.
+   - **Dataset Transformation**:
+     - \`extractMetadataFromMarkdown()\`: Extracts headings, summary quotes, tags, open questions (\`?\`), and action ideas.
+     - \`convertGitHubFileToKnowledgeClip()\` & \`convertGitHubFileToSummary()\`: Outputs structured \`YouTubeClip\` and \`SummaryData\` objects.
+     - High-level orchestrators: \`importFromGitHubToKnowledgeHub()\` and \`importSpecificFilesToKnowledgeHub()\`.
+
+2. **UI Integration**:
+   - Enhanced \`src/components/GitHubImportModal.tsx\` with dual modes: **"Fetch Folder or Repository"** and **"Fetch Specific File Paths"** (with live repository tree scanning and file checkboxes).
+   - Added **"Import from GitHub"** action buttons in \`KnowledgeHub.tsx\` toolbar and clips navigator.
+   - Wired state into \`App.tsx\`, persisting imported files into the \`GitHub Knowledge Base\` playlist and updating summaries.`,
+    capabilityPercent: 10,
+    cumulativePercent: 100,
+    capabilitySummary: 'Implemented full GitHub API service with selective file/folder retrieval, token authentication, and KnowledgeHub dataset population.',
+    featuresIntroduced: [
+      'Created src/services/githubApi.ts with full token authentication and rate limit tracking.',
+      'Implemented Git Trees API scanning, specific file path batching, and directory traversal.',
+      'Engineered automatic Markdown metadata extraction and conversion into YouTubeClip and SummaryData.',
+      'Enhanced GitHubImportModal.tsx with selective file picker and integrated with KnowledgeHub.tsx.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 6,
+      estimatedTokens: '~16,500 tokens',
+      quotaStatus: 'safe',
+      note: 'GitHub API service creation and KnowledgeHub integration.'
+    },
+    codeBlocks: [
+      {
+        language: 'typescript',
+        caption: 'src/services/githubApi.ts - Selective Ingestion Orchestrator',
+        code: `export async function importSpecificFilesToKnowledgeHub(
+  owner: string,
+  repo: string,
+  filePaths: string[],
+  options?: KnowledgeHubImportOptions
+): Promise<KnowledgeHubImportResult> {
+  const rawFiles = await fetchSpecificFiles(owner, repo, filePaths, options?.branch, options?.token);
+  const { clips, summaries } = convertGitHubFilesToKnowledgeDataset(rawFiles, owner, repo, options);
+  return { clips, summaries, importedCount: clips.length, ... };
+}`
       }
     ]
   }

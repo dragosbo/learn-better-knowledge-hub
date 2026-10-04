@@ -4,10 +4,10 @@
   "generatedDate": "2026-09-30",
   "author": "AI Studio Senior Engineering Engine",
   "totalCapabilities": 15,
-  "completedCapabilities": 6,
+  "completedCapabilities": 8,
   "inProgressCapabilities": 0,
   "pacingStrategy": "Multi-Day Token-Preserving Cadence (2-3 modules per session)",
-  "continuityProtocol": "Hemingway Bridge #6 (Session 6 -> Session 7)",
+  "continuityProtocol": "Hemingway Bridge #8 (Session 8 -> Session 9)",
   "chapters": [
     {
       "chapterNumber": 1,
@@ -149,14 +149,16 @@
     {
       "id": "cap-08",
       "number": 8,
-      "title": "Gemini AI Studio & Prompt Workbench",
+      "title": "Gemini AI Studio & Multi-Model Cascade",
       "chapter": 4,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/08_CAPABILITY_GEMINI_AI_STUDIO.html",
       "storyboardFile": "videos/08_CAPABILITY_GEMINI_AI_STUDIO_STORYBOARD.md",
-      "slideCount": 7,
-      "estimatedDurationSec": 270,
-      "summary": "Server-side multimodal model cascade, prompt library, and quiz/takeaway distillation."
+      "videoPlayerUrl": "/videos/08_CAPABILITY_GEMINI_AI_STUDIO_VIDEO.html",
+      "notebooklmDossierFile": "videos/08_NOTEBOOKLM_SOURCE_DOSSIER.md",
+      "slideCount": 8,
+      "estimatedDurationSec": 265,
+      "summary": "Multi-tier cascade (3.8-flash -> flash-latest -> 2.5-flash) for zero-downtime 503 recovery, typed JSON distillation, and Vibe-Pilot anti-slop prompt optimizer."
     },
     {
       "id": "cap-09",

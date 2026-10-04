@@ -15,7 +15,8 @@ import {
   Trash2,
   GraduationCap,
   Mic,
-  Volume2
+  Volume2,
+  GitBranch
 } from 'lucide-react';
 import { YouTubeClip, SummaryData, Playlist, VoiceReflectionSession } from '../types';
 import { AudioLessonPlayer } from './AudioLessonPlayer';
@@ -23,6 +24,7 @@ import { PdfExportModal } from './PdfExportModal';
 import { SocraticVoiceInterviewModal } from './SocraticVoiceInterviewModal';
 import { VoiceReflectionsJournal } from './VoiceReflectionsJournal';
 import { VoiceReflectionInterviewer } from './VoiceReflectionInterviewer';
+import { GitHubImportModal } from './GitHubImportModal';
 
 interface KnowledgeHubProps {
   clips: YouTubeClip[];
@@ -38,6 +40,7 @@ interface KnowledgeHubProps {
   onNavigateToGemini: (clip: YouTubeClip, content: string) => void;
   onSaveVoiceReflection?: (clipId: string, session: VoiceReflectionSession, appendToNotes: boolean) => void;
   onDeleteVoiceReflection?: (clipId: string, sessionId: string) => void;
+  onImportGitHubData?: (clips: YouTubeClip[], summaries: SummaryData[]) => void;
 }
 
 export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({
@@ -54,6 +57,7 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({
   onNavigateToGemini,
   onSaveVoiceReflection,
   onDeleteVoiceReflection,
+  onImportGitHubData,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeNoteText, setActiveNoteText] = useState(selectedClip?.notes || '');
@@ -64,6 +68,7 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isSideInterviewerOpen, setIsSideInterviewerOpen] = useState(false);
+  const [isGitHubModalOpen, setIsGitHubModalOpen] = useState(false);
 
   const handleSaveVoiceReflection = (clipId: string, session: VoiceReflectionSession, appendToNotes: boolean) => {
     if (onSaveVoiceReflection) {
@@ -221,54 +226,65 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
           </p>
         </div>
 
-        {currentClip && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => {
-                setActiveView('editor');
-                setIsSideInterviewerOpen((prev) => !prev);
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors shadow-sm cursor-pointer ${
-                isSideInterviewerOpen && activeView === 'editor'
-                  ? 'bg-rose-600 text-white border-rose-500 shadow-rose-600/20'
-                  : 'text-rose-200 bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/80'
-              }`}
-              title="Toggle side-by-side Socratic voice reflection interviewer"
-            >
-              <Mic className="w-3.5 h-3.5 text-rose-300" />
-              {isSideInterviewerOpen && activeView === 'editor' ? 'Close Voice Interview' : 'Voice Interview'}
-            </button>
-            <button
-              onClick={() => setIsPdfModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-200 bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/80 rounded-lg transition-colors shadow-sm cursor-pointer"
-              title="Export academic notebook PDF with lined margins"
-            >
-              <GraduationCap className="w-3.5 h-3.5 text-rose-400" />
-              Export Study PDF
-            </button>
-            <button
-              onClick={handleCopyToClipboard}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              {copied ? 'Copied MD' : 'Copy Markdown'}
-            </button>
-            <button
-              onClick={handleExportObsidian}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors"
-            >
-              <FileDown className="w-3.5 h-3.5 text-sky-400" />
-              Obsidian Export (.md)
-            </button>
-            <button
-              onClick={() => onNavigateToGemini(currentClip, matchingSummary ? matchingSummary.content : (currentClip.notes || currentClip.title))}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-sm"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              Gemini Distill
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setIsGitHubModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-sky-200 bg-sky-950/60 hover:bg-sky-900/80 border border-sky-800/80 rounded-lg transition-colors shadow-sm cursor-pointer"
+            title="Import markdown lessons, notes, and datasets directly from GitHub"
+          >
+            <GitBranch className="w-3.5 h-3.5 text-sky-400" />
+            Import from GitHub
+          </button>
+
+          {currentClip && (
+            <>
+              <button
+                onClick={() => {
+                  setActiveView('editor');
+                  setIsSideInterviewerOpen((prev) => !prev);
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors shadow-sm cursor-pointer ${
+                  isSideInterviewerOpen && activeView === 'editor'
+                    ? 'bg-rose-600 text-white border-rose-500 shadow-rose-600/20'
+                    : 'text-rose-200 bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/80'
+                }`}
+                title="Toggle side-by-side Socratic voice reflection interviewer"
+              >
+                <Mic className="w-3.5 h-3.5 text-rose-300" />
+                {isSideInterviewerOpen && activeView === 'editor' ? 'Close Voice Interview' : 'Voice Interview'}
+              </button>
+              <button
+                onClick={() => setIsPdfModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-200 bg-rose-950/60 hover:bg-rose-900/80 border border-rose-800/80 rounded-lg transition-colors shadow-sm cursor-pointer"
+                title="Export academic notebook PDF with lined margins"
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-rose-400" />
+                Export Study PDF
+              </button>
+              <button
+                onClick={handleCopyToClipboard}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? 'Copied MD' : 'Copy Markdown'}
+              </button>
+              <button
+                onClick={handleExportObsidian}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors"
+              >
+                <FileDown className="w-3.5 h-3.5 text-sky-400" />
+                Obsidian Export (.md)
+              </button>
+              <button
+                onClick={() => onNavigateToGemini(currentClip, matchingSummary ? matchingSummary.content : (currentClip.notes || currentClip.title))}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                Gemini Distill
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Main Grid: Clip Selector Sidebar + Knowledge Workspace */}
@@ -276,9 +292,19 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
         {/* Left: Clips Navigator */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col h-[740px]">
           <div className="mb-3">
-            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              Select Study Clip ({clips.length})
-            </h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Select Study Clip ({clips.length})
+              </h3>
+              <button
+                onClick={() => setIsGitHubModalOpen(true)}
+                className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-medium hover:underline cursor-pointer"
+                title="Import files from GitHub"
+              >
+                <GitBranch className="w-3 h-3" />
+                <span>+ GitHub</span>
+              </button>
+            </div>
             <div className="relative">
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
               <input
@@ -679,6 +705,17 @@ ${(currentClip.userIdeas && currentClip.userIdeas.length > 0)
         clips={clips}
         summaries={summaries}
         playlists={playlists}
+      />
+
+      {/* GitHub Repository & File Importer Modal */}
+      <GitHubImportModal
+        isOpen={isGitHubModalOpen}
+        onClose={() => setIsGitHubModalOpen(false)}
+        onImportComplete={(newClips, newSummaries) => {
+          if (onImportGitHubData) {
+            onImportGitHubData(newClips, newSummaries);
+          }
+        }}
       />
     </div>
   );

@@ -280,6 +280,17 @@ app.get(['/agent-tools', '/analysis/agent-tools'], (req, res) => {
   }
 });
 
+app.get(['/ipad-vs-cloud', '/analysis/ipad-vs-cloud'], (req, res) => {
+  const target = path.join(analysisDir, '04_ipad_vs_cloud_processing_analysis.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('iPad vs Cloud processing analysis report not found.');
+  }
+});
+
 // 4b-4. Decks & Videos folders static serving
 const decksDir = path.resolve(process.cwd(), 'decks');
 const videosDir = path.resolve(process.cwd(), 'videos');
@@ -408,6 +419,17 @@ app.get('/api/analysis/data', (req, res) => {
         htmlUrl: '/analysis/03_dual_audience_agent_tools_spec.html',
         markdownUrl: '/analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md',
         badge: 'Phase 3 • Agent Protocol'
+      },
+      {
+        phase: 4,
+        id: 'phase4',
+        title: 'iPad Client vs. Cloud Processing Architecture',
+        description: 'Empirical FLOPs, network packet payloads, and hardware acceleration analysis across active vibe-coding vs. app runtime.',
+        markdownFile: '04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md',
+        htmlFile: '04_ipad_vs_cloud_processing_analysis.html',
+        htmlUrl: '/analysis/04_ipad_vs_cloud_processing_analysis.html',
+        markdownUrl: '/analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md',
+        badge: 'Phase 4 • Compute Topology'
       }
     ];
 
@@ -424,7 +446,7 @@ app.get('/api/analysis/data', (req, res) => {
       };
     });
 
-    const activePhase = requestedPhase && requestedPhase >= 1 && requestedPhase <= 3 
+    const activePhase = requestedPhase && requestedPhase >= 1 && requestedPhase <= 4 
       ? populatedPhases[requestedPhase - 1] 
       : populatedPhases[1]; // default to Phase 2
 

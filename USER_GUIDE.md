@@ -197,4 +197,25 @@ On iPadOS, Apple restricts native DOM fullscreen (`requestFullscreen`) inside em
 
 ---
 
+### Section 8: Codebase Prerequisites & GitHub Repository Importer
+
+#### 1. Codebase Prerequisites & Knowledge Matrix (L1 to L10)
+- Tap the **"Prerequisites"** button in the top navigation bar or the toolbar above this guide.
+- Opens an interactive modal evaluating the exact technical competencies required to understand and modify the application:
+  - **Levels Matrix**: Filter from Level 1 (Beginner) to Level 10 (Kernel/Distributed Systems Architect).
+  - **Languages Tab**: Review calibrated difficulty scores across all 10 project languages (TypeScript Level 8, Python Level 7, JavaScript Level 6, CSS Level 5, Dockerfile Level 5, SQL Level 4, Bash Level 3, Batch Level 3, JSON Level 2, Markdown Level 2).
+  - **Export Options**: 1-click **"Copy Full File"** or **"Download .md"** to retrieve `prerequisite.md` locally.
+
+#### 2. Importing from GitHub into KnowledgeHub
+- Navigate to the **Knowledge Hub** tab.
+- Click the **"Import from GitHub"** button in the top action bar or the **"+ GitHub"** link in the clips navigator.
+- **Two Flexible Ingestion Modes**:
+  1. **Folder Mode**: Enter any GitHub repository or folder path (e.g., `dragosbo/learn-better/lessons_Claude` or full URL `https://github.com/owner/repo/tree/main/docs`).
+  2. **Selective File Paths Mode**: Enter specific file paths (one per line) or click **"Scan Repo"** to list all documents via the GitHub Git Trees API and check the exact files you want to import.
+- **Authentication**: Public repositories work out-of-the-box (60 req/hr). Add an optional GitHub Personal Access Token (PAT) for private repositories or to expand rate limits to 5,000 requests/hr.
+- **Automatic Synthesis**: Imported Markdown files automatically parse headings, summary quotes, `#tags`, open questions, and action items, and populate the **"GitHub Knowledge Base"** playlist.
+
+---
+
 *Enjoy learning better! Use the top-right button in this guide to download this manual anytime.*
+

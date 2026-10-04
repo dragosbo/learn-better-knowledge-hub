@@ -131,12 +131,30 @@ export const GeminiStudio: React.FC<GeminiStudioProps> = ({
       {/* Top Banner */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Sparkles className="w-5 h-5 text-amber-400" />
             <h1 className="text-xl font-bold text-white">Gemini AI Intelligence Studio</h1>
             <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800" title="Resilient model cascade: gemini-3.8-flash → gemini-flash-latest → gemini-2.5-flash">
-              gemini-3.8-flash + Multi-Model Cascade
+              gemini-3.8-flash + Cascade
             </span>
+            <a
+              href="/decks/08_CAPABILITY_GEMINI_AI_STUDIO.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700 hover:bg-slate-700 hover:text-amber-300 transition-colors flex items-center gap-1"
+              title="Open Capability 08 Interactive Slide Deck"
+            >
+              <span>Deck 08 ↗</span>
+            </a>
+            <a
+              href="/videos/08_CAPABILITY_GEMINI_AI_STUDIO_VIDEO.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-800 text-rose-400 border border-slate-700 hover:bg-slate-700 hover:text-rose-300 transition-colors flex items-center gap-1"
+              title="Open Capability 08 Interactive Video Hub Simulator"
+            >
+              <span>🎬 Video ↗</span>
+            </a>
           </div>
           <p className="text-sm text-slate-400 mt-1">
             Turn dense video transcripts into high-retention takeaways, formulate self-test questions, and craft anti-pattern-free prompts for multi-AI coding with automatic 503 failover resilience.

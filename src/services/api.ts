@@ -360,4 +360,7 @@ export async function synthesizeSocraticInterview(params: {
   return await res.json();
 }
 
+// Re-export GitHub API integration service
+export * from './githubApi';
+
 

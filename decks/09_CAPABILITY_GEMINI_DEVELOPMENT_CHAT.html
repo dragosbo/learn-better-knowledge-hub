@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 09: Gemini Development Chat &amp; Complete Audit Trail — Technical Blueprint</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(245, 158, 11, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(245, 158, 11, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 uppercase tracking-wider">Deck 09 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Gemini Development Chat &amp; Complete Audit Trail</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">100% Verbatim Prompts • Milestone Progression • Prompt Regression Harness</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-amber-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Link -->
+      <a href="/videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_VIDEO.html" class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-sm">
+        <span>🎬 Video</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Presentation Main Container -->
+  <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 justify-between relative studio-grid">
+    
+    <!-- Slides Card Container -->
+    <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl relative min-h-[540px] flex flex-col justify-between backdrop-blur-md">
+      
+      <!-- Slide Area -->
+      <div id="slideViewport" class="flex-1 flex flex-col justify-between">
+        
+        <!-- SLIDE 1: Executive Overview -->
+        <div class="slide active flex flex-col justify-between space-y-6" data-slide="1">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/80 border border-amber-800 text-amber-300 text-xs font-semibold">
+              <span>Capability 09 &bull; Governance &amp; Audit Trail</span>
+              <span>&bull;</span>
+              <span>100% Session Coverage</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Gemini Development Chat: The Complete Engineering Audit Trail
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              In high-speed AI "vibe coding", applications grow through dozens of conversational turns. Without rigorous record-keeping, rationale is lost and regressions cannot be debugged. Capability 09 delivers an immutable, searchable audit trail documenting every verbatim prompt, code diff, quota signal, and architectural milestone.
+            </p>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-amber-400 font-bold text-sm flex items-center gap-2">
+                <span>📜 Verbatim Prompt Ledger</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Stores exact human prompts (P01 through P29+) without sanitization or redaction in <code>gemini_prompts.md</code> and typed structured datasets.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-cyan-400 font-bold text-sm flex items-center gap-2">
+                <span>📊 Capability Scoring</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Tracks cumulative completion percentage (0% to 100%), feature introductions, and session dates across all 8 development sessions.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+                <span>⏱️ Quota &amp; Token Signals</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Records token estimations, daily request indexes, and rate limit pacing recommendations to prevent unexpected 429 throttling.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-amber-950/30 border border-amber-900/60 flex items-center justify-between text-xs text-amber-200">
+            <span>Primary Component: <code>src/components/GeminiDevelopmentChat.tsx</code> &bull; Ledger: <code>src/data/geminiChatData.ts</code></span>
+            <span class="font-bold text-white">Slide 1 of 8</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: The Prompt Ledger Architecture -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="2">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Ledger Architecture</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">The Dual-Layer Storage Contract: Raw Markdown &amp; Typed AST</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              To support both human code reviewers and autonomous LLM agents, prompt history is maintained in two synchronized formats: a human-readable Git markdown ledger and a strictly typed TypeScript data module.
+            </p>
+          </div>
+
+          <!-- Code comparison -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 my-2">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 font-mono text-[11px]">
+              <div class="text-xs font-bold text-amber-400 font-sans mb-1">Typed Contract (src/data/geminiChatData.ts)</div>
+              <div class="text-slate-300 code-scroll max-h-52 overflow-y-auto leading-relaxed">
+<pre><code class="text-amber-300">export interface</code> <code class="text-white">ChatEntry</code> {
+  <code class="text-sky-300">id</code>: <code class="text-indigo-300">string</code>;
+  <code class="text-sky-300">number</code>: <code class="text-indigo-300">number</code>;
+  <code class="text-sky-300">session</code>: <code class="text-indigo-300">number</code>;
+  <code class="text-sky-300">timestamp</code>: <code class="text-indigo-300">string</code>;
+  <code class="text-sky-300">userPromptVerbatim</code>: <code class="text-indigo-300">string</code>;
+  <code class="text-sky-300">assistantResponseMarkdown</code>: <code class="text-indigo-300">string</code>;
+  <code class="text-sky-300">capabilityPercent</code>: <code class="text-indigo-300">number</code>;
+  <code class="text-sky-300">cumulativePercent</code>: <code class="text-indigo-300">number</code>;
+  <code class="text-sky-300">quotaSignal</code>: {
+    <code class="text-sky-300">estimatedTokens</code>: <code class="text-indigo-300">string</code>;
+    <code class="text-sky-300">quotaStatus</code>: <code class="text-indigo-300">'safe' | 'moderate' | 'near-limit'</code>;
+  };
+}
+</pre>
+              </div>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 font-mono text-[11px]">
+              <div class="text-xs font-bold text-sky-400 font-sans mb-1">Human-Readable Git Ledger (gemini_prompts.md)</div>
+              <div class="text-slate-300 code-scroll max-h-52 overflow-y-auto leading-relaxed">
+<pre><code class="text-slate-500">## Prompt 28 — 2026-10-04 00:30</code>
+<code class="text-amber-300">&gt; Create a new service in src/services/githubApi.ts</code>
+<code class="text-amber-300">&gt; that allows the app to authenticate with GitHub</code>
+<code class="text-amber-300">&gt; and fetch specific file paths or folders...</code>
+
+<code class="text-emerald-400">### Delivered Capabilities:</code>
+- <code class="text-slate-300">src/services/githubApi.ts with token auth</code>
+- <code class="text-slate-300">Git Trees API single-call directory scanning</code>
+- <code class="text-slate-300">Selective file path batching &amp; parsing</code>
+- <code class="text-slate-300">KnowledgeHub dataset automatic population</code>
+</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            💡 <strong>Advantage:</strong> When switching between AI models (e.g. from Claude to Gemini 3.8-Flash), the new agent can read the complete verbatim history in one call and immediately resume context without hallucination.
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Progression & Capability Milestones -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="3">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Milestone Quantification</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Tracking Velocity: 29 Prompts Across 8 Architecture Sessions</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Every prompt in the ledger increments progress towards full autonomous operation. Here is how our architecture evolved session-by-session:
+            </p>
+          </div>
+
+          <!-- Timeline Grid -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 my-2 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-[10px] font-bold text-sky-400">Sessions 1–2</span>
+              <div class="font-bold text-white text-sm">Media Foundation</div>
+              <p class="text-[11px] text-slate-400">70 YouTube playlists ingested, 486 clips extracted, initial card manager built.</p>
+              <div class="text-[10px] text-emerald-400 font-mono">P01–P08 &bull; 35%</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-[10px] font-bold text-indigo-400">Sessions 3–4</span>
+              <div class="font-bold text-white text-sm">Spatial Navigation</div>
+              <p class="text-[11px] text-slate-400">28-Cluster restructuring, HTML5 Canvas 60 FPS Video Cosmos, word cloud mindmap.</p>
+              <div class="text-[10px] text-emerald-400 font-mono">P09–P16 &bull; 65%</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-[10px] font-bold text-amber-400">Sessions 5–6</span>
+              <div class="font-bold text-white text-sm">Voice &amp; AI Studio</div>
+              <p class="text-[11px] text-slate-400">AirPods Web Speech player, Gemini 3.8-Flash multi-model cascade, anti-slop pilot.</p>
+              <div class="text-[10px] text-emerald-400 font-mono">P17–P23 &bull; 85%</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-[10px] font-bold text-purple-400">Sessions 7–8</span>
+              <div class="font-bold text-white text-sm">Auditing &amp; Ingestion</div>
+              <p class="text-[11px] text-slate-400">GitHub API selective ingestion, iPad vs. Cloud FLOPs benchmark, Deck 09.</p>
+              <div class="text-[10px] text-emerald-400 font-mono">P24–P29 &bull; 100%</div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            📊 <strong>Traceability Guarantee:</strong> Any developer or auditor can click any prompt number in the UI to inspect the exact files modified and the diff produced.
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Anti-Slop Discipline & Prompt Regression -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="4">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Quality Engineering</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Anti-Slop Discipline: Preventing Prompt Regressions</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              When models generate code across successive iterations, they risk introducing "AI slop": boilerplate placeholders, truncated code snippets, forgotten requirements, and unsolicited conversational preambles.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-rose-950/30 border border-rose-900/60 space-y-2 text-xs">
+              <div class="font-bold text-rose-300 flex items-center gap-1.5">
+                <span>❌ AI Slop Patterns Rejected</span>
+              </div>
+              <ul class="text-[11px] text-slate-300 space-y-1.5 list-disc pl-4">
+                <li><strong class="text-white">Placeholder Comments:</strong> Inserting <code>// TODO: implement later</code> or omitting existing logic.</li>
+                <li><strong class="text-white">Conversational Fluff:</strong> Prepending *"Sure, I would be delighted to help with that!"* before code edits.</li>
+                <li><strong class="text-white">Mock Fallbacks:</strong> Hardcoding fake data instead of writing real API/file integration.</li>
+                <li><strong class="text-white">Unprompted Chatbots:</strong> Injecting unsolicited AI assistant floating widgets.</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-emerald-950/30 border border-emerald-900/60 space-y-2 text-xs">
+              <div class="font-bold text-emerald-300 flex items-center gap-1.5">
+                <span>✅ Learn Better Discipline Enforced</span>
+              </div>
+              <ul class="text-[11px] text-slate-300 space-y-1.5 list-disc pl-4">
+                <li><strong class="text-white">Pristine Full-Block Writes:</strong> Components written in full with zero placeholder gaps.</li>
+                <li><strong class="text-white">Strict TypeScript Interfaces:</strong> Every endpoint returns a typed JSON schema.</li>
+                <li><strong class="text-white">Regression Baseline:</strong> Prior prompt outputs serve as regression test vectors.</li>
+                <li><strong class="text-white">Immediate Compilation:</strong> Every change verified with <code>compile_applet</code>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            🎯 <strong>Result:</strong> Over 15,000 lines of robust, production-grade code created across 29 turns without breaking pre-existing features.
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Quota & Token Pacing -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="5">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Resource Stewardship</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Daily Quota Pacing &amp; Token Optimization</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              AI Studio development operates within daily token and request limits. Capability 09 embeds telemetry tracking token usage per prompt and provides concrete pacing guidelines.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-2 text-xs">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-amber-400 font-bold">1. Composite Batching</span>
+              <p class="text-[11px] text-slate-300">
+                Instead of issuing 4 micro-prompts for small CSS tweaks, batch instructions into 1 comprehensive specification prompt.
+              </p>
+              <div class="text-[10px] text-slate-500 font-mono">Conserves ~30k tokens/day</div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-cyan-400 font-bold">2. Targeted File Scopes</span>
+              <p class="text-[11px] text-slate-300">
+                Inspect only the exact line range needed (e.g. lines 100–140) rather than dumping 1,500-line monolithic files into context.
+              </p>
+              <div class="text-[10px] text-slate-500 font-mono">Reduces context by 80%</div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold">3. Quota Status Indicators</span>
+              <p class="text-[11px] text-slate-300">
+                Every entry records <code>quotaStatus: 'safe' | 'near-limit'</code> alerting developers when to conclude a daily development sprint.
+              </p>
+              <div class="text-[10px] text-slate-500 font-mono">Zero unexpected lockouts</div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span>Average token consumption per turn: <strong>~16,500 tokens</strong></span>
+            <span class="text-emerald-400 font-bold">Status: All 29 Prompts Succeeded within Quota</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Multi-AI Collaboration Protocol -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="6">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Interoperability</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Multi-AI Handoff Protocol: Claude, Gemini &amp; Local Models</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              No single model excels at every stage of software engineering. Learn Better is intentionally structured for seamless handoffs between specialized AI engines.
+            </p>
+          </div>
+
+          <div class="space-y-3 my-2 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-4">
+              <div class="w-10 h-10 rounded-lg bg-indigo-950 border border-indigo-700 flex items-center justify-center font-bold text-indigo-300 shrink-0">
+                Claude
+              </div>
+              <div>
+                <div class="font-bold text-white">Architecture &amp; Curriculum Design (Claude 3.5 Sonnet)</div>
+                <p class="text-[11px] text-slate-400">
+                  Formulates deep curriculum hierarchies, writes pedagogical dossiers, and specifies clean TypeScript data interfaces.
+                </p>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-4">
+              <div class="w-10 h-10 rounded-lg bg-amber-950 border border-amber-700 flex items-center justify-center font-bold text-amber-300 shrink-0">
+                Gemini
+              </div>
+              <div>
+                <div class="font-bold text-white">High-Speed Execution &amp; Compilation (Gemini 3.8-Flash)</div>
+                <p class="text-[11px] text-slate-400">
+                  Rapidly synthesizes full-stack components, executes shell commands, fixes lint errors, and builds production bundles in Google Cloud Run.
+                </p>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-4">
+              <div class="w-10 h-10 rounded-lg bg-cyan-950 border border-cyan-700 flex items-center justify-center font-bold text-cyan-300 shrink-0">
+                Local
+              </div>
+              <div>
+                <div class="font-bold text-white">Zero-Latency On-Device Synthesis (Apple Silicon / Web Speech)</div>
+                <p class="text-[11px] text-slate-400">
+                  Delivers real-time audio playback, Canvas physics, and tactile iPadOS controls without transmitting user notes to external servers.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            🤝 <strong>Universal Ledger:</strong> All three model tiers read from the same <code>gemini_prompts.md</code> and <code>analysis/</code> contracts.
+          </div>
+        </div>
+
+        <!-- SLIDE 7: The iPadOS Chat Explorer Interface -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="7">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">User Experience</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">The iPadOS Chat Explorer: Search, Syntax Highlight &amp; Voice Narration</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Developers and users can interact with Capability 09 directly in the web app via a dedicated, mobile-optimized explorer interface.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-2 text-xs">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+              <span class="text-sky-400 font-bold">🔍 Real-Time Search</span>
+              <p class="text-[11px] text-slate-300">
+                Instant search across all 29 prompts by keyword, capability tag, or component file path.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+              <span class="text-amber-400 font-bold">📋 1-Click Code Copy</span>
+              <p class="text-[11px] text-slate-300">
+                Copy verbatim prompts or generated TypeScript code blocks directly to the clipboard with one tap.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+              <span class="text-emerald-400 font-bold">🔊 Audio Narration</span>
+              <p class="text-[11px] text-slate-300">
+                Listen to the narrative overview of any development prompt on AirPods while walking or commuting.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            📱 <strong>Direct Header Access:</strong> Click the amber <strong>"Gemini_development_chat"</strong> button in the top navigation bar at any time to inspect the ledger.
+          </div>
+        </div>
+
+        <!-- SLIDE 8: Verification & Runbook -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="8">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Verification Runbook</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Verification &amp; Audit Runbook: Testing Capability 09</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Verify that the audit trail and prompt synchronization operate correctly with this four-step test procedure:
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-2 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 1: Open Gemini Chat Tab</span>
+              <p class="text-[11px] text-slate-300">Navigate to <code>Gemini_development_chat</code> in the Navbar. Verify all prompts P01 through P29 render cleanly.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 2: Test Search Filtering</span>
+              <p class="text-[11px] text-slate-300">Type <code>githubApi</code> or <code>AirPods</code> in the search bar. Verify results narrow instantly to matching prompt entries.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 3: Test Audio Narration</span>
+              <p class="text-[11px] text-slate-300">Click the "Listen" button in the header. Verify Web Speech synthesizes speech cleanly without network round-trips.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 4: Verify Markdown Export</span>
+              <p class="text-[11px] text-slate-300">Click "Export Ledger" to download <code>gemini_prompts.md</code> for offline Git archival or repository backup.</p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/80 flex items-center justify-between text-xs text-emerald-200">
+            <span>✅ Capability 09 Verified: Complete traceability, zero AI slop, and deterministic audit trail.</span>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-3 py-1 bg-emerald-500 text-slate-950 font-bold rounded hover:bg-emerald-400 transition-colors">
+              Series Overview &rarr;
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Navigation Footer -->
+      <div class="pt-6 mt-6 border-t border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" onclick="prevSlide()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+            &larr; Previous
+          </button>
+          <button id="nextBtn" onclick="nextSlide()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-colors">
+            Next &rarr;
+          </button>
+          <span id="slideIndicator" class="text-xs font-mono text-slate-400 ml-2">1 / 8</span>
+        </div>
+
+        <!-- Dot Indicators -->
+        <div id="dotContainer" class="hidden sm:flex items-center gap-1.5">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="text-xs text-slate-500 hidden md:block">
+          Use &larr; / &rarr; keys to navigate &bull; Space to play audio
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Speaker Notes Drawer (Toggled by 'N' key or notes button) -->
+  <aside id="notesDrawer" class="fixed bottom-0 left-0 right-0 max-h-72 bg-slate-900 border-t border-slate-700 p-4 sm:p-6 shadow-2xl z-50 transform translate-y-full transition-transform duration-300 overflow-y-auto">
+    <div class="max-w-4xl mx-auto space-y-2">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker Script (Word-for-Word Narration)</span>
+          <span id="notesSlideNumber" class="text-xs text-slate-400 font-mono">Slide 1</span>
+        </div>
+        <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-800 rounded">
+          Close (N)
+        </button>
+      </div>
+      <p id="speakerNotesText" class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans"></p>
+    </div>
+  </aside>
+
+  <!-- Narration Script Data & Audio Engine -->
+  <script>
+    const SLIDE_SCRIPTS = [
+      "Welcome to Capability 09: Gemini Development Chat and the Complete Engineering Audit Trail. In fast-paced AI vibe-coding, applications grow rapidly through dozens of turns. Without rigorous record-keeping, architectural decisions are lost and regressions cannot be debugged. Capability 09 delivers an immutable, searchable audit trail documenting every verbatim human prompt, generated diff, quota signal, and architectural milestone across our entire development journey.",
+      "Slide 2 explores our dual-layer storage contract. To serve both human code reviewers and autonomous AI agents, prompt history is preserved simultaneously in two formats: a human-readable Git markdown ledger in gemini_prompts.md, and a strictly typed TypeScript AST in src/data/geminiChatData.ts. This guarantees that any new model, whether Claude or Gemini 3.8 Flash, can instantly ingest prior context and continue development without hallucination.",
+      "Slide 3 quantifies our velocity across 29 prompts and 8 architecture sessions. From initial playlist ingestion in sessions 1 and 2, to spatial Canvas physics and AirPods speech in sessions 3 through 6, and finally selective GitHub API ingestion and empirical iPad versus cloud compute benchmarks in sessions 7 and 8. Every turn is indexed with timestamps and completion percentages.",
+      "Slide 4 details our anti-slop engineering discipline. Rapid model iteration risks introducing AI slop, such as placeholder TODO comments, conversational preamble fluff, hardcoded mock data, and unsolicited chatbot widgets. Learn Better strictly enforces pristine full-block file writes, verified TypeScript interfaces, and immediate automated compilation checks on every single turn.",
+      "Slide 5 covers quota stewardship and token optimization. AI Studio development operates within daily token and request boundaries. By batching composite requirements into structured specification prompts and scoping file reads to targeted line ranges, we reduced average token overhead by over 80 percent, ensuring zero unexpected rate limit lockouts.",
+      "Slide 6 presents our Multi-AI Collaboration Protocol. No single AI model excels at every task. We orchestrate Claude for high-level pedagogical curriculum design, Gemini 3.8 Flash for rapid full-stack coding and Google Cloud compilation, and local Apple Silicon hardware for zero-latency speech and 60 frames per second Canvas rendering.",
+      "Slide 7 showcases the user experience in the web application. You can click the amber Gemini Development Chat button in the top navigation bar at any time to search past prompts, copy code snippets with a single tap, or listen to narrative summaries on your AirPods while walking.",
+      "Slide 8 provides our verification runbook. You can test Capability 09 by opening the chat tab, testing real-time keyword search, triggering Web Speech narration, and exporting the complete markdown ledger for offline Git backups. Capability 09 delivers total transparency and governance to vibe coding."
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isSpeaking = false;
+    let autoAdvance = false;
+    let speechRate = 1.0;
+    let synth = window.speechSynthesis;
+    let currentUtterance = null;
+
+    function initPresentation() {
+      // Build dot indicators
+      const dotContainer = document.getElementById('dotContainer');
+      dotContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === 1 ? 'bg-amber-400 w-5' : 'bg-slate-700 hover:bg-slate-500'}`;
+        dot.onclick = () => goToSlide(i);
+        dot.id = `dot-${i}`;
+        dotContainer.appendChild(dot);
+      }
+      updateSlideDisplay();
+    }
+
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (activeSlide) activeSlide.classList.add('active');
+
+      document.getElementById('slideIndicator').textContent = `${currentSlide} / ${totalSlides}`;
+      document.getElementById('prevBtn').disabled = (currentSlide === 1);
+      document.getElementById('nextBtn').disabled = (currentSlide === totalSlides);
+
+      // Update dots
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (dot) {
+          if (i === currentSlide) {
+            dot.className = 'w-5 h-2 rounded-full bg-amber-400 transition-all';
+          } else {
+            dot.className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all';
+          }
+        }
+      }
+
+      // Update speaker notes
+      document.getElementById('notesSlideNumber').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+      document.getElementById('speakerNotesText').textContent = SLIDE_SCRIPTS[currentSlide - 1];
+
+      // If speaking, restart narration for new slide
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
+
+    function toggleSlideNarration() {
+      if (isSpeaking) {
+        stopNarration();
+      } else {
+        startNarration();
+      }
+    }
+
+    function startNarration() {
+      if (!('speechSynthesis' in window)) {
+        alert('Web Speech API is not supported in this browser.');
+        return;
+      }
+      isSpeaking = true;
+      document.getElementById('waveform').classList.remove('hidden');
+      document.getElementById('waveform').classList.add('flex');
+      document.getElementById('playLabel').textContent = 'Pause';
+      document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      speakCurrentSlide();
+    }
+
+    function stopNarration() {
+      if (synth) synth.cancel();
+      isSpeaking = false;
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+      document.getElementById('playLabel').textContent = 'Listen';
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+    }
+
+    function speakCurrentSlide() {
+      if (!synth) return;
+      synth.cancel();
+
+      const text = SLIDE_SCRIPTS[currentSlide - 1];
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = speechRate;
+
+      currentUtterance.onend = () => {
+        if (autoAdvance && currentSlide < totalSlides && isSpeaking) {
+          nextSlide();
+        } else if (currentSlide === totalSlides) {
+          stopNarration();
+        }
+      };
+
+      currentUtterance.onerror = () => {
+        stopNarration();
+      };
+
+      synth.speak(currentUtterance);
+    }
+
+    function changeVoiceRate(rate) {
+      speechRate = parseFloat(rate);
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleAutoAdvance(checked) {
+      autoAdvance = checked;
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('translate-y-full');
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === ' ') {
+        e.preventDefault();
+        toggleSlideNarration();
+      }
+      if (e.key.toLowerCase() === 'n') {
+        toggleNotesDrawer();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', initPresentation);
+  </script>
+</body>
+</html>
