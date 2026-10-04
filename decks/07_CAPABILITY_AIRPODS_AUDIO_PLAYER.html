@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 07: AirPods Audio Player &amp; MediaSession Engine — Technical Blueprint</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(99, 102, 241, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(99, 102, 241, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 uppercase tracking-wider">Deck 07 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">AirPods Audio Player &amp; MediaSession Engine</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Eyes-Free Learning • Hardware Stem Pinch Remotes • Zero Quota</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-indigo-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-indigo-500 hover:bg-indigo-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-indigo-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-indigo-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-indigo-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-indigo-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Simulator Link -->
+      <a href="/videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_VIDEO.html" class="hidden lg:flex items-center gap-1 px-2.5 py-1 text-xs text-indigo-300 bg-indigo-950/70 hover:bg-indigo-900 rounded-lg border border-indigo-700 transition-colors" title="Launch Video Hub">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Video Hub</span>
+      </a>
+
+      <!-- Fullscreen Toggle -->
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1v4m0-4h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Slide Canvas -->
+  <main class="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 studio-grid relative overflow-hidden">
+    <div id="deckContainer" class="w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[580px] sm:min-h-[640px] relative">
+      
+      <!-- Slide Progress Bar -->
+      <div class="w-full bg-slate-950 h-1 flex">
+        <div id="progressBar" class="bg-indigo-500 h-full transition-all duration-300" style="width: 12.5%;"></div>
+      </div>
+
+      <!-- Slide Content Area -->
+      <div class="flex-1 flex flex-col p-6 sm:p-10 relative overflow-y-auto">
+
+        <!-- SLIDE 1: Mission Briefing & The Eyes-Free Developer -->
+        <div class="slide active flex-col justify-between h-full space-y-6" data-slide="1">
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800">Capability 07</span>
+              <span class="text-xs text-slate-400">&bull; Chapter 3: Study Studio &amp; Voice Reflections</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              The Eyes-Free Developer &amp; AirPods Remote Control
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
+              Software engineering places heavy demands on visual attention. When studying complex architectural curriculums, screen fatigue degrades retention. Learn Better transforms every lesson into a client-synthesized audio experience with full hardware remote control.
+            </p>
+          </div>
+
+          <!-- 3-Pillar Architectural Matrix -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-indigo-950 border border-indigo-700 flex items-center justify-center text-indigo-400 font-bold">1</div>
+              <h3 class="text-sm font-bold text-white">Zero-Quota Client Audio</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Executes via HTML5 <code>window.speechSynthesis</code>. Zero cloud API bills, zero server latency, and 100% offline functionality.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-sky-950 border border-sky-700 flex items-center justify-center text-sky-400 font-bold">2</div>
+              <h3 class="text-sm font-bold text-white">MediaSession Bridge</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Binds W3C <code>navigator.mediaSession</code> to display high-resolution lock-screen artwork and capture physical Bluetooth AVRCP signals.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-700 flex items-center justify-center text-emerald-400 font-bold">3</div>
+              <h3 class="text-sm font-bold text-white">AirPods Stem Pinch Control</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Single, double, and triple earbud stem pinches mapped to playhead resumption, paragraph skipping, and concept rewinding.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-800/80">
+            <span>Core Component: <code>src/components/AudioLessonPlayer.tsx</code></span>
+            <span>Zero External NPM Audio Dependencies</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: The Core Problem — Mobile Safari Execution Barriers -->
+        <div class="slide flex-col justify-between h-full space-y-6" data-slide="2">
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-rose-400">Operating System Friction</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+              The Mobile Safari Barrier: Background Audio Killing
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Why running audio in mobile web browsers fails without specialized architectural countermeasures.
+            </p>
+          </div>
+
+          <!-- Problem vs Solution Breakdown -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-rose-950/30 border border-rose-900/60 space-y-2.5">
+              <div class="flex items-center gap-2 text-rose-400 font-bold text-xs">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span>Mobile Safari Failure Modes</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                <li><strong class="text-white">Timer Freezing</strong>: Lock screen or tab switch immediately freezes <code>setTimeout</code> and <code>setInterval</code> loops.</li>
+                <li><strong class="text-white">Speech Synthesis Suspension</strong>: WebKit throttles speech audio after 15 seconds of inactivity.</li>
+                <li><strong class="text-white">Hardware Signal Hijacking</strong>: Without MediaSession registration, earbud pinches launch Apple Music or Spotify instead.</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-emerald-950/30 border border-emerald-900/60 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Learn Better Countermeasures</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                <li><strong class="text-white">MediaSession Registration</strong>: Informs iOS/Android that this tab is an active media player.</li>
+                <li><strong class="text-white">Atomic Paragraph Chunking</strong>: Avoids monolithic text blobs; synthetically speaks paragraph-by-paragraph.</li>
+                <li><strong class="text-white">AVRCP Action Trapping</strong>: Directly traps <code>play</code>, <code>pause</code>, <code>seekforward</code>, and <code>seekbackward</code> events.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-400">
+            Rule: Never pass >300 words into a single SpeechSynthesisUtterance on Mobile WebKit.
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Web Speech API & Chunked Speech Dispatcher -->
+        <div class="slide flex-col justify-between h-full space-y-6" data-slide="3">
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-indigo-400">Speech Synthesis Mechanics</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+              Utterance Dispatcher &amp; Paragraph Chunking
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              How the engine manages asynchronous boundary callbacks and rate transitions without audio distortion.
+            </p>
+          </div>
+
+          <!-- Code Architecture Display -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-slate-300 overflow-x-auto code-scroll space-y-2">
+            <div class="text-slate-500">// Chunked Speech Dispatcher with Dynamic Rate Override</div>
+            <div><span class="text-purple-400">const</span> <span class="text-sky-400">speakParagraph</span> = (index: <span class="text-amber-400">number</span>, overrideRate?: <span class="text-amber-400">number</span>) =&gt; {</div>
+            <div class="pl-4">window.speechSynthesis.<span class="text-sky-300">cancel</span>();</div>
+            <div class="pl-4"><span class="text-purple-400">const</span> utterance = <span class="text-purple-400">new</span> <span class="text-yellow-300">SpeechSynthesisUtterance</span>(spokenParagraphs[index]);</div>
+            <div class="pl-4">utterance.rate = overrideRate !== <span class="text-purple-400">undefined</span> ? overrideRate : rateRef.current;</div>
+            <div class="pl-4">utterance.onend = () =&gt; {</div>
+            <div class="pl-8"><span class="text-purple-400">const</span> nextIdx = paragraphIndexRef.current + 1;</div>
+            <div class="pl-8"><span class="text-purple-400">if</span> (nextIdx &lt; spokenParagraphs.length) {</div>
+            <div class="pl-12"><span class="text-sky-300">speakParagraph</span>(nextIdx, rateRef.current);</div>
+            <div class="pl-8">} <span class="text-purple-400">else</span> { <span class="text-sky-300">handleStop</span>(); }</div>
+            <div class="pl-4">};</div>
+            <div class="pl-4">window.speechSynthesis.<span class="text-sky-300">speak</span>(utterance);</div>
+            <div>};</div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-300">
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <div class="font-bold text-white mb-0.5">Rate Bounds</div>
+              <p class="text-[11px] text-slate-400">Clamped safely between 0.1x and 10x (default preset choices: 0.8x, 1.0x, 1.25x).</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <div class="font-bold text-white mb-0.5">Pitch Modulation</div>
+              <p class="text-[11px] text-slate-400">Configured per learner preference for maximum acoustic clarity on earbud speakers.</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <div class="font-bold text-white mb-0.5">Voice Hot-Swap</div>
+              <p class="text-[11px] text-slate-400">Dynamically binds <code>speechSynthesis.onvoiceschanged</code> to load neural system voices.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: MediaSession Architecture & Lock-Screen Metadata -->
+        <div class="slide flex-col justify-between h-full space-y-6" data-slide="4">
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-sky-400">W3C Standard Integration</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+              MediaSession Metadata &amp; Lock-Screen Art
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Turning the mobile lock-screen into a high-visibility, branded learning dashboard.
+            </p>
+          </div>
+
+          <!-- Visual Representation of Mobile Lock Screen -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3 font-mono text-xs">
+              <div class="text-slate-500">// Register W3C MediaMetadata</div>
+              <div class="text-indigo-400">navigator.mediaSession.metadata = new MediaMetadata({</div>
+              <div class="pl-4 text-slate-200">title: activeTitle,</div>
+              <div class="pl-4 text-slate-200">artist: 'Learn Better Academy (Claude)',</div>
+              <div class="pl-4 text-slate-200">album: 'Multi-AI Vibe Coding Curriculum',</div>
+              <div class="pl-4 text-slate-200">artwork: [</div>
+              <div class="pl-8 text-sky-300">{ src: '/artwork-512x512.jpg', sizes: '512x512', type: 'image/jpeg' }</div>
+              <div class="pl-4 text-slate-200">]</div>
+              <div class="text-indigo-400">});</div>
+            </div>
+
+            <!-- Lock-screen Mockup Card -->
+            <div class="p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700 shadow-xl space-y-3 max-w-sm mx-auto w-full">
+              <div class="flex items-center gap-3">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                  LB
+                </div>
+                <div class="overflow-hidden">
+                  <div class="text-sm font-bold text-white truncate">01: First Contact &amp; Prompting</div>
+                  <div class="text-xs text-indigo-300 truncate">Learn Better Academy (Claude)</div>
+                  <div class="text-[10px] text-slate-400">Vibe Coding Curriculum</div>
+                </div>
+              </div>
+              <!-- Lock-screen transport controls -->
+              <div class="flex items-center justify-center gap-6 pt-2 border-t border-slate-800 text-slate-300">
+                <button class="hover:text-white" title="Seek Backward">&#9198;</button>
+                <button class="w-9 h-9 rounded-full bg-white text-slate-950 flex items-center justify-center font-bold text-sm" title="Play/Pause">&#9658;</button>
+                <button class="hover:text-white" title="Seek Forward">&#9197;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400">
+            Benefit: Users see exactly what lesson and paragraph is playing directly from their Apple Watch or lock screen.
+          </div>
+        </div>
+
+        <!-- SLIDE 5: AirPods Stem Pinch Gesture Matrix -->
+        <div class="slide flex-col justify-between h-full space-y-6" data-slide="5">
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-emerald-400">Hardware Gesture Mapping</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+              The AirPods Stem Pinch Gesture Matrix
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Physical earbud force sensor events mapped directly to state machine action handlers.
+            </p>
+          </div>
+
+          <!-- Gesture Matrix Table -->
+          <div class="border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+            <table class="w-full text-left text-xs text-slate-300 divide-y divide-slate-800">
+              <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th class="py-3 px-4">AirPods Stem Pinch</th>
+                  <th class="py-3 px-4">W3C Action Handler</th>
+                  <th class="py-3 px-4">Audio Player Handler</th>
+                  <th class="py-3 px-4">Behavior in App</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/80 bg-slate-900/40">
+                <tr class="hover:bg-slate-800/40">
+                  <td class="py-3 px-4 font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                    Single Pinch
+                  </td>
+                  <td class="py-3 px-4 font-mono text-sky-400">setActionHandler('play' / 'pause')</td>
+                  <td class="py-3 px-4 font-mono text-amber-300">handleResume() / handlePause()</td>
+                  <td class="py-3 px-4 text-slate-300">Pauses or resumes speech at exact current word index.</td>
+                </tr>
+                <tr class="hover:bg-slate-800/40">
+                  <td class="py-3 px-4 font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    Double Pinch
+                  </td>
+                  <td class="py-3 px-4 font-mono text-sky-400">setActionHandler('seekforward')</td>
+                  <td class="py-3 px-4 font-mono text-amber-300">handleNext()</td>
+                  <td class="py-3 px-4 text-slate-300">Skips forward to next concept paragraph.</td>
+                </tr>
+                <tr class="hover:bg-slate-800/40">
+                  <td class="py-3 px-4 font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                    Triple Pinch
+                  </td>
+                  <td class="py-3 px-4 font-mono text-sky-400">setActionHandler('seekbackward')</td>
+                  <td class="py-3 px-4 font-mono text-amber-300">handlePrevious()</td>
+                  <td class="py-3 px-4 text-slate-300">Rewinds to start of previous paragraph to re-listen.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="bg-indigo-950/40 border border-indigo-800/60 p-3.5 rounded-xl flex items-center gap-3 text-xs text-indigo-300">
+            <span class="text-lg">&#127911;</span>
+            <span>Zero Touch UX: You can complete an entire 45-minute lesson walk without touching your phone once.</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Markdown Spoken-Text Preprocessor -->
+        <div class="slide flex-col justify-between h-full space-y-6" data-slide="6">
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-amber-400">NLP &amp; Conversational Sanitization</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+              The Markdown Spoken-Text Preprocessor
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Transforming dense syntax, backticks, and code blocks into fluid, natural human speech.
+            </p>
+          </div>
+
+          <!-- Before & After Comparison -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span class="font-bold text-rose-400">Raw Technical Markdown</span>
+                <span class="font-mono text-[10px]">Unfiltered Input</span>
+              </div>
+              <pre class="bg-slate-900 p-3 rounded-lg font-mono text-[11px] text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+### Setup Environment
+Install dependencies:
+```bash
+pip install faster-whisper
+python main.py --quant int8
+```
+**Note:** Verify GPU drivers.</pre>
+              <div class="text-[11px] text-rose-400">Verbatim TTS would read: "Three hashes Setup Environment backtick backtick backtick bash..."</div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span class="font-bold text-emerald-400">Purified Spoken Stream</span>
+                <span class="font-mono text-[10px]">Sanitized Audio Input</span>
+              </div>
+              <div class="bg-slate-900 p-3 rounded-lg text-[12px] text-emerald-200 leading-relaxed space-y-2">
+                <p>Setup Environment.</p>
+                <p>Install dependencies.</p>
+                <p class="font-semibold text-sky-300">Terminal command: pip install faster-whisper.</p>
+                <p>Note: Verify GPU drivers.</p>
+              </div>
+              <div class="text-[11px] text-emerald-400">Clean, natural pauses with explicit command vocalization.</div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400">
+            Implemented via pure regex AST string splitting in <code>useMemo(() =&gt; spokenParagraphs)</code>.
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Interactive Diagnostic Lab -->
+        <div class="slide flex-col justify-between h-full space-y-6" data-slide="7">
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-purple-400">Live Hardware Lab</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+              AirPods &amp; Speech Diagnostic Simulator
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Test stem pinches, browser speech synthesis, and MediaSession state transitions right here in your browser.
+            </p>
+          </div>
+
+          <!-- Diagnostic Controls -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+            <!-- Left: Simulated AirPods Controls -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="text-xs font-bold text-white flex items-center justify-between">
+                <span>Simulate Physical AirPods Pinches:</span>
+                <span id="simStateBadge" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-mono">IDLE</span>
+              </div>
+              
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="simulateGesture('single')" class="p-2.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700 font-medium text-xs text-center transition-all">
+                  <div class="font-bold">Single Pinch</div>
+                  <div class="text-[10px] text-indigo-400 mt-0.5">Play / Pause</div>
+                </button>
+                <button onclick="simulateGesture('double')" class="p-2.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-700 font-medium text-xs text-center transition-all">
+                  <div class="font-bold">Double Pinch</div>
+                  <div class="text-[10px] text-emerald-400 mt-0.5">Next Paragraph</div>
+                </button>
+                <button onclick="simulateGesture('triple')" class="p-2.5 rounded-lg bg-sky-950 hover:bg-sky-900 text-sky-300 border border-sky-700 font-medium text-xs text-center transition-all">
+                  <div class="font-bold">Triple Pinch</div>
+                  <div class="text-[10px] text-sky-400 mt-0.5">Prev Paragraph</div>
+                </button>
+              </div>
+
+              <!-- Live Gesture Log Output -->
+              <div id="gestureLog" class="p-2.5 bg-slate-900 rounded-lg text-xs font-mono text-slate-300 h-20 overflow-y-auto space-y-1">
+                <div class="text-slate-500">&gt; MediaSession initialized. Ready for stem pinch signals...</div>
+              </div>
+            </div>
+
+            <!-- Right: Live Speech Test Panel -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="text-xs font-bold text-white">Live Client Speech Output:</div>
+              <textarea id="liveSpeechInput" class="w-full h-20 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 outline-none focus:border-indigo-500 resize-none font-sans" placeholder="Type text here to test native SpeechSynthesis...">The AirPods Audio Player executes client-side speech synthesis with W3C MediaSession hardware stem pinch triggers.</textarea>
+              
+              <div class="flex items-center justify-between gap-2">
+                <button onclick="speakCustomText()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+                  <span>Speak Text</span>
+                </button>
+                <button onclick="stopCustomText()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition-colors border border-slate-700">
+                  <span>Stop Speech</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400">
+            Open Web Inspector Console to observe <code>navigator.mediaSession.setActionHandler</code> invocations in real-time.
+          </div>
+        </div>
+
+        <!-- SLIDE 8: Production Synthesis & Day 7 Milestone -->
+        <div class="slide flex-col justify-between h-full space-y-6" data-slide="8">
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-emerald-400">Milestone Complete</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+              Day 7 Delivered: Capability 07 Active
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              The Learn Better ecosystem now boasts complete eyes-free, hardware-accelerated technical audio playback.
+            </p>
+          </div>
+
+          <!-- 4 Delivered Capabilities Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-2">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span class="text-emerald-400">&#10003;</span>
+                Client-Side SpeechSynthesis
+              </div>
+              <p class="text-[11px] text-slate-400">Zero cloud API costs; instant playback across all 19 lessons and user guides.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span class="text-emerald-400">&#10003;</span>
+                W3C MediaSession Registration
+              </div>
+              <p class="text-[11px] text-slate-400">High-resolution 512px lock-screen artwork and mobile background audio persistence.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span class="text-emerald-400">&#10003;</span>
+                AirPods Stem Pinch Handlers
+              </div>
+              <p class="text-[11px] text-slate-400">Single, double, and triple pinch gestures mapped to play, pause, next, and rewind.</p>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span class="text-emerald-400">&#10003;</span>
+                Markdown AST Sanitization
+              </div>
+              <p class="text-[11px] text-slate-400">Strips syntax noise and announces terminal commands with natural conversational flow.</p>
+            </div>
+          </div>
+
+          <!-- Hemingway Bridge Callout -->
+          <div class="p-4 rounded-xl bg-gradient-to-r from-indigo-950/80 to-purple-950/80 border border-indigo-700/80 space-y-1.5 shadow-lg">
+            <div class="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span>
+              Hemingway Bridge &bull; Next Day Milestone
+            </div>
+            <p class="text-xs text-slate-200 leading-relaxed">
+              With Capability 07 complete, Chapter 3 is fully operational! The next milestone is <strong>Day 8: Capability 08 — Gemini AI Studio &amp; Prompt Workbench</strong> (multimodal server-side cascade, quiz generation, and insight distillation).
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Speaker Notes Drawer (Toggled with 'N') -->
+      <div id="notesDrawer" class="hidden bg-slate-950 border-t border-slate-800 p-4 text-xs text-slate-300 max-h-40 overflow-y-auto transition-all">
+        <div class="flex items-center justify-between mb-1 font-bold text-slate-400 uppercase text-[10px]">
+          <span>Speaker Narration Script</span>
+          <span class="text-slate-500 font-normal">Press 'N' to close</span>
+        </div>
+        <p id="speakerNotesText" class="leading-relaxed"></p>
+      </div>
+
+      <!-- Slide Navigation Footer -->
+      <footer class="bg-slate-950/90 border-t border-slate-800 px-4 py-3 flex items-center justify-between text-xs text-slate-400">
+        <div class="flex items-center gap-2">
+          <button onclick="prevSlide()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition-colors" title="Previous Slide (ArrowLeft)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <span id="slideCounter" class="font-mono text-white text-xs px-2">1 / 8</span>
+          <button onclick="nextSlide()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition-colors" title="Next Slide (ArrowRight)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </button>
+        </div>
+
+        <!-- Thumbnails / Direct Jump -->
+        <div class="hidden sm:flex items-center gap-1.5">
+          <button onclick="goToSlide(1)" class="w-6 h-6 rounded bg-indigo-500 text-slate-950 font-bold text-[10px] slide-pill" data-target="1">1</button>
+          <button onclick="goToSlide(2)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill" data-target="2">2</button>
+          <button onclick="goToSlide(3)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill" data-target="3">3</button>
+          <button onclick="goToSlide(4)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill" data-target="4">4</button>
+          <button onclick="goToSlide(5)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill" data-target="5">5</button>
+          <button onclick="goToSlide(6)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill" data-target="6">6</button>
+          <button onclick="goToSlide(7)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill" data-target="7">7</button>
+          <button onclick="goToSlide(8)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill" data-target="8">8</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="hidden md:inline text-[11px] text-slate-500">Shortcuts: &larr; &rarr; Space N L F</span>
+          <span class="text-xs text-indigo-400 font-mono">Learn Better 2026</span>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+
+  <script>
+    // Narration scripts per slide
+    const slideScripts = {
+      1: "Welcome to Deck 07: The AirPods Audio Player and MediaSession Engine. In this briefing, we explore the eyes-free developer paradigm, proving that technical mastery doesn't require staring at a glowing screen for twelve hours a day. Learn Better uses native client speech synthesis paired with physical earbud controls to deliver zero-cost mobile listening.",
+      2: "On mobile devices, iOS Safari aggressively kills background tabs and halts JavaScript timers to save battery. In Slide 2, we dissect this constraint and show how registering W3C MediaSession metadata signals the operating system to keep our audio daemon alive even when your phone is locked.",
+      3: "Slide 3 explores the speech synthesis utterance dispatcher. Never pass a three-thousand-word document into a single speech object. Instead, Learn Better chunks lessons into discrete paragraphs, monitoring boundary callbacks and enabling live speed modulation without distortion.",
+      4: "Here we see the W3C MediaSession architecture in action. By binding 512-pixel artwork, chapter numbering, and artist tags, your phone lock screen and smartwatch transform into an interactive technical dashboard with native media scrubber controls.",
+      5: "The AirPods stem pinch gesture matrix is where the magic happens. Single pinch pauses or resumes without losing your position. Double pinch jumps ahead to the next concept. Triple pinch rewinds to re-listen. You can complete an entire forty-five-minute learning walk without taking your phone out of your pocket.",
+      6: "Slide 6 breaks down the markdown spoken-text preprocessor. Verbatim TTS sounds terrible when reading code brackets and backticks. Our preprocessor strips dense syntax while announcing terminal commands with natural human rhythm.",
+      7: "Welcome to the live diagnostic test lab. Click the stem pinch buttons to simulate physical AirPods signals, watch the state machine dispatch handlers in real-time, or test your browser's speech synthesis engine directly.",
+      8: "Day 7 is delivered! Capability 07 is fully integrated across the platform. With Chapter 3 complete, we cross the Hemingway Bridge into Day 8, where we will construct the Gemini AI Studio and Prompt Workbench."
+    };
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isNarrationPlaying = false;
+    let autoAdvance = false;
+    let voiceRate = 1.0;
+    let currentUtterance = null;
+
+    function updateSlideDisplay() {
+      // Update slide elements
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (activeSlide) activeSlide.classList.add('active');
+
+      // Update progress bar
+      const progressPercent = (currentSlide / totalSlides) * 100;
+      document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+      // Update counter
+      document.getElementById('slideCounter').textContent = `${currentSlide} / ${totalSlides}`;
+
+      // Update pills
+      document.querySelectorAll('.slide-pill').forEach(pill => {
+        const target = parseInt(pill.getAttribute('data-target'));
+        if (target === currentSlide) {
+          pill.className = 'w-6 h-6 rounded bg-indigo-500 text-slate-950 font-bold text-[10px] slide-pill';
+        } else {
+          pill.className = 'w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] slide-pill';
+        }
+      });
+
+      // Update speaker notes
+      document.getElementById('speakerNotesText').textContent = slideScripts[currentSlide] || '';
+
+      // If narration was playing, restart it for the new slide
+      if (isNarrationPlaying) {
+        startSlideNarration();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function changeVoiceRate(val) {
+      voiceRate = parseFloat(val);
+      if (isNarrationPlaying) {
+        startSlideNarration();
+      }
+    }
+
+    function toggleAutoAdvance(checked) {
+      autoAdvance = checked;
+    }
+
+    function toggleSlideNarration() {
+      if (isNarrationPlaying) {
+        stopSlideNarration();
+      } else {
+        startSlideNarration();
+      }
+    }
+
+    function startSlideNarration() {
+      if (!('speechSynthesis' in window)) {
+        alert('Web Speech API is not supported in this browser.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const text = slideScripts[currentSlide];
+      if (!text) return;
+
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = voiceRate;
+
+      // Select voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google') || v.name.includes('Samantha')));
+      if (preferred) currentUtterance.voice = preferred;
+
+      currentUtterance.onstart = () => {
+        isNarrationPlaying = true;
+        document.getElementById('playLabel').textContent = 'Pause';
+        document.getElementById('waveform').classList.remove('hidden');
+        document.getElementById('waveform').classList.add('flex');
+      };
+
+      currentUtterance.onend = () => {
+        isNarrationPlaying = false;
+        document.getElementById('playLabel').textContent = 'Listen';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('waveform').classList.remove('flex');
+
+        if (autoAdvance && currentSlide < totalSlides) {
+          setTimeout(() => {
+            nextSlide();
+            startSlideNarration();
+          }, 800);
+        }
+      };
+
+      currentUtterance.onerror = (e) => {
+        if (e.error !== 'interrupted') {
+          console.warn('Speech error:', e);
+        }
+        isNarrationPlaying = false;
+        document.getElementById('playLabel').textContent = 'Listen';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('waveform').classList.remove('flex');
+      };
+
+      window.speechSynthesis.speak(currentUtterance);
+    }
+
+    function stopSlideNarration() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isNarrationPlaying = false;
+      document.getElementById('playLabel').textContent = 'Listen';
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+    }
+
+    // Interactive Simulator on Slide 7
+    let simCurrentParagraph = 1;
+    const simTotalParagraphs = 5;
+    let simIsPlaying = false;
+
+    function simulateGesture(type) {
+      const log = document.getElementById('gestureLog');
+      const badge = document.getElementById('simStateBadge');
+      const timestamp = new Date().toLocaleTimeString().split(' ')[0];
+
+      if (type === 'single') {
+        simIsPlaying = !simIsPlaying;
+        badge.textContent = simIsPlaying ? 'PLAYING' : 'PAUSED';
+        badge.className = simIsPlaying ? 'px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-300 font-mono' : 'px-2 py-0.5 rounded text-[10px] bg-amber-950 text-amber-300 font-mono';
+        log.innerHTML += `<div class="text-indigo-400">[${timestamp}] Single Pinch ➔ Action: ${simIsPlaying ? 'resume()' : 'pause()'} (Paragraph ${simCurrentParagraph}/${simTotalParagraphs})</div>`;
+      } else if (type === 'double') {
+        simCurrentParagraph = Math.min(simTotalParagraphs, simCurrentParagraph + 1);
+        log.innerHTML += `<div class="text-emerald-400">[${timestamp}] Double Pinch ➔ Action: seekforward() (Now on Paragraph ${simCurrentParagraph}/${simTotalParagraphs})</div>`;
+      } else if (type === 'triple') {
+        simCurrentParagraph = Math.max(1, simCurrentParagraph - 1);
+        log.innerHTML += `<div class="text-sky-400">[${timestamp}] Triple Pinch ➔ Action: seekbackward() (Now on Paragraph ${simCurrentParagraph}/${simTotalParagraphs})</div>`;
+      }
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function speakCustomText() {
+      const input = document.getElementById('liveSpeechInput');
+      if (!input || !input.value.trim()) return;
+      if (!('speechSynthesis' in window)) return;
+
+      window.speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(input.value.trim());
+      utt.rate = voiceRate;
+      window.speechSynthesis.speak(utt);
+    }
+
+    function stopCustomText() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Don't trigger if user is typing in textarea
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotesDrawer();
+      } else if (e.key === 'l' || e.key === 'L') {
+        toggleSlideNarration();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize display
+    updateSlideDisplay();
+  </script>
+</body>
+</html>

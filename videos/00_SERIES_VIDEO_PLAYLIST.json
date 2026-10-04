@@ -137,12 +137,14 @@
       "number": 7,
       "title": "AirPods Audio Player & MediaSession Engine",
       "chapter": 3,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html",
       "storyboardFile": "videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_STORYBOARD.md",
-      "slideCount": 6,
-      "estimatedDurationSec": 230,
-      "summary": "Zero-quota client-side Web Speech synthesis with AirPods stem pinch remote control."
+      "videoPlayerUrl": "/videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_VIDEO.html",
+      "notebooklmDossierFile": "videos/07_NOTEBOOKLM_SOURCE_DOSSIER.md",
+      "slideCount": 8,
+      "estimatedDurationSec": 255,
+      "summary": "Zero-quota client-side Web Speech synthesis with AirPods stem pinch remote control and W3C MediaSession integration."
     },
     {
       "id": "cap-08",

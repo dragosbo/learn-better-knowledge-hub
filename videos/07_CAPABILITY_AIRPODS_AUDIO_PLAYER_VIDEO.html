@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 07 — AirPods Audio Player &amp; MediaSession Engine</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span> Video Hub • Cap 07
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">AirPods Audio Player &amp; MediaSession Engine</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">NotebookLM Audio Overview &amp; Interactive Hardware Player Simulator</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Launchers -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-500 hover:bg-indigo-400 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+        </svg>
+        <span>Open Deck 07 →</span>
+      </a>
+      <a href="/videos/07_NOTEBOOKLM_SOURCE_DOSSIER.md" target="_blank" class="px-2.5 py-1.5 text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors flex items-center gap-1">
+        <span>📄 Dossier</span>
+      </a>
+      <button onclick="toggleFullscreen()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Fullscreen (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport Grid -->
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- Left / Center: Interactive Video Player Viewport (8 Cols) -->
+    <div class="lg:col-span-8 space-y-4">
+      
+      <!-- Video Screen Frame (16:9 Aspect Ratio) -->
+      <div id="videoContainer" class="relative w-full aspect-video studio-bg rounded-2xl border-2 border-slate-800 overflow-hidden shadow-2xl flex flex-col justify-between p-6 select-none group">
+        
+        <!-- Top Overlay Bar -->
+        <div class="flex items-center justify-between z-20">
+          <div class="flex items-center gap-2">
+            <span id="sceneBadge" class="text-xs font-bold px-2.5 py-1 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 uppercase tracking-wider backdrop-blur-sm">
+              Scene 1 of 5
+            </span>
+            <span id="sceneTitleOverlay" class="text-xs text-slate-300 font-medium bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-800 backdrop-blur-sm">
+              The Screen Fatigue Trap
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="videoClock" class="text-xs font-mono text-slate-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800">
+              00:00 / 04:15
+            </span>
+          </div>
+        </div>
+
+        <!-- Center Stage Visual Canvas -->
+        <div id="videoStage" class="my-auto w-full max-w-2xl mx-auto z-10 flex flex-col items-center justify-center text-center transition-all duration-500">
+          <!-- Rendered dynamically by current scene -->
+        </div>
+
+        <!-- Bottom Captions & Waveform Bar -->
+        <div class="z-20 space-y-2">
+          <div id="closedCaptions" class="bg-slate-950/90 border border-slate-800/80 p-3 rounded-xl backdrop-blur-md text-xs sm:text-sm text-slate-200 leading-relaxed text-center min-h-[56px] flex items-center justify-center">
+            <span id="captionText">Initializing Video Hub...</span>
+          </div>
+          
+          <!-- Progress Bar Track -->
+          <div class="w-full bg-slate-900/90 h-1.5 rounded-full overflow-hidden cursor-pointer" onclick="handleScrub(event)">
+            <div id="videoProgress" class="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 h-full w-0 transition-all duration-200"></div>
+          </div>
+        </div>
+
+        <!-- Floating Ambient Background Waveform -->
+        <div id="ambientWaveform" class="absolute inset-0 pointer-events-none flex items-center justify-center gap-1.5 opacity-0 transition-opacity duration-500 z-0">
+          <span class="w-1.5 bg-indigo-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-indigo-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-indigo-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-indigo-500/15 rounded-full waveform-bar"></span>
+          <span class="w-1.5 bg-indigo-500/15 rounded-full waveform-bar"></span>
+        </div>
+      </div>
+
+      <!-- Playback Controls Toolbar -->
+      <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-2">
+          <button id="playPauseBtn" onclick="togglePlayback()" class="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-bold text-xs rounded-lg shadow-md transition-all">
+            <svg id="playPauseIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <span id="playButtonText">Play Video</span>
+          </button>
+          
+          <button onclick="prevScene()" class="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" title="Previous Scene">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          <button onclick="nextScene()" class="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors" title="Next Scene">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Playback Speed -->
+          <div class="flex items-center gap-1.5 text-xs text-slate-400">
+            <span>Speed:</span>
+            <select id="speedSelect" onchange="changeSpeed(this.value)" class="bg-slate-800 text-slate-200 rounded px-2 py-1 border border-slate-700 outline-none">
+              <option value="0.8">0.8x</option>
+              <option value="1.0" selected>1.0x</option>
+              <option value="1.25">1.25x</option>
+            </select>
+          </div>
+
+          <!-- Audio Voice Source Toggle -->
+          <button id="voiceModeBtn" onclick="toggleVoiceMode()" class="px-2.5 py-1 text-xs font-semibold rounded bg-slate-800 text-indigo-400 border border-slate-700 hover:bg-slate-750 transition-colors">
+            SpeechSynthesis
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Scene Playlist & Technical Storyboard Rail (4 Cols) -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+          <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <span>🎬</span> Video Storyboard Chapters
+          </h2>
+          <span class="text-[10px] font-mono text-indigo-400">5 Scenes</span>
+        </div>
+
+        <div class="space-y-2">
+          <!-- Scene 1 Nav Card -->
+          <button id="sceneNav0" onclick="jumpToScene(0)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/80 bg-indigo-950/40 text-indigo-200 transition-all shadow-md">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>01. The Screen Fatigue Trap</span>
+              <span class="font-mono text-[10px] text-indigo-400">00:00 - 00:50</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Visual exhaustion vs. eyes-free commute learning.</p>
+          </button>
+
+          <!-- Scene 2 Nav Card -->
+          <button id="sceneNav1" onclick="jumpToScene(1)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>02. The Safari Barrier &amp; MediaSession</span>
+              <span class="font-mono text-[10px] text-indigo-400">00:50 - 01:45</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Overcoming iOS background audio throttling and timer freezing.</p>
+          </button>
+
+          <!-- Scene 3 Nav Card -->
+          <button id="sceneNav2" onclick="jumpToScene(2)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>03. AirPods Stem Pinch Matrix</span>
+              <span class="font-mono text-[10px] text-indigo-400">01:45 - 02:35</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Single, double, and triple pinch hardware action handlers.</p>
+          </button>
+
+          <!-- Scene 4 Nav Card -->
+          <button id="sceneNav3" onclick="jumpToScene(3)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>04. Markdown Spoken Preprocessor</span>
+              <span class="font-mono text-[10px] text-indigo-400">02:35 - 03:30</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Stripping syntax noise and announcing terminal commands naturally.</p>
+          </button>
+
+          <!-- Scene 5 Nav Card -->
+          <button id="sceneNav4" onclick="jumpToScene(4)" class="scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all">
+            <div class="flex items-center justify-between text-[11px] font-bold">
+              <span>05. Diagnostic Lab &amp; Takeaway</span>
+              <span class="font-mono text-[10px] text-indigo-400">03:30 - 04:15</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-1">Zero-cost client audio summary and gateway to Day 8.</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Technical Callout Box -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 space-y-2 text-xs text-slate-300">
+        <div class="font-bold text-white flex items-center gap-1.5">
+          <span>🎧</span>
+          <span>AirPods Hardware Integration</span>
+        </div>
+        <p class="text-slate-400 leading-relaxed text-[11px]">
+          Uses W3C <code>navigator.mediaSession.setActionHandler</code> to trap Bluetooth AVRCP earbud pinch events directly into React component state.
+        </p>
+        <div class="pt-2 border-t border-slate-800 text-[10px] font-mono text-indigo-400">
+          Source: src/components/AudioLessonPlayer.tsx
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive JavaScript Video Simulator Engine -->
+  <script>
+    const scenes = [
+      {
+        id: 0,
+        badge: "Scene 1 of 5",
+        title: "The Screen Fatigue Trap & Eyes-Free Learning",
+        timestamp: "00:00 / 00:50",
+        audioDuration: 50,
+        narration: "Modern software engineering demands hours of hyper-focused visual attention. But when it comes to absorbing high-level architectural patterns, mental models, and documentation, your eyes don't always need to be glued to a screen. In Capability 07, we unveil the AirPods Audio Player and MediaSession Engine—turning every markdown lesson, user guide, and technical blueprint in Learn Better into an immersive, hands-free podcast with zero cloud API keys and zero cost.",
+        renderVisual: () => `
+          <div class="space-y-4 max-w-lg mx-auto">
+            <div class="w-16 h-16 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-indigo-950/50">
+              🎧
+            </div>
+            <h3 class="text-xl sm:text-2xl font-black text-white">The Eyes-Free Developer</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Transforming 19 technical lessons &amp; user manuals into hands-free audio with zero cloud API cost.
+            </p>
+            <div class="grid grid-cols-2 gap-3 text-left">
+              <div class="p-3 rounded-lg bg-rose-950/40 border border-rose-900/60 text-xs">
+                <div class="font-bold text-rose-300 mb-1">Visual Screen Fatigue</div>
+                <div class="text-[11px] text-slate-400">8-12 hours in IDEs causes mental exhaustion and low retention.</div>
+              </div>
+              <div class="p-3 rounded-lg bg-emerald-950/40 border border-emerald-900/60 text-xs">
+                <div class="font-bold text-emerald-300 mb-1">Eyes-Free Commute</div>
+                <div class="text-[11px] text-slate-400">Learn while walking, driving, or resting your eyes without phone handling.</div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 1,
+        badge: "Scene 2 of 5",
+        title: "The Mobile Safari Barrier & W3C MediaSession",
+        timestamp: "00:50 / 01:45",
+        audioDuration: 55,
+        narration: "Anyone who has tried building a web-based audio reader knows the iOS Safari nightmare: lock your phone screen or put the browser in the background, and the operating system instantly throttles JavaScript and kills your audio stream. We solve this using the W3C MediaSession API. By binding a rich MediaMetadata payload—complete with high-resolution 512-pixel album artwork, lesson title, and chapter numbering—we convince the mobile operating system that our browser tab is a primary media player. The result? Uninterrupted background playback with full lock-screen controls.",
+        renderVisual: () => `
+          <div class="space-y-4 max-w-md mx-auto">
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700 shadow-xl space-y-3">
+              <div class="flex items-center gap-3 text-left">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-tr from-indigo-600 to-sky-500 flex items-center justify-center font-bold text-white text-lg shadow">
+                  LB
+                </div>
+                <div class="overflow-hidden">
+                  <div class="text-xs font-bold text-white truncate">01: First Contact &amp; Prompting</div>
+                  <div class="text-[11px] text-indigo-300 truncate">Learn Better Academy (Claude)</div>
+                  <div class="text-[10px] text-slate-400 font-mono">W3C navigator.mediaSession</div>
+                </div>
+              </div>
+              <div class="flex items-center justify-center gap-6 pt-2 border-t border-slate-800 text-slate-300 text-sm">
+                <span>&#9198;</span>
+                <span class="w-8 h-8 rounded-full bg-indigo-500 text-slate-950 flex items-center justify-center font-bold">&#9658;</span>
+                <span>&#9197;</span>
+              </div>
+            </div>
+            <div class="text-[11px] text-slate-400">
+              Signals iOS &amp; Android to persist audio synthesis through lock-screen and background tab switches.
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 2,
+        badge: "Scene 3 of 5",
+        title: "The AirPods Stem Pinch Gesture Matrix",
+        timestamp: "01:45 / 02:35",
+        audioDuration: 50,
+        narration: "Now, here is the magic for mobile listening: you never have to take your phone out of your pocket. When you pinch the AirPods stem once, the browser receives a hardware play or pause event, resuming or pausing without losing your exact word position. Double-pinch the stem, and the player triggers seekforward, advancing cleanly to the next concept paragraph. Triple-pinch triggers seekbackward, rewinding to the previous paragraph so you can re-listen to a dense explanation. Your standard headphones are now a programmable technical learning remote.",
+        renderVisual: () => `
+          <div class="space-y-3 max-w-lg mx-auto">
+            <div class="grid grid-cols-3 gap-2.5 text-left">
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-indigo-700/80 space-y-1">
+                <div class="text-xs font-bold text-indigo-300">Single Pinch</div>
+                <div class="text-[10px] font-mono text-sky-400">play / pause</div>
+                <p class="text-[10px] text-slate-400">Toggles playback at current word position.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-emerald-700/80 space-y-1">
+                <div class="text-xs font-bold text-emerald-300">Double Pinch</div>
+                <div class="text-[10px] font-mono text-sky-400">seekforward</div>
+                <p class="text-[10px] text-slate-400">Skips directly to next paragraph.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-700/80 space-y-1">
+                <div class="text-xs font-bold text-sky-300">Triple Pinch</div>
+                <div class="text-[10px] font-mono text-sky-400">seekbackward</div>
+                <p class="text-[10px] text-slate-400">Rewinds to previous concept.</p>
+              </div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-indigo-950/50 border border-indigo-800 text-xs text-indigo-300 font-mono">
+              Earbud Hardware Event ➔ AVRCP Signal ➔ MediaSession Action Handler
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 3,
+        badge: "Scene 4 of 5",
+        title: "The Intelligent Markdown Spoken Preprocessor",
+        timestamp: "02:35 / 03:30",
+        audioDuration: 55,
+        narration: "Have you ever heard a generic text-to-speech engine try to read raw code? It drones through backticks, indentation spaces, curly braces, and import strings until you want to take your headphones off. The Learn Better preprocessor solves this through heuristic text sanitization. It filters out complex code blocks while intelligently preserving and vocalizing actionable terminal commands—announcing them as 'Terminal command: pip install faster-whisper'. Markdown headers become rhythmic pauses, and bullet lists flow like natural human speech.",
+        renderVisual: () => `
+          <div class="space-y-3 max-w-lg mx-auto text-left text-xs">
+            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono text-[11px] text-slate-300 space-y-1">
+              <div class="text-slate-500">// Regex Markdown Sanitizer (AudioLessonPlayer.tsx)</div>
+              <div><span class="text-purple-400">if</span> (line.startsWith(<span class="text-emerald-300">'pip install'</span>)) {</div>
+              <div class="pl-4">cleanedBlocks.push(<span class="text-emerald-300">\`Terminal command: \${line}\`</span>);</div>
+              <div>}</div>
+            </div>
+            <div class="p-3 rounded-lg bg-emerald-950/30 border border-emerald-800 text-[11px] text-emerald-200 space-y-1">
+              <div class="font-bold">Natural Conversational Flow:</div>
+              <p>Dense syntax noise stripped. Terminal commands announced with vocal clarity.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 4,
+        badge: "Scene 5 of 5",
+        title: "Live Diagnostic Lab & Architectural Takeaway",
+        timestamp: "03:30 / 04:15",
+        audioDuration: 45,
+        narration: "By coupling native browser speech synthesis with the W3C MediaSession standard, Capability 07 delivers a masterclass in zero-cost, local-first software architecture. No subscription fees, no cloud latency, and no battery-draining video streams—just pure, high-retention technical mastery wherever you go. Explore Deck 07's interactive test lab, fire up your headphones, and experience the future of eyes-free developer education.",
+        renderVisual: () => `
+          <div class="space-y-4 max-w-lg mx-auto">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-3xl mx-auto shadow-lg">
+              ✨
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white">Capability 07 Complete!</h3>
+            <p class="text-xs text-slate-300">
+              Eyes-free learning operational. Chapter 3 complete. Ready for Gemini AI Studio in Chapter 4!
+            </p>
+            <div class="flex items-center justify-center gap-3 pt-2">
+              <a href="/decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html" class="px-3.5 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-bold text-xs shadow">
+                Launch Deck 07 Blueprint →
+              </a>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    let currentSceneIdx = 0;
+    let isPlaying = false;
+    let playbackSpeed = 1.0;
+    let sceneTimer = null;
+    let sceneStartTime = 0;
+    let currentUtterance = null;
+
+    function renderCurrentScene() {
+      const scene = scenes[currentSceneIdx];
+      
+      // Update header badges
+      document.getElementById('sceneBadge').textContent = scene.badge;
+      document.getElementById('sceneTitleOverlay').textContent = scene.title;
+      document.getElementById('videoClock').textContent = scene.timestamp;
+      
+      // Update visual stage
+      document.getElementById('videoStage').innerHTML = scene.renderVisual();
+      
+      // Update caption
+      document.getElementById('captionText').textContent = scene.narration;
+
+      // Update progress bar
+      const pct = ((currentSceneIdx) / scenes.length) * 100;
+      document.getElementById('videoProgress').style.width = `${pct}%`;
+
+      // Update right navigation cards
+      document.querySelectorAll('.scene-nav-btn').forEach((btn, idx) => {
+        if (idx === currentSceneIdx) {
+          btn.className = 'scene-nav-btn w-full text-left p-2.5 rounded-xl border border-indigo-500/80 bg-indigo-950/40 text-indigo-200 transition-all shadow-md';
+        } else {
+          btn.className = 'scene-nav-btn w-full text-left p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200 transition-all';
+        }
+      });
+    }
+
+    function togglePlayback() {
+      if (isPlaying) {
+        pausePlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      isPlaying = true;
+      document.getElementById('playButtonText').textContent = 'Pause Video';
+      document.getElementById('ambientWaveform').classList.remove('opacity-0');
+      document.getElementById('ambientWaveform').classList.add('opacity-100');
+
+      speakCurrentSceneNarration();
+    }
+
+    function pausePlayback() {
+      isPlaying = false;
+      document.getElementById('playButtonText').textContent = 'Play Video';
+      document.getElementById('ambientWaveform').classList.remove('opacity-100');
+      document.getElementById('ambientWaveform').classList.add('opacity-0');
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      clearTimeout(sceneTimer);
+    }
+
+    function speakCurrentSceneNarration() {
+      if (!('speechSynthesis' in window)) {
+        // Fallback simulation timer
+        const durationMs = (scenes[currentSceneIdx].audioDuration * 1000) / playbackSpeed;
+        sceneTimer = setTimeout(() => {
+          if (currentSceneIdx < scenes.length - 1) {
+            currentSceneIdx++;
+            renderCurrentScene();
+            speakCurrentSceneNarration();
+          } else {
+            pausePlayback();
+          }
+        }, durationMs);
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const scene = scenes[currentSceneIdx];
+      currentUtterance = new SpeechSynthesisUtterance(scene.narration);
+      currentUtterance.rate = playbackSpeed;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google') || v.name.includes('Samantha')));
+      if (preferred) currentUtterance.voice = preferred;
+
+      currentUtterance.onend = () => {
+        if (isPlaying) {
+          if (currentSceneIdx < scenes.length - 1) {
+            currentSceneIdx++;
+            renderCurrentScene();
+            setTimeout(() => {
+              if (isPlaying) speakCurrentSceneNarration();
+            }, 600);
+          } else {
+            pausePlayback();
+            document.getElementById('videoProgress').style.width = '100%';
+          }
+        }
+      };
+
+      currentUtterance.onerror = (e) => {
+        if (e.error !== 'interrupted') {
+          console.warn('Speech error:', e);
+        }
+      };
+
+      window.speechSynthesis.speak(currentUtterance);
+    }
+
+    function nextScene() {
+      if (currentSceneIdx < scenes.length - 1) {
+        currentSceneIdx++;
+        renderCurrentScene();
+        if (isPlaying) speakCurrentSceneNarration();
+      }
+    }
+
+    function prevScene() {
+      if (currentSceneIdx > 0) {
+        currentSceneIdx--;
+        renderCurrentScene();
+        if (isPlaying) speakCurrentSceneNarration();
+      }
+    }
+
+    function jumpToScene(idx) {
+      if (idx >= 0 && idx < scenes.length) {
+        currentSceneIdx = idx;
+        renderCurrentScene();
+        if (isPlaying) speakCurrentSceneNarration();
+      }
+    }
+
+    function changeSpeed(val) {
+      playbackSpeed = parseFloat(val);
+      if (isPlaying) {
+        speakCurrentSceneNarration();
+      }
+    }
+
+    function toggleVoiceMode() {
+      // Toggle indication
+      alert('Voice Mode: Client HTML5 SpeechSynthesis (Zero Cloud Latency & Zero Quota).');
+    }
+
+    function handleScrub(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = clickX / rect.width;
+      const targetIdx = Math.floor(ratio * scenes.length);
+      jumpToScene(Math.min(scenes.length - 1, Math.max(0, targetIdx)));
+    }
+
+    function toggleFullscreen() {
+      const container = document.getElementById('videoContainer');
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'k') {
+        e.preventDefault();
+        togglePlayback();
+      } else if (e.key === 'ArrowRight' || e.key === 'l') {
+        e.preventDefault();
+        nextScene();
+      } else if (e.key === 'ArrowLeft' || e.key === 'j') {
+        e.preventDefault();
+        prevScene();
+      } else if (e.key === 'f') {
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize display
+    renderCurrentScene();
+  </script>
+</body>
+</html>

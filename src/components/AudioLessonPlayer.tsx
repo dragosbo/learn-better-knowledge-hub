@@ -417,7 +417,27 @@ if __name__ == "__main__":
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Deck 07 & Video Launchers */}
+          <a
+            href="/decks/07_CAPABILITY_AIRPODS_AUDIO_PLAYER.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-indigo-950/80 text-indigo-300 border border-indigo-700/80 hover:bg-indigo-900 transition-colors"
+            title="Open Deck 07 Interactive Blueprint"
+          >
+            <span>Deck 07 Blueprint ↗</span>
+          </a>
+          <a
+            href="/videos/07_CAPABILITY_AIRPODS_AUDIO_PLAYER_VIDEO.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-rose-950/80 text-rose-300 border border-rose-700/80 hover:bg-rose-900 transition-colors"
+            title="Launch AirPods Studio Video Hub"
+          >
+            <span>AirPods Studio Video ↗</span>
+          </a>
+
           <button
             onClick={() => setShowSettings(!showSettings)}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-colors border ${
