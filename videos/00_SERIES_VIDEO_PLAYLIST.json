@@ -163,26 +163,28 @@
     {
       "id": "cap-09",
       "number": 9,
-      "title": "Gemini Development Chat & Capability Audit",
+      "title": "Gemini Development Chat & Complete Audit Trail",
       "chapter": 4,
-      "status": "planned",
-      "deckFile": "decks/09_CAPABILITY_GEMINI_DEV_CHAT.html",
-      "storyboardFile": "videos/09_CAPABILITY_GEMINI_DEV_CHAT_STORYBOARD.md",
-      "slideCount": 7,
-      "estimatedDurationSec": 260,
-      "summary": "22-prompt full development dialogue audit, pastel syntax blocks, and quota signals."
+      "status": "ready",
+      "deckFile": "decks/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT.html",
+      "storyboardFile": "videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_STORYBOARD.md",
+      "videoPlayerUrl": "/videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_VIDEO.html",
+      "slideCount": 8,
+      "estimatedDurationSec": 270,
+      "summary": "Complete 29-prompt verbatim development audit, typed AST ledger, velocity tracking, quota stewardship, and anti-slop prompt regression testing."
     },
     {
       "id": "cap-10",
       "number": 10,
-      "title": "Legacy HTML Tools Hub",
+      "title": "Legacy HTML Tools Hub & Sandboxed Iframes",
       "chapter": 4,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/10_CAPABILITY_LEGACY_HTML_TOOLS.html",
       "storyboardFile": "videos/10_CAPABILITY_LEGACY_HTML_TOOLS_STORYBOARD.md",
-      "slideCount": 6,
-      "estimatedDurationSec": 220,
-      "summary": "Sandboxed viewport access to original repository apps (youtube.html, wordcloud.html, etc.)."
+      "videoPlayerUrl": "/videos/10_CAPABILITY_LEGACY_HTML_TOOLS_VIDEO.html",
+      "slideCount": 8,
+      "estimatedDurationSec": 255,
+      "summary": "Sandboxed iframe execution container for 4 original tools (youtube.html, standalone Claude reader, Kiro reader, wordcloud.html) with complete CSS/JS process isolation."
     },
     {
       "id": "cap-11",

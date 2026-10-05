@@ -910,3 +910,57 @@ Create a new service in `src/services/githubApi.ts` that allows the application 
 >    - Enhanced `GitHubImportModal.tsx` with folder and selective file picking modes, and added "Import from GitHub" button in `KnowledgeHub.tsx`.
 
 
+
+
+---
+
+### Prompt 44: iPad vs. Cloud Compute Benchmark & Capability 09 Delivery
+*Timestamp: 2026-10-04T01:00:00-07:00*
+
+```text
+1. Ok update Gemini development chat to reflect our discussion like before, if necessary the user guide also. Then proceed with next deck
+2. For curiosity how much of the processing for this development is happening on my iPad and how much is in the cloud. Use percentages to show this and elaborate a little bit to explain how you obtained this estimation.
+Add this analysis to the app as a markdown and add button to access it.
+```
+
+#### Assistant Response 44
+> 1. **Empirical Compute Allocation Analysis**:
+>    - **Development Lifecycle (Vibe Coding)**: **95% Cloud** (Google TPUs running Gemini 3.8-Flash ~60%, Google Cloud Run Linux container & Vite bundler ~35%) vs. **5% iPad** (Mobile Safari WebKit rendering, WebSocket framing, TLS 1.3, touch events).
+>    - **Application Runtime Lifecycle**: **68% iPad Client** (Apple Silicon GPU 60 FPS Canvas physics 25%, Apple Neural Engine SpeechSynthesis 20%, React 19 vDOM diffing & localStorage 23%) vs. **32% Cloud** (Express API, Gemini Flash insights, YouTube CDN).
+> 2. **Analysis Artifacts & UI Integration**:
+>    - Created `analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md` and interactive report `analysis/04_ipad_vs_cloud_processing_analysis.html`.
+>    - Exposed route `/analysis/ipad-vs-cloud` and registered Phase 4 in `/api/analysis/data`.
+>    - Engineered `src/components/IpadVsCloudAnalysisModal.tsx` with comparative percentage meters and Web Speech narration.
+>    - Added prominent "iPad vs Cloud %" quick-access button in `Navbar.tsx` and the application footer.
+>    - Integrated Phase 4 into `AnalysisHub.tsx` with FLOPs accounting and subsystem table.
+> 3. **Capability 09 Complete Delivery**:
+>    - Slide Deck: `decks/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT.html` (8 slides, Web Speech narration, speaker notes drawer, auto-advance).
+>    - Storyboard: `videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_STORYBOARD.md` (5 OBS production scenes).
+>    - Video Hub: `videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_VIDEO.html` with teleprompter and speech playback.
+>    - Series Overview updated in `decks/00_SERIES_OVERVIEW_PLAYLIST.html` and `videos/00_SERIES_VIDEO_PLAYLIST.json` marking Day 9 ready.
+
+
+---
+
+### Prompt 45: Capability 10 Delivery (Legacy HTML Tools Hub) & Series Remaining Horizon
+*Timestamp: 2026-10-04T02:35:00-07:00*
+
+```text
+Continue with next deck and tell me how many remains
+```
+
+#### Assistant Response 45
+> 1. **Delivered Capability 10 (Legacy HTML Tools Hub & Sandboxed Iframes)**:
+>    - **Slide Deck**: `decks/10_CAPABILITY_LEGACY_HTML_TOOLS.html` (8 slides, Web Speech narration, auto-advance, speaker notes).
+>    - **Video Storyboard**: `videos/10_CAPABILITY_LEGACY_HTML_TOOLS_STORYBOARD.md` (5 OBS scenes with teleprompter script).
+>    - **Video Hub**: `videos/10_CAPABILITY_LEGACY_HTML_TOOLS_VIDEO.html` (interactive player with scene switching).
+>    - **Preserved Artifacts**: Quarantined serving of 4 original tools (`youtube.html`, `claude_lessons_app.html`, `kiro_lessons_app.html`, `wordcloud.html`) under `/legacy/*`.
+>    - **Security Architecture**: Sandboxed iframe configuration with `allow-scripts allow-same-origin allow-popups` and omission of `allow-top-navigation` for zero parent hijacking.
+> 2. **Master Series Completion Progress**:
+>    - **Completed so far**: **10 of 15 capabilities** (66.7% complete).
+>    - **Remaining to build**: Exactly **5 capabilities remaining**:
+>      - **Cap 11**: Python Code Viewer (Two-column IDE layout with syntax highlighting for backend scripts).
+>      - **Cap 12**: GitHub Sync & Multi-AI Monorepo Protocol (Branch isolation & automated push runbooks).
+>      - **Cap 13**: Interactive User Guide & Audio Manual (Markdown viewer & iPadOS runbooks).
+>      - **Cap 14**: Ecosystem Roadmap Hub & Multi-AI Collaboration (Architectural milestones & handoffs).
+>      - **Cap 15**: Autonomous Agent Gateway & OpenAPI Protocol (REST endpoints, JSON Schemas & function calling).

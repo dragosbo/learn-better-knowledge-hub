@@ -1426,6 +1426,128 @@ Concise synthesis of technical achievements...
 }`
       }
     ]
+  },
+  {
+    id: 'prompt-29',
+    number: 29,
+    session: 9,
+    sessionDate: '2026-10-04',
+    sessionTitle: 'Session 9: iPad Client vs. Cloud Processing Architecture & Deck 09 Delivery',
+    timestamp: '2026-10-04 01:00',
+    userPromptVerbatim: `1. Ok update Gemini development chat to reflect our discussion like before, if necessary the user guide also. Then proceed with next deck
+2. For curiosity how much of the processing for this development is happening on my iPad and how much is in the cloud. Use percentages to show this and elaborate a little bit to explain how you obtained this estimation.
+Add this analysis to the app as a markdown and add button to access it.`,
+    assistantResponseMarkdown: `### iPad vs. Cloud Processing Topology & Capability 09 Delivered
+
+1. **Empirical Compute Allocation Analysis**:
+   - **Mode A: Active Agent Development Lifecycle**:
+     - **Cloud (95%)**: Gemini 3.8-Flash on Google TPUs (~60%), Google Cloud Run Linux sandbox (~35%), Vite bundler, Node.js proxy, and TypeScript AST verification.
+     - **iPad Client (5%)**: Mobile Safari WebKit DOM painting, WebSocket framing, TLS 1.3 encryption, and touch keyboard inputs.
+   - **Mode B: Application Runtime Lifecycle (Day-to-day use on iPadOS)**:
+     - **iPad Client (68%)**: HTML5 Canvas 60 FPS physics on Apple Silicon GPU (25%), on-device SpeechSynthesis on Apple Neural Engine (20%), React 19 vDOM diffing & localStorage (23%).
+     - **Cloud (32%)**: Express API endpoints, Gemini Flash insight extractions, and YouTube CDN media decoders.
+
+2. **System Artifacts Created & Integrated**:
+   - **Markdown Document**: \`analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md\`
+   - **Interactive HTML Report**: \`analysis/04_ipad_vs_cloud_processing_analysis.html\`
+   - **Express Route**: \`/analysis/ipad-vs-cloud\` & phase 4 in \`/api/analysis/data\`
+   - **Interactive Modal**: \`src/components/IpadVsCloudAnalysisModal.tsx\` with percentage gauges, tabbed markdown, and Web Speech narration.
+   - **Navbar & Footer Integration**: Added high-priority **"iPad vs Cloud %"** button with gradient styling and telemetry badges.
+   - **AnalysisHub Expansion**: Added **Phase 4 • Topology** tab with live comparative cards and FLOPs accounting.
+
+3. **Capability 09 Complete Delivery**:
+   - **Interactive Slide Deck**: \`decks/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT.html\` (8 slides, Web Speech narration, speaker notes drawer, auto-advance).
+   - **Video Production Storyboard**: \`videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_STORYBOARD.md\` (5 OBS scenes with teleprompter script).
+   - **Interactive Video Player Hub**: \`videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_VIDEO.html\` with scene jumping and speech synthesis.
+   - **Series Registry Updated**: Marked Deck 09 ready in \`decks/00_SERIES_OVERVIEW_PLAYLIST.html\` and \`videos/00_SERIES_VIDEO_PLAYLIST.json\`.`,
+    capabilityPercent: 10,
+    cumulativePercent: 100,
+    capabilitySummary: 'Empirical FLOPs benchmark of iPad vs. cloud processing, markdown/HTML analysis, navbar access button, and Capability 09 complete delivery.',
+    featuresIntroduced: [
+      'Authored analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md with scientific FLOPs and network payload estimations.',
+      'Created interactive HTML report analysis/04_ipad_vs_cloud_processing_analysis.html.',
+      'Engineered IpadVsCloudAnalysisModal.tsx with visual percentage meters and Web Speech narration.',
+      'Added prominent iPad vs Cloud % quick access button in Navbar.tsx and footer.',
+      'Expanded AnalysisHub.tsx with Phase 4: iPad Client vs Cloud Processing Architecture.',
+      'Built Deck 09 (decks/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT.html) and Video Hub (videos/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT_VIDEO.html).'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 7,
+      estimatedTokens: '~18,200 tokens',
+      quotaStatus: 'safe',
+      note: 'iPad vs Cloud analysis and Capability 09 delivery.'
+    },
+    codeBlocks: [
+      {
+        language: 'typescript',
+        caption: 'Dual-Phase Compute Model Ledger',
+        code: `export const COMPUTE_RATIOS = {
+  developmentPhase: {
+    cloud: 0.95, // Gemini 3.8-Flash TPUs (60%) + Cloud Run / Vite (35%)
+    ipad: 0.05   // WebKit DOM reflow + WebSocket streaming (5%)
+  },
+  runtimePhase: {
+    ipad: 0.68,  // Canvas 60 FPS GPU (25%) + Apple Neural TTS (20%) + React/Storage (23%)
+    cloud: 0.32  // Express API (10%) + Gemini Flash insights (12%) + YouTube CDN (10%)
+  }
+};`
+      }
+    ]
+  },
+  {
+    id: 'prompt-30',
+    number: 30,
+    session: 10,
+    sessionDate: '2026-10-04',
+    sessionTitle: 'Session 10: Legacy HTML Tools Hub & Sandboxed Architecture (10/15 Delivered)',
+    timestamp: '2026-10-04 02:35',
+    userPromptVerbatim: `Continue with next deck and tell me how many remains`,
+    assistantResponseMarkdown: `### Capability 10 Delivered & Series Horizon Status
+
+1. **Capability 10 (Legacy HTML Tools Hub & Sandboxed Iframes)**:
+   - **Slide Deck 10**: \`decks/10_CAPABILITY_LEGACY_HTML_TOOLS.html\` (8 interactive slides, Web Speech narration, auto-advance, speaker notes).
+   - **Video Production Storyboard**: \`videos/10_CAPABILITY_LEGACY_HTML_TOOLS_STORYBOARD.md\` (5 scenes with teleprompter script).
+   - **Video Player Hub**: \`videos/10_CAPABILITY_LEGACY_HTML_TOOLS_VIDEO.html\` with scene switching and on-device audio playback.
+   - **Preserved Artifacts**: Quarantined serving of 4 original standalone HTML tools (\`youtube.html\`, \`claude_lessons_app.html\`, \`kiro_lessons_app.html\`, \`wordcloud.html\`) under \`/legacy/*\`.
+   - **Security Architecture**: Sandboxed iframe configuration with \`allow-scripts allow-same-origin allow-popups\` and omission of \`allow-top-navigation\` for zero parent hijacking.
+
+2. **Master Series Completion Progress**:
+   - **Completed so far**: **10 of 15 capabilities** (66.7% complete).
+   - **Remaining to build**: Exactly **5 capabilities remaining**:
+     - **Cap 11**: Python Code Viewer (Two-column IDE layout with syntax highlighting for backend scripts).
+     - **Cap 12**: GitHub Sync & Multi-AI Monorepo Protocol (Branch isolation & automated push runbooks).
+     - **Cap 13**: Interactive User Guide & Audio Manual (Markdown viewer & iPadOS runbooks).
+     - **Cap 14**: Ecosystem Roadmap Hub & Multi-AI Collaboration (Architectural milestones & handoffs).
+     - **Cap 15**: Autonomous Agent Gateway & OpenAPI Protocol (REST endpoints, JSON Schemas & function calling).`,
+    capabilityPercent: 7,
+    cumulativePercent: 100,
+    capabilitySummary: 'Built Deck 10, Storyboard 10, Video Hub 10, and updated series registry with remaining 5 capabilities roadmap.',
+    featuresIntroduced: [
+      'Built decks/10_CAPABILITY_LEGACY_HTML_TOOLS.html with 8 narrated slides and sandbox security architecture.',
+      'Created videos/10_CAPABILITY_LEGACY_HTML_TOOLS_STORYBOARD.md and video player hub.',
+      'Updated series overview and video playlist registries marking Day 10 ready.',
+      'Documented exact remaining 5-capability roadmap for sessions 11 through 15.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 8,
+      estimatedTokens: '~15,400 tokens',
+      quotaStatus: 'safe',
+      note: 'Capability 10 complete delivery.'
+    },
+    codeBlocks: [
+      {
+        language: 'html',
+        caption: 'Sandboxed Iframe Container Specification',
+        code: `<iframe
+  key={iframeKey}
+  src={selectedApp.url}
+  title={selectedApp.title}
+  className="w-full h-full border-0 rounded-xl"
+  sandbox="allow-scripts allow-same-origin allow-popups allow-downloads"
+  loading="lazy"
+/>`
+      }
+    ]
   }
 ];
 

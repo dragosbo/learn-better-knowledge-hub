@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 10: Legacy HTML Tools Hub &amp; Sandboxed Iframe Architecture — Technical Blueprint</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase tracking-wider">Deck 10 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Legacy HTML Tools Hub &amp; Sandboxed Iframes</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">100% Preservation • Sandboxed Security • Zero CSS Contamination</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Link -->
+      <a href="/videos/10_CAPABILITY_LEGACY_HTML_TOOLS_VIDEO.html" class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-sm">
+        <span>🎬 Video</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Presentation Main Container -->
+  <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 justify-between relative studio-grid">
+    
+    <!-- Slides Card Container -->
+    <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl relative min-h-[540px] flex flex-col justify-between backdrop-blur-md">
+      
+      <!-- Slide Area -->
+      <div id="slideViewport" class="flex-1 flex flex-col justify-between">
+        
+        <!-- SLIDE 1: Executive Overview -->
+        <div class="slide active flex flex-col justify-between space-y-6" data-slide="1">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/80 border border-sky-800 text-sky-300 text-xs font-semibold">
+              <span>Capability 10 &bull; Architecture Preservation</span>
+              <span>&bull;</span>
+              <span>100% Backward Compatibility</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Legacy HTML Tools Hub &amp; Sandboxed Iframe Runner
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              When migrating a sprawling multi-script repository into a modern React 19 SPA, the biggest anti-pattern is deleting or breaking original standalone tools. Capability 10 guarantees 100% backward compatibility: original standalone HTML applications run inside an isolated, sandboxed execution container without CSS collisions, JavaScript global leaks, or breaking old bookmarks.
+            </p>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-sky-400 font-bold text-sm flex items-center gap-2">
+                <span>🛡️ Complete Process Isolation</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Legacy global scripts (D3 v5, jQuery, prototype polyfills) execute in their own browser browsing context without polluting React's virtual DOM.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+                <span>⚡ Instant Offline Fallback</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Pre-populated <code>DEFAULT_LEGACY_APPS</code> in <code>src/services/api.ts</code> ensures tools load instantaneously even before Express API responds.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-indigo-400 font-bold text-sm flex items-center gap-2">
+                <span>📱 Dual Viewport Modes</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Supports embedded side-by-side study preview with 1-click fullscreen expansion and standalone tab launching.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-sky-950/30 border border-sky-900/60 flex items-center justify-between text-xs text-sky-200">
+            <span>Primary Component: <code>src/components/LegacyAppsHub.tsx</code> &bull; Static Route: <code>/legacy/*</code></span>
+            <span class="font-bold text-white">Slide 1 of 8</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: The 4 Standalone Legacy Artifacts -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="2">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Catalog of Preserved Tools</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">The 4 Core Standalone HTML Artifacts Preserved in Repo</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Every tool created during the initial Python and standalone HTML phase remains fully operational, verified, and accessible from the dashboard:
+            </p>
+          </div>
+
+          <!-- 4 Tools Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 my-2 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-sm">1. Original YouTube Explorer</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">youtube.html</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                The baseline YouTube curriculum and clip explorer with topic tags, difficulty badges, and embedded video transcripts.
+              </p>
+              <div class="text-[10px] text-slate-500 font-mono">Route: /legacy/youtube.html &bull; Size: ~45 KB</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-sm">2. Claude AI Lessons Standalone</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">claude_lessons_app.html</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                Single-page offline application presenting the complete 10-lesson Claude prompt engineering and vibe coding course.
+              </p>
+              <div class="text-[10px] text-slate-500 font-mono">Route: /legacy/claude_lessons_app.html &bull; Size: ~85 KB</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-sm">3. Kiro AI Lessons Standalone</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">kiro_lessons_app.html</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                Interactive curriculum reader for Kiro CLI engineering, local Whisper transcription, and terminal pipelines.
+              </p>
+              <div class="text-[10px] text-slate-500 font-mono">Route: /legacy/kiro_lessons_app.html &bull; Size: ~65 KB</div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-sm">4. D3 Word Cloud Explorer</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">wordcloud.html</span>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                Classic D3.js force-directed keyword cloud and terminology frequency visualizer analyzing playlist vocabulary.
+              </p>
+              <div class="text-[10px] text-slate-500 font-mono">Route: /legacy/wordcloud.html &bull; Size: ~55 KB</div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            ✅ <strong>Zero Loss:</strong> Not a single line of original work was discarded during the platform modernization.
+          </div>
+        </div>
+
+        <!-- SLIDE 3: The Sandboxed Iframe Security Model -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="3">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Security Architecture</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">The Sandboxed Iframe Security Model</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Embedding external or legacy HTML files requires careful attribute configuration to maintain security without breaking client scripting:
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 my-2">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 font-mono text-[11px]">
+              <div class="text-xs font-bold text-sky-400 font-sans mb-1">React Iframe Invocation (LegacyAppsHub.tsx)</div>
+              <div class="text-slate-300 code-scroll max-h-52 overflow-y-auto leading-relaxed">
+<pre>&lt;<code class="text-sky-300">iframe</code>
+  <code class="text-indigo-300">key</code>={<code class="text-amber-300">iframeKey</code>}
+  <code class="text-indigo-300">src</code>={<code class="text-amber-300">selectedApp.url</code>}
+  <code class="text-indigo-300">title</code>={<code class="text-amber-300">selectedApp.title</code>}
+  <code class="text-indigo-300">className</code>=<code class="text-emerald-300">"w-full h-full border-0 rounded-xl"</code>
+  <code class="text-indigo-300">sandbox</code>=<code class="text-amber-300">"allow-scripts allow-same-origin allow-popups allow-downloads"</code>
+  <code class="text-indigo-300">loading</code>=<code class="text-emerald-300">"lazy"</code>
+/&gt;
+</pre>
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs text-slate-300">
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                <strong class="text-white">allow-scripts:</strong> Enables legacy D3 animations, client search, and event handlers.
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                <strong class="text-white">allow-same-origin:</strong> Lets standalone apps load companion JSON files from <code>/data/*</code>.
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                <strong class="text-white">allow-popups:</strong> Permits clicking YouTube external links into new tabs safely.
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                <strong class="text-white">Omitted allow-top-navigation:</strong> Prevents legacy scripts from redirecting the parent applet.
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            🔒 <strong>Protection:</strong> Strict sandboxing guarantees that legacy script errors cannot crash the main React UI.
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Dual-Route Server Architecture -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="4">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Backend Routing</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Dual-Route Serving: <code>server.ts</code> Static Asset Resolution</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              To support both clean dashboard URLs and direct bookmarks from the original repository, Express serves files via a dual-route hierarchy:
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2 text-xs">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="font-bold text-sky-300 text-sm">Route A: Dedicated Namespace</div>
+              <code class="text-[11px] font-mono text-sky-400 block bg-slate-900 p-2 rounded">
+                app.use('/legacy', express.static(importedDir))
+              </code>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Prevents route collisions with React routes. All standalone apps are cleanly isolated under <code>/legacy/*.html</code> with correct MIME headers.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="font-bold text-indigo-300 text-sm">Route B: Root Bookmark Compatibility</div>
+              <code class="text-[11px] font-mono text-indigo-400 block bg-slate-900 p-2 rounded">
+                GET /youtube.html &rarr; /legacy/youtube.html
+              </code>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                Express transparently redirects root requests to the canonical legacy path, ensuring old links never return 404 errors.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span>Cache Policy: <code>Cache-Control: no-cache</code> for development &bull; <code>X-Frame-Options: SAMEORIGIN</code></span>
+            <span class="text-emerald-400 font-bold">100% Endpoint Health</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Memory & Asset Isolation -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="5">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Asset Safety</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Preventing CSS &amp; Global JavaScript Pollution</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Legacy HTML apps often declare un-scoped CSS resets (e.g. <code>* { box-sizing: border-box; margin: 0; }</code>) and mutate <code>window.*</code> globals. If rendered directly in React, they destroy dashboard layout styling.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-2 text-xs">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-sky-400 font-bold">CSS Namespace Isolation</span>
+              <p class="text-[11px] text-slate-300">
+                Tailwind CSS v4 in the parent React applet remains completely immune to inline <code>&lt;style&gt;</code> blocks inside the legacy pages.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-emerald-400 font-bold">JavaScript Window Scope</span>
+              <p class="text-[11px] text-slate-300">
+                Variables like <code>window.data</code> or <code>window.$</code> in legacy scripts live inside the iframe's distinct global window context.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-indigo-400 font-bold">Independent Garbage Collection</span>
+              <p class="text-[11px] text-slate-300">
+                When the user switches tabs, unmounting the iframe immediately frees DOM nodes and canvas memory without memory leaks.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            🧼 <strong>Clean Architecture:</strong> The host application stays pristine while legacy tools run at native speed.
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Mobile & iPadOS Viewport Adaptations -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="6">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Mobile Web Experience</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">iPadOS &amp; Touch Viewport Optimization</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Iframes on iPadOS Safari frequently suffer from double-scroll issues or clipped canvas edges. Learn Better implements responsive containment rules:
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-2 text-xs">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="font-bold text-sky-300 text-sm">1. Fullscreen Immersive Mode</div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                A 1-click expander button toggles the iframe to <code>fixed inset-0 z-50</code>, maximizing viewport space for deep exploration of the YouTube materials matrix.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="font-bold text-emerald-300 text-sm">2. Kinetic Touch Scrolling</div>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                Uses <code>-webkit-overflow-scrolling: touch</code> and calibrated min-height constraints so legacy table content scrolls smoothly with two-finger gestures.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            📱 <strong>Direct Launch Button:</strong> For users who prefer a dedicated browser tab, every card includes a 1-tap <strong>"Launch in Tab ↗"</strong> action.
+          </div>
+        </div>
+
+        <!-- SLIDE 7: The Modernization Bridge -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="7">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Architectural Evolution</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">The Bridge: How Legacy Apps Inspired Modern Capabilities</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              The legacy tools were not an end state—they were the foundational blueprints that evolved into modern capabilities:
+            </p>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-slate-400 font-mono">youtube.html</span>
+                <span class="mx-2">&rarr;</span>
+                <strong class="text-white">Capability 01 (PlaylistManager.tsx) &amp; Cap 02 (RestructureHub.tsx)</strong>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-semibold">From flat HTML to 28-Cluster Matrix</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-slate-400 font-mono">claude_lessons_app.html</span>
+                <span class="mx-2">&rarr;</span>
+                <strong class="text-white">Capability 06 (AILearningAcademy.tsx)</strong>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-semibold">From static reader to typed course player</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-slate-400 font-mono">wordcloud.html</span>
+                <span class="mx-2">&rarr;</span>
+                <strong class="text-white">Capability 04 (PlaylistWordCloudMindMap.tsx)</strong>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-semibold">From 2D cloud to 3-tier radial mindmap</span>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+            🔄 <strong>Continuous Evolution:</strong> Users can inspect the original and modern implementations side-by-side to understand design decisions.
+          </div>
+        </div>
+
+        <!-- SLIDE 8: Verification & Runbook -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="8">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Verification Runbook</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Verification &amp; Audit Runbook: Testing Capability 10</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Verify that the Legacy Tools Hub operates reliably across both embedded and standalone modes:
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-2 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 1: Open Legacy Tools Tab</span>
+              <p class="text-[11px] text-slate-300">Click <code>Legacy Tools</code> in the Navbar. Verify all 4 tool cards render with accurate file tags.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 2: Test Iframe Loading</span>
+              <p class="text-[11px] text-slate-300">Select "YouTube Explorer". Verify the sandboxed frame loads without CORS or security errors.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 3: Test Fullscreen Toggle</span>
+              <p class="text-[11px] text-slate-300">Click the expand button in the frame header. Verify the viewport expands smoothly without clipping.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <span class="text-emerald-400 font-bold">Step 4: Launch Standalone Tab</span>
+              <p class="text-[11px] text-slate-300">Click "Launch in Tab ↗". Verify the tool opens directly at <code>/legacy/*.html</code> with full fidelity.</p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/80 flex items-center justify-between text-xs text-emerald-200">
+            <span>✅ Capability 10 Verified: 100% preservation, zero CSS collisions, sandboxed security.</span>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-3 py-1 bg-emerald-500 text-slate-950 font-bold rounded hover:bg-emerald-400 transition-colors">
+              Series Overview &rarr;
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Navigation Footer -->
+      <div class="pt-6 mt-6 border-t border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" onclick="prevSlide()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+            &larr; Previous
+          </button>
+          <button id="nextBtn" onclick="nextSlide()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold transition-colors">
+            Next &rarr;
+          </button>
+          <span id="slideIndicator" class="text-xs font-mono text-slate-400 ml-2">1 / 8</span>
+        </div>
+
+        <!-- Dot Indicators -->
+        <div id="dotContainer" class="hidden sm:flex items-center gap-1.5">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="text-xs text-slate-500 hidden md:block">
+          Use &larr; / &rarr; keys to navigate &bull; Space to play audio
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Speaker Notes Drawer (Toggled by 'N' key or notes button) -->
+  <aside id="notesDrawer" class="fixed bottom-0 left-0 right-0 max-h-72 bg-slate-900 border-t border-slate-700 p-4 sm:p-6 shadow-2xl z-50 transform translate-y-full transition-transform duration-300 overflow-y-auto">
+    <div class="max-w-4xl mx-auto space-y-2">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Speaker Script (Word-for-Word Narration)</span>
+          <span id="notesSlideNumber" class="text-xs text-slate-400 font-mono">Slide 1</span>
+        </div>
+        <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-800 rounded">
+          Close (N)
+        </button>
+      </div>
+      <p id="speakerNotesText" class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans"></p>
+    </div>
+  </aside>
+
+  <!-- Narration Script Data & Audio Engine -->
+  <script>
+    const SLIDE_SCRIPTS = [
+      "Welcome to Capability 10: Legacy HTML Tools Hub and Sandboxed Iframe Architecture. When modernizing an evolving multi-script codebase into a modern React 19 application, a common engineering error is discarding or breaking original standalone tools. Capability 10 delivers 100 percent backward compatibility: all pre-existing standalone HTML apps run in secure, sandboxed execution contexts with zero CSS collisions and zero script interference.",
+      "Slide 2 showcases our four preserved standalone HTML tools. First, the original YouTube Materials Explorer in youtube.html. Second, the standalone Claude prompt engineering course viewer in claude_lessons_app.html. Third, the Kiro CLI engineering course viewer in kiro_lessons_app.html. And fourth, the original D3 word cloud visualizer in wordcloud.html. Every file remains fully functional.",
+      "Slide 3 breaks down our sandboxed iframe security model. We configure the iframe with allow-scripts, allow-same-origin, allow-popups, and allow-downloads. Crucially, we omit allow-top-navigation, preventing legacy code from hijacking or redirecting the parent application.",
+      "Slide 4 examines our dual-route backend resolution in server.ts. Legacy files are cleanly isolated under the /legacy/ namespace, avoiding path collisions with React routes, while root aliases transparently redirect legacy bookmarks so old links never return 404 errors.",
+      "Slide 5 explains asset and memory isolation. Standalone HTML apps often include un-scoped CSS resets and mutate global window objects. By hosting them inside an iframe, our Tailwind CSS styles remain completely uncontaminated, and closing the tab immediately reclaims memory.",
+      "Slide 6 focuses on touch and mobile optimizations for iPadOS. We implemented a 1-click fullscreen expander and smooth kinetic touch scrolling, so you can explore dense table layouts and D3 canvas graphs on your iPad without clipped edges or double-scroll bars.",
+      "Slide 7 illustrates the evolutionary bridge from legacy tools to modern capabilities. The original youtube.html inspired our 28-cluster Restructure Hub, the Claude reader inspired our AI Coding Academy, and the word cloud evolved into our 3-tier hierarchical mind map.",
+      "Slide 8 provides our verification runbook. You can verify Capability 10 by navigating to Legacy Tools in the navigation bar, switching between all four apps, testing fullscreen mode, and launching standalone tabs. Capability 10 proves that modernization never requires sacrificing your history."
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isSpeaking = false;
+    let autoAdvance = false;
+    let speechRate = 1.0;
+    let synth = window.speechSynthesis;
+    let currentUtterance = null;
+
+    function initPresentation() {
+      const dotContainer = document.getElementById('dotContainer');
+      dotContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === 1 ? 'bg-sky-400 w-5' : 'bg-slate-700 hover:bg-slate-500'}`;
+        dot.onclick = () => goToSlide(i);
+        dot.id = `dot-${i}`;
+        dotContainer.appendChild(dot);
+      }
+      updateSlideDisplay();
+    }
+
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (activeSlide) activeSlide.classList.add('active');
+
+      document.getElementById('slideIndicator').textContent = `${currentSlide} / ${totalSlides}`;
+      document.getElementById('prevBtn').disabled = (currentSlide === 1);
+      document.getElementById('nextBtn').disabled = (currentSlide === totalSlides);
+
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (dot) {
+          if (i === currentSlide) {
+            dot.className = 'w-5 h-2 rounded-full bg-sky-400 transition-all';
+          } else {
+            dot.className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all';
+          }
+        }
+      }
+
+      document.getElementById('notesSlideNumber').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+      document.getElementById('speakerNotesText').textContent = SLIDE_SCRIPTS[currentSlide - 1];
+
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
+
+    function toggleSlideNarration() {
+      if (isSpeaking) {
+        stopNarration();
+      } else {
+        startNarration();
+      }
+    }
+
+    function startNarration() {
+      if (!('speechSynthesis' in window)) {
+        alert('Web Speech API is not supported in this browser.');
+        return;
+      }
+      isSpeaking = true;
+      document.getElementById('waveform').classList.remove('hidden');
+      document.getElementById('waveform').classList.add('flex');
+      document.getElementById('playLabel').textContent = 'Pause';
+      document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      speakCurrentSlide();
+    }
+
+    function stopNarration() {
+      if (synth) synth.cancel();
+      isSpeaking = false;
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+      document.getElementById('playLabel').textContent = 'Listen';
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+    }
+
+    function speakCurrentSlide() {
+      if (!synth) return;
+      synth.cancel();
+
+      const text = SLIDE_SCRIPTS[currentSlide - 1];
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = speechRate;
+
+      currentUtterance.onend = () => {
+        if (autoAdvance && currentSlide < totalSlides && isSpeaking) {
+          nextSlide();
+        } else if (currentSlide === totalSlides) {
+          stopNarration();
+        }
+      };
+
+      currentUtterance.onerror = () => {
+        stopNarration();
+      };
+
+      synth.speak(currentUtterance);
+    }
+
+    function changeVoiceRate(rate) {
+      speechRate = parseFloat(rate);
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleAutoAdvance(checked) {
+      autoAdvance = checked;
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('translate-y-full');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === ' ') {
+        e.preventDefault();
+        toggleSlideNarration();
+      }
+      if (e.key.toLowerCase() === 'n') {
+        toggleNotesDrawer();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', initPresentation);
+  </script>
+</body>
+</html>

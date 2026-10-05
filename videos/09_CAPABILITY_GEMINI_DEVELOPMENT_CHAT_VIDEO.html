@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 09 — Gemini Development Chat &amp; Audit Trail</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #451a03 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Video Hub • Cap 09
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Gemini Development Chat &amp; Complete Audit Trail</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">100% Verbatim Prompts &bull; Milestone Velocity &bull; AI Governance Simulator</p>
+      </div>
+    </div>
+
+    <!-- Actions & Slide Deck Link -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/09_CAPABILITY_GEMINI_DEVELOPMENT_CHAT.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+        </svg>
+        <span>Slide Deck 09</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Player & Simulator Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Left Column: Video & Audio Player Simulator (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Studio Screen Player Container -->
+      <div class="aspect-video w-full rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl relative overflow-hidden flex flex-col justify-between p-6 studio-bg">
+        
+        <!-- Header Tag -->
+        <div class="flex items-center justify-between z-10">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="text-xs font-mono font-bold text-rose-400 uppercase tracking-widest">RECORDING READY &bull; 1080P 60FPS</span>
+          </div>
+          <span class="text-xs font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">4m 30s Audio Script</span>
+        </div>
+
+        <!-- Center Graphic -->
+        <div class="flex flex-col items-center justify-center text-center space-y-3 z-10 py-6">
+          <div class="w-16 h-16 rounded-2xl bg-amber-500/20 border-2 border-amber-500/80 flex items-center justify-center shadow-xl animate-pulse-ring">
+            <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight">Capability 09: Engineering Audit Trail</h2>
+            <p class="text-xs text-amber-200/80 max-w-md mx-auto mt-1 font-mono">
+              29 Verbatim Prompts &bull; Zero AI Slop &bull; Immutable Machine Memory
+            </p>
+          </div>
+        </div>
+
+        <!-- Bottom Audio Controls in Player -->
+        <div class="bg-slate-950/80 backdrop-blur-md rounded-xl p-3 border border-slate-800/80 flex items-center justify-between gap-3 z-10">
+          <div class="flex items-center gap-2">
+            <button id="mainPlayBtn" onclick="toggleAudio()" class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center justify-center transition-all shadow-md">
+              <svg id="playIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+            <div class="flex flex-col">
+              <span id="sceneTitleDisplay" class="text-xs font-bold text-white">Scene 1: The Peril of Amnesic AI</span>
+              <span id="timecodeDisplay" class="text-[10px] font-mono text-slate-400">0:00 / 4:30</span>
+            </div>
+          </div>
+
+          <!-- Waveform Simulator -->
+          <div id="waveform" class="hidden items-center gap-1 h-5 px-3">
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <select id="voiceRateSelect" onchange="setRate(this.value)" class="bg-slate-900 text-xs text-slate-300 rounded px-2 py-1 border border-slate-700 outline-none">
+              <option value="0.8">0.8x</option>
+              <option value="1.0" selected>1.0x</option>
+              <option value="1.25">1.25x</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Scene Selection Timeline -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-300">
+          <span>OBS Scene Selection &amp; Script Timeline</span>
+          <span class="text-amber-400 font-mono">5 Scenes Total</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
+          <button onclick="jumpToScene(0)" class="scene-btn p-2 rounded-lg bg-slate-950 border border-amber-500/80 text-left space-y-1 hover:border-amber-400 transition-all">
+            <span class="text-[10px] font-mono text-amber-400 font-bold block">01 &bull; 0:00</span>
+            <span class="font-bold text-white block truncate">Amnesic Dev</span>
+          </button>
+          <button onclick="jumpToScene(1)" class="scene-btn p-2 rounded-lg bg-slate-950 border border-slate-800 text-left space-y-1 hover:border-amber-400 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 font-bold block">02 &bull; 0:45</span>
+            <span class="font-bold text-white block truncate">Dual Layer</span>
+          </button>
+          <button onclick="jumpToScene(2)" class="scene-btn p-2 rounded-lg bg-slate-950 border border-slate-800 text-left space-y-1 hover:border-amber-400 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 font-bold block">03 &bull; 1:40</span>
+            <span class="font-bold text-white block truncate">Velocity 29</span>
+          </button>
+          <button onclick="jumpToScene(3)" class="scene-btn p-2 rounded-lg bg-slate-950 border border-slate-800 text-left space-y-1 hover:border-amber-400 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 font-bold block">04 &bull; 2:30</span>
+            <span class="font-bold text-white block truncate">Anti-Slop</span>
+          </button>
+          <button onclick="jumpToScene(4)" class="scene-btn p-2 rounded-lg bg-slate-950 border border-slate-800 text-left space-y-1 hover:border-amber-400 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 font-bold block">05 &bull; 3:25</span>
+            <span class="font-bold text-white block truncate">Multi-AI</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Interactive Script & Ledger Telemetry (5 cols) -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      
+      <!-- Telemetry Box -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center justify-between">
+          <span>Audit Ledger Telemetry</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-semibold">100% Verified</span>
+        </h3>
+        
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800">
+            <div class="text-[10px] text-slate-400 uppercase">Prompts Logged</div>
+            <div class="text-lg font-bold text-white font-mono">29 / 29</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800">
+            <div class="text-[10px] text-slate-400 uppercase">Tokens Paced</div>
+            <div class="text-lg font-bold text-emerald-400 font-mono">~16.5k avg</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800">
+            <div class="text-[10px] text-slate-400 uppercase">Sessions Audited</div>
+            <div class="text-lg font-bold text-amber-300 font-mono">8 Sessions</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800">
+            <div class="text-[10px] text-slate-400 uppercase">AI Slop Rate</div>
+            <div class="text-lg font-bold text-cyan-400 font-mono">0.0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Word-for-Word Script Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex-1 flex flex-col justify-between space-y-3">
+        <div>
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="text-xs font-bold text-white">Active Scene Teleprompter Script</span>
+            <button onclick="copyScript()" class="text-[11px] text-slate-400 hover:text-white flex items-center gap-1">
+              <span>Copy</span>
+            </button>
+          </div>
+          <div class="py-3 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans scrollbar-thin overflow-y-auto max-h-64" id="teleprompterText">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+          <span>Read aloud with Web Speech on Apple Silicon</span>
+          <button onclick="nextScene()" class="text-amber-400 hover:underline font-bold">
+            Next Scene &rarr;
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const SCENES = [
+      {
+        title: "Scene 1: The Peril of Amnesic AI Development",
+        timecode: "0:00 / 4:30",
+        script: "Welcome back to the Learn Better Systems series. Today we explore Capability 09: Gemini Development Chat and the Complete Engineering Audit Trail. In conventional vibe coding, developers type prompts into ephemeral chat windows, paste code, and move on. After thirty turns, nobody remembers why a specific regex was chosen, what trade-offs were made, or which prompt introduced a subtle regression. The project suffers from collective amnesia. Capability 09 establishes full engineering governance. It turns our entire development conversation into a first-class, version-controlled software asset."
+      },
+      {
+        title: "Scene 2: The Dual-Layer Audit Architecture",
+        timecode: "0:45 / 4:30",
+        script: "Notice the dual-layer storage model. On one hand, we maintain gemini_prompts.md—a clean, human-readable markdown journal that commits directly to Git. On the other hand, we compile this into src/data/geminiChatData.ts, an immutable TypeScript array typed to the ChatEntry interface. When a developer opens the application on their iPad, they can browse every prompt with syntax highlighting. When a headless agent like Gemini 3.8 Flash connects, it queries structured JSON endpoints without scraping raw web pages."
+      },
+      {
+        title: "Scene 3: Milestone Velocity: 29 Prompts Across 8 Sessions",
+        timecode: "1:40 / 4:30",
+        script: "Velocity tracking is essential for project confidence. Through 29 prompts and 8 intensive architecture sessions, every deliverable is logged with timestamped completion scores. From Chapter 1's YouTube catalog ingestion to Chapter 4's multi-model failover cascades, selective GitHub tree ingestion, and our empirical iPad versus Cloud compute benchmark, every step is reproducible and auditable."
+      },
+      {
+        title: "Scene 4: Anti-Slop Enforcement & Quota Stewardship",
+        timecode: "2:30 / 4:30",
+        script: "Quality engineering requires anti-slop discipline. We systematically reject lazy placeholder comments like 'TODO implement later', conversational fluff, and fake mock data. Furthermore, our audit trail tracks token quota consumption. By batching composite requirements and inspecting targeted line ranges, we preserved daily limits while compiling over 15,000 lines of pristine TypeScript."
+      },
+      {
+        title: "Scene 5: Live Runbook & Multi-AI Handoff",
+        timecode: "3:25 / 4:30",
+        script: "Here in the live interface, you can search for any component, copy code blocks with a single tap, or listen to voice narration on your AirPods while walking. Capability 09 guarantees that whether you are collaborating with Claude, Gemini, or future autonomous agents, the machine memory never fades. Capability 09 is verified. Tomorrow we launch Chapter 5 with Capability 10: Legacy HTML Tools Hub!"
+      }
+    ];
+
+    let activeSceneIdx = 0;
+    let isPlaying = false;
+    let synth = window.speechSynthesis;
+    let utterance = null;
+    let speechRate = 1.0;
+
+    function renderScene() {
+      const s = SCENES[activeSceneIdx];
+      document.getElementById('sceneTitleDisplay').textContent = s.title;
+      document.getElementById('timecodeDisplay').textContent = s.timecode;
+      document.getElementById('teleprompterText').textContent = s.script;
+
+      // Update button borders
+      const buttons = document.querySelectorAll('.scene-btn');
+      buttons.forEach((btn, idx) => {
+        if (idx === activeSceneIdx) {
+          btn.className = 'scene-btn p-2 rounded-lg bg-slate-950 border-2 border-amber-500 text-left space-y-1';
+        } else {
+          btn.className = 'scene-btn p-2 rounded-lg bg-slate-950 border border-slate-800 text-left space-y-1 hover:border-amber-400';
+        }
+      });
+    }
+
+    function jumpToScene(idx) {
+      activeSceneIdx = idx;
+      renderScene();
+      if (isPlaying) {
+        speakScene();
+      }
+    }
+
+    function nextScene() {
+      if (activeSceneIdx < SCENES.length - 1) {
+        activeSceneIdx++;
+        renderScene();
+        if (isPlaying) speakScene();
+      }
+    }
+
+    function toggleAudio() {
+      if (isPlaying) {
+        stopAudio();
+      } else {
+        startAudio();
+      }
+    }
+
+    function startAudio() {
+      if (!('speechSynthesis' in window)) return;
+      isPlaying = true;
+      document.getElementById('waveform').classList.remove('hidden');
+      document.getElementById('waveform').classList.add('flex');
+      document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      speakScene();
+    }
+
+    function stopAudio() {
+      if (synth) synth.cancel();
+      isPlaying = false;
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+    }
+
+    function speakScene() {
+      if (!synth) return;
+      synth.cancel();
+
+      const text = SCENES[activeSceneIdx].script;
+      utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = speechRate;
+
+      utterance.onend = () => {
+        if (activeSceneIdx < SCENES.length - 1 && isPlaying) {
+          activeSceneIdx++;
+          renderScene();
+          speakScene();
+        } else {
+          stopAudio();
+        }
+      };
+
+      utterance.onerror = () => stopAudio();
+      synth.speak(utterance);
+    }
+
+    function setRate(r) {
+      speechRate = parseFloat(r);
+      if (isPlaying) speakScene();
+    }
+
+    function copyScript() {
+      navigator.clipboard.writeText(SCENES[activeSceneIdx].script);
+      alert('Scene script copied to clipboard!');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderScene();
+    });
+  </script>
+</body>
+</html>

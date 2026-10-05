@@ -1217,6 +1217,9 @@ export const AnalysisHub: React.FC = () => {
                   </table>
                 </div>
               </div>
+            </div>
+          )}
+
           {/* PHASE 4 OVERVIEW: IPAD VS CLOUD PROCESSING TOPOLOGY */}
           {selectedPhase === 4 && (
             <div className="space-y-6">
