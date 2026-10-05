@@ -4,10 +4,10 @@
   "generatedDate": "2026-09-30",
   "author": "AI Studio Senior Engineering Engine",
   "totalCapabilities": 15,
-  "completedCapabilities": 8,
+  "completedCapabilities": 12,
   "inProgressCapabilities": 0,
   "pacingStrategy": "Multi-Day Token-Preserving Cadence (2-3 modules per session)",
-  "continuityProtocol": "Hemingway Bridge #8 (Session 8 -> Session 9)",
+  "continuityProtocol": "Hemingway Bridge #12 (Session 12 -> Session 13)",
   "chapters": [
     {
       "chapterNumber": 1,
@@ -189,26 +189,28 @@
     {
       "id": "cap-11",
       "number": 11,
-      "title": "Python Code Viewer",
+      "title": "Python Code Viewer & Ingestion Engine",
       "chapter": 5,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/11_CAPABILITY_PYTHON_CODE_VIEWER.html",
       "storyboardFile": "videos/11_CAPABILITY_PYTHON_CODE_VIEWER_STORYBOARD.md",
-      "slideCount": 6,
-      "estimatedDurationSec": 230,
-      "summary": "Two-column Python code inspector with syntax highlighting and file tree navigation."
+      "videoPlayerUrl": "/videos/11_CAPABILITY_PYTHON_CODE_VIEWER_VIDEO.html",
+      "slideCount": 8,
+      "estimatedDurationSec": 270,
+      "summary": "In-app AST code inspector and syntax-highlighted workspace for 15 operational backend modules with zero-API-key yt-dlp scraping."
     },
     {
       "id": "cap-12",
       "number": 12,
       "title": "GitHub Sync & Multi-AI Monorepo Protocol",
       "chapter": 5,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/12_CAPABILITY_GITHUB_SYNC_PROTOCOL.html",
       "storyboardFile": "videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_STORYBOARD.md",
-      "slideCount": 7,
-      "estimatedDurationSec": 260,
-      "summary": "Safe branch isolation protocol for merging AI Studio changes back to dragosbo/learn-better."
+      "videoPlayerUrl": "/videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_VIDEO.html",
+      "slideCount": 8,
+      "estimatedDurationSec": 270,
+      "summary": "Safe branch isolation protocol and non-destructive webapp/ subfolder quarantine for merging multi-AI changes back to dragosbo/learn-better."
     },
     {
       "id": "cap-13",
@@ -248,11 +250,11 @@
     }
   ],
   "hemingwayBridge": {
-    "currentSession": 4,
-    "lastCompletedModule": "04_CAPABILITY_WORDCLOUD_MINDMAP",
-    "nextModuleToBuild": "05_CAPABILITY_KNOWLEDGE_HUB",
-    "primerStatus": "Chapter 2 completed (Cap 03 Video Cosmos + Cap 04 Word Cloud). Chapter 3 ready for Day 5 (Cap 05 Knowledge Hub & Socratic Reflection Studio).",
-    "continuationPrompt": "Proceed with Day 5 of the Capability Series: Build Deck 05 (Knowledge Hub & Socratic Reflection Studio) and its Video Hub.",
-    "overnightDecision": "Should Deck 05 focus on browser-side SpeechSynthesis voice reflection audio journaling or the multi-page Cornell notes vector PDF generation pipeline?"
+    "currentSession": 12,
+    "lastCompletedModule": "12_CAPABILITY_GITHUB_SYNC_PROTOCOL",
+    "nextModuleToBuild": "13_CAPABILITY_USER_GUIDE_RUNBOOK",
+    "primerStatus": "Capability 12 completed (Safe GitHub Sync Protocol). Exactly 3 capabilities remaining (Decks 13, 14, 15). Ready for Day 13 (Cap 13 User Guide & iPad Runbook).",
+    "continuationPrompt": "Proceed with Day 13 of the Capability Series: Build Deck 13 (Interactive User Guide & iPad Runbook) and its Video Hub.",
+    "overnightDecision": "Should Deck 13 focus on iPadOS WebKit cross-site audio cookie bypass or the browser vector print layout engine?"
   }
 }

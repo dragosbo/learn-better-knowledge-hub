@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 11: Python Code Viewer &amp; Ingestion Engine — Technical Blueprint</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+    .token-kw { color: #f43f5e; font-weight: 600; }
+    .token-str { color: #38bdf8; }
+    .token-fn { color: #818cf8; font-weight: 600; }
+    .token-cmt { color: #64748b; font-style: italic; }
+    .token-num { color: #fbbf24; }
+    .token-dec { color: #c084fc; font-style: italic; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 uppercase tracking-wider">Deck 11 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Python Code Viewer &amp; Ingestion Engine</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">15 Production Modules &bull; AST Inspection &bull; Zero-API-Key Ingestion</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Link -->
+      <a href="/videos/11_CAPABILITY_PYTHON_CODE_VIEWER_VIDEO.html" class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-sm">
+        <span>🎬 Video</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Presentation Main Container -->
+  <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 justify-between relative studio-grid">
+    
+    <!-- Slides Card Container -->
+    <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl relative min-h-[560px] flex flex-col justify-between backdrop-blur-md">
+      
+      <!-- Slide Area -->
+      <div id="slideViewport" class="flex-1 flex flex-col justify-between">
+        
+        <!-- SLIDE 1: Executive Overview -->
+        <div class="slide active flex flex-col justify-between space-y-6" data-slide="1">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Capability 11 &bull; Chapter 5: Codebase &amp; DevOps</span>
+              <span>&bull;</span>
+              <span>The Python Engine</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Python Code Viewer &amp; Autonomous Ingestion Engine
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              Behind the interactive React 19 UI lies a robust, production-grade Python processing backbone. Capability 11 bridges the user interface with the engine room: an in-app AST code inspector, syntax-highlighted code workspace, and deep metadata analyzer for all 15 operational Python scripts.
+            </p>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+                <span>🐍 15 Operational Scripts</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                6 specialized domains covering channel ingestion, yt-dlp scraping, audio extraction, Whisper transcription, NLP summaries, and D3 frequency matrices.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-sky-400 font-bold text-sm flex items-center gap-2">
+                <span>⚡ Abstract Syntax Tree (AST)</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Automated metadata extraction exposing docstrings, signatures, input/output contracts, CLI usage examples, and vibe coding refactoring notes.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-indigo-400 font-bold text-sm flex items-center gap-2">
+                <span>🛡️ Zero-API-Key Ingestion</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Flat-playlist traversal and subtitle extraction resilient to corporate proxies and anti-bot challenges with automatic cookie detection.
+              </p>
+            </div>
+          </div>
+
+          <!-- Architecture Footnote -->
+          <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-4">
+            <span class="font-mono text-emerald-400">Component: src/components/PythonCodeViewer.tsx &bull; 726 lines</span>
+            <span>Dataset: 15 Files &bull; ~156KB Typed AST Matrix</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: 15 Python Files Across 6 Domains -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="2">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-300 text-xs font-semibold">
+              <span>Domain Architecture</span>
+              <span>&bull;</span>
+              <span>Repository Topology</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              The 15 Operational Python Modules &amp; 6 Functional Domains
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              The backend follows the "Thin Entry Point" pattern: top-level CLI scripts handle configuration and arguments while shared mechanics live in <code class="text-sky-300 font-mono">lib/</code>.
+            </p>
+          </div>
+
+          <!-- Domain Matrix -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-sky-800/50 space-y-1.5">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. Ingestion &amp; Playlists</span>
+              <ul class="text-xs font-mono text-slate-300 space-y-1">
+                <li>&bull; <span class="text-white">read_channel.py</span> (108 lines)</li>
+                <li>&bull; <span class="text-white">list_playlists.py</span> (156 lines)</li>
+                <li>&bull; <span class="text-white">read_transcript.py</span> (92 lines)</li>
+              </ul>
+              <p class="text-[11px] text-slate-400">Zero-quota scraping, channel flat-listing, and subtitle track retrieval.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-indigo-800/50 space-y-1.5">
+              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">2. Audio &amp; Transcription</span>
+              <ul class="text-xs font-mono text-slate-300 space-y-1">
+                <li>&bull; <span class="text-white">transcribe_audio.py</span> (Whisper)</li>
+                <li>&bull; <span class="text-white">compare_transcripts.py</span> (Diff)</li>
+                <li>&bull; <span class="text-white">reencode_audio.py</span> (ffmpeg 192k)</li>
+              </ul>
+              <p class="text-[11px] text-slate-400">Whisper ASR pipeline, VTT vs. Whisper diff analysis, bitrate normalizer.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-emerald-800/50 space-y-1.5">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">3. Speech &amp; Synthesis</span>
+              <ul class="text-xs font-mono text-slate-300 space-y-1">
+                <li>&bull; <span class="text-white">generate_speech.py</span> (TTS Engine)</li>
+              </ul>
+              <p class="text-[11px] text-slate-400">Local TTS audio generator for podcast clips and AirPods playback studio.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-amber-800/50 space-y-1.5">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">4. NLP &amp; Summarization</span>
+              <ul class="text-xs font-mono text-slate-300 space-y-1">
+                <li>&bull; <span class="text-white">make_summaries.py</span> (Chunked NLP)</li>
+              </ul>
+              <p class="text-[11px] text-slate-400">Chunked text summarization producing bullet points, takeaways, and quiz facts.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-purple-800/50 space-y-1.5">
+              <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">5. Visual Analytics</span>
+              <ul class="text-xs font-mono text-slate-300 space-y-1">
+                <li>&bull; <span class="text-white">make_wordcloud.py</span> (D3 / SVG)</li>
+              </ul>
+              <p class="text-[11px] text-slate-400">TF-IDF stopword-filtered keyword frequency generator for Mind Map Hub.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-rose-800/50 space-y-1.5">
+              <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">6. Core Shared Library</span>
+              <ul class="text-xs font-mono text-slate-300 space-y-1">
+                <li>&bull; <span class="text-white">lib/youtube.py</span> (Core API)</li>
+                <li>&bull; <span class="text-white">lib/net.py</span> (Anti-Bot &amp; Proxy)</li>
+                <li>&bull; <span class="text-white">lib/paths.py</span> &bull; <span class="text-white">textutil.py</span></li>
+              </ul>
+              <p class="text-[11px] text-slate-400">Shared resilient utilities preventing duplicated network and parsing code.</p>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+            <span>Pattern: Thin Entry scripts (&lt;150 lines) delegate to <code class="text-sky-300 font-mono">lib/</code> modules</span>
+            <span class="text-emerald-400 font-bold">100% Modular &amp; Reusable</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: React 19 AST Inspector Architecture -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="3">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950 border border-indigo-800 text-indigo-300 text-xs font-semibold">
+              <span>Frontend Architecture</span>
+              <span>&bull;</span>
+              <span>AST Parsing Engine</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              The React 19 AST Inspector &amp; Syntax Highlighting Engine
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              How <code class="text-indigo-300 font-mono">PythonCodeViewer.tsx</code> transforms raw code strings into an interactive pedagogical environment.
+            </p>
+          </div>
+
+          <!-- 3-Column Layout Diagram -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Left Col: TOC & Categorization -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-sky-400 uppercase">
+                <span>1. Collapsible TOC</span>
+                <span class="font-mono text-slate-500">Left Column</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Categorized navigation accordion with instant live fuzzy search, line count badges, and file size indicators.
+              </p>
+              <div class="bg-slate-900 p-2 rounded text-[11px] font-mono text-slate-400 space-y-1">
+                <div>&bull; search filter (q.includes)</div>
+                <div>&bull; toggleCategory(category)</div>
+                <div>&bull; active indicator pill</div>
+              </div>
+            </div>
+
+            <!-- Center Col: Syntax Highlighting -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-indigo-400 uppercase">
+                <span>2. Regex Highlighting</span>
+                <span class="font-mono text-slate-500">Center Stage</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Zero-bundle lightweight tokenization matching Python keywords, docstrings, function definitions, decorators, and comments.
+              </p>
+              <div class="bg-slate-900 p-2 rounded text-[11px] font-mono text-slate-400 space-y-1">
+                <div>&bull; line-wrapping toggle</div>
+                <div>&bull; 1-click line highlighting</div>
+                <div>&bull; raw file copy &amp; download</div>
+              </div>
+            </div>
+
+            <!-- Right Col: Metadata Inspector -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-emerald-400 uppercase">
+                <span>3. AST Inspector</span>
+                <span class="font-mono text-slate-500">Right Column</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Deep metadata drawer showing extracted inputs/outputs, CLI run examples, dependency trees, and vibe coding refactoring history.
+              </p>
+              <div class="bg-slate-900 p-2 rounded text-[11px] font-mono text-slate-400 space-y-1">
+                <div>&bull; functions &amp; classes array</div>
+                <div>&bull; internal/external deps</div>
+                <div>&bull; 1-click CLI command copy</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Snippet -->
+          <div class="bg-slate-950 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto code-scroll">
+            <span class="text-slate-500">// TypeScript Contract in src/types/index.ts</span><br>
+            <span class="token-kw">interface</span> <span class="token-fn">PythonFileInfo</span> {<br>
+            &nbsp;&nbsp;id: <span class="token-str">string</span>; path: <span class="token-str">string</span>; category: <span class="token-str">string</span>; lineCount: <span class="token-num">number</span>; size: <span class="token-num">number</span>;<br>
+            &nbsp;&nbsp;purpose: <span class="token-str">string</span>; inputsOutputs: { inputs: <span class="token-str">string[]</span>; outputs: <span class="token-str">string[]</span> };<br>
+            &nbsp;&nbsp;dependencies: { internal: <span class="token-str">string[]</span>; external: <span class="token-str">string[]</span> }; usageExample: <span class="token-str">string</span>;<br>
+            &nbsp;&nbsp;vibeCodingNotes: <span class="token-str">string</span>; content: <span class="token-str">string</span>;<br>
+            }
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Interactive Python Code Explorer Lab -->
+        <div class="slide flex flex-col justify-between space-y-4" data-slide="4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Interactive Diagnostic Lab</span>
+              <span>&bull;</span>
+              <span>Live File Explorer</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white">
+              Interactive Python Code Explorer Lab
+            </h2>
+            <p class="text-xs text-slate-300">
+              Test the Python Code Viewer's AST inspector, token highlighting, and CLI copy commands in real time.
+            </p>
+          </div>
+
+          <!-- Interactive Workspace -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <!-- Selector Column (4 cols) -->
+            <div class="md:col-span-4 space-y-2">
+              <label class="text-[11px] font-bold uppercase text-slate-400">Select Script to Inspect:</label>
+              <div class="space-y-1.5" id="fileListButtons">
+                <button onclick="switchLabFile('read_channel')" id="btn-read_channel" class="w-full text-left p-2 rounded-lg bg-sky-950/80 border border-sky-600 text-xs text-white flex items-center justify-between transition-all">
+                  <div>
+                    <div class="font-bold font-mono">read_channel.py</div>
+                    <div class="text-[10px] text-slate-300">Ingestion &bull; 108 lines</div>
+                  </div>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-800 font-mono text-sky-200">CLI</span>
+                </button>
+
+                <button onclick="switchLabFile('list_playlists')" id="btn-list_playlists" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 flex items-center justify-between transition-all">
+                  <div>
+                    <div class="font-bold font-mono">list_playlists.py</div>
+                    <div class="text-[10px] text-slate-400">Playlists &bull; 156 lines</div>
+                  </div>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 font-mono text-slate-300">JSON</span>
+                </button>
+
+                <button onclick="switchLabFile('youtube_lib')" id="btn-youtube_lib" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 flex items-center justify-between transition-all">
+                  <div>
+                    <div class="font-bold font-mono">lib/youtube.py</div>
+                    <div class="text-[10px] text-slate-400">Core Engine &bull; 340 lines</div>
+                  </div>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 font-mono text-slate-300">Engine</span>
+                </button>
+
+                <button onclick="switchLabFile('transcribe')" id="btn-transcribe" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 flex items-center justify-between transition-all">
+                  <div>
+                    <div class="font-bold font-mono">transcribe_audio.py</div>
+                    <div class="text-[10px] text-slate-400">Whisper ASR &bull; 124 lines</div>
+                  </div>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 font-mono text-slate-300">AI</span>
+                </button>
+              </div>
+
+              <!-- CLI Execution Card -->
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase">CLI Command</span>
+                  <button onclick="copyLabCommand()" id="copyCommandBtn" class="text-[10px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-semibold">
+                    <span>Copy</span>
+                  </button>
+                </div>
+                <div id="labCliCommand" class="text-[11px] font-mono text-emerald-400 bg-slate-950 p-1.5 rounded border border-slate-800 truncate">
+                  python code/read_channel.py
+                </div>
+              </div>
+            </div>
+
+            <!-- Code Preview & AST Column (8 cols) -->
+            <div class="md:col-span-8 flex flex-col space-y-2">
+              <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-t-lg border border-slate-800 text-xs">
+                <span id="labFileName" class="font-mono font-bold text-sky-300">code/read_channel.py</span>
+                <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                  <span id="labLineCount">108 lines</span>
+                  <span>&bull;</span>
+                  <span id="labCategory">Ingestion &amp; Playlists</span>
+                </div>
+              </div>
+
+              <!-- Code Box -->
+              <div id="labCodeBox" class="bg-slate-900/70 p-3 rounded-b-lg border-x border-b border-slate-800 font-mono text-xs text-slate-200 overflow-y-auto max-h-[160px] code-scroll">
+                <!-- Dynamically populated -->
+              </div>
+
+              <!-- AST Metadata Drawer -->
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="p-2 rounded bg-slate-900/80 border border-slate-800">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Purpose</span>
+                  <p id="labPurpose" class="text-[11px] text-slate-300 line-clamp-2">
+                    Orchestrates YouTube metadata extraction, audio download, and subtitle retrieval without an official API key.
+                  </p>
+                </div>
+                <div class="p-2 rounded bg-slate-900/80 border border-slate-800">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Dependencies</span>
+                  <p id="labDeps" class="text-[11px] font-mono text-sky-300 truncate">
+                    yt-dlp, lib.youtube, lib.net, lib.paths
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 text-right">
+            Click any script above to inspect real syntax highlighting and extracted contracts.
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Zero-API-Key Ingestion Mechanics -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="5">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950 border border-rose-800 text-rose-300 text-xs font-semibold">
+              <span>Ingestion Architecture</span>
+              <span>&bull;</span>
+              <span>yt-dlp Pipeline</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Zero-API-Key YouTube Ingestion: How It Works
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Extracting 70 playlists, 486 clips, and dual-language subtitles without burning Google YouTube Data API quota.
+            </p>
+          </div>
+
+          <!-- Ingestion Step Pipeline -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xs flex items-center justify-center border border-rose-500/30">1</span>
+              <h4 class="text-xs font-bold text-white uppercase">Flat Playlist Crawl</h4>
+              <p class="text-xs text-slate-300">
+                <code class="text-rose-300 font-mono">extract_flat=True</code> retrieves channel tabs, playlist IDs, and video counts in milliseconds without loading heavy video web pages.
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xs flex items-center justify-center border border-amber-500/30">2</span>
+              <h4 class="text-xs font-bold text-white uppercase">Subtitle Cue Parsing</h4>
+              <p class="text-xs text-slate-300">
+                Pulls WebVTT/SRV caption tracks directly. Strips timestamps, cue headers, and duplicate rolling lines into clean, human-readable <code class="text-amber-300 font-mono">.txt</code> files.
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 font-bold text-xs flex items-center justify-center border border-sky-500/30">3</span>
+              <h4 class="text-xs font-bold text-white uppercase">Streamlined Audio</h4>
+              <p class="text-xs text-slate-300">
+                Extracts raw audio stream and converts to standard MP3 at 192kbps via <code class="text-sky-300 font-mono">reencode_audio.py</code>, skipping heavy video stream downloads.
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/30">4</span>
+              <h4 class="text-xs font-bold text-white uppercase">Idempotent Caching</h4>
+              <p class="text-xs text-slate-300">
+                Files already on disk are skipped instantly. Re-running <code class="text-emerald-300 font-mono">read_channel.py</code> only downloads newly added videos.
+              </p>
+            </div>
+          </div>
+
+          <!-- Comparison Box -->
+          <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
+            <div class="space-y-0.5">
+              <span class="font-bold text-white">Why Not YouTube Data API v3?</span>
+              <p class="text-slate-400 text-[11px]">API v3 caps requests at 10,000 units/day. Reading 70 playlists with videos exhausts daily quota in minutes.</p>
+            </div>
+            <span class="px-2.5 py-1 rounded bg-emerald-950 text-emerald-300 border border-emerald-700 font-bold text-[11px] whitespace-nowrap">Unlimited Execution</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Proxy, Anti-Bot & Network Resilience -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950 border border-amber-800 text-amber-300 text-xs font-semibold">
+              <span>Reliability Engineering</span>
+              <span>&bull;</span>
+              <span>Network Defense</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Anti-Bot, Cookie Auto-Detection &amp; Proxy Resilience
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Eliminating the dreaded <code class="text-amber-300 font-mono">ParseError: no element found</code> and bot-detection blocks in corporate environments.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="flex items-center gap-2 text-rose-400 font-bold text-sm">
+                <span>⚠️ The Problem: Corporate Proxies &amp; Bot Blocks</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-2">
+                <li class="flex items-start gap-1.5">
+                  <span class="text-rose-400 font-bold">&times;</span>
+                  <span><code class="text-rose-300 font-mono">youtube-transcript-api</code> fails with empty XML bodies when intercepting HTTP proxies strip SSL headers.</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-rose-400 font-bold">&times;</span>
+                  <span>YouTube serves CAPTCHA or HTTP 429 when high-frequency requests originate from shared IP ranges.</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-rose-400 font-bold">&times;</span>
+                  <span>Browser cookie databases (Chrome/Brave) lock sqlite files while running.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                <span>🛡️ The Solution: lib/net.py Defensive Shield</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-2">
+                <li class="flex items-start gap-1.5">
+                  <span class="text-emerald-400 font-bold">&check;</span>
+                  <span><code class="text-emerald-300 font-mono">apply_no_proxy_env()</code> unsets conflicting proxy variables before invoking network sockets.</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-emerald-400 font-bold">&check;</span>
+                  <span><code class="text-emerald-300 font-mono">find_cookies()</code> checks <code class="font-mono text-slate-200">code/cookies.txt</code> automatically, enabling authenticated requests without Chrome file lock issues.</span>
+                </li>
+                <li class="flex items-start gap-1.5">
+                  <span class="text-emerald-400 font-bold">&check;</span>
+                  <span>Custom User-Agent rotation and exponential backoff retry algorithms in <code class="text-emerald-300 font-mono">lib/youtube.py</code>.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 flex items-center justify-between">
+            <span class="text-sky-300">import net; net.apply_no_proxy_env()</span>
+            <span class="text-slate-400 text-[11px]">Guarantees reliable execution on iPad, WSL, macOS, and Linux</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Developer Experience, iPadOS & Vector Print -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="7">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950 border border-purple-800 text-purple-300 text-xs font-semibold">
+              <span>Developer Experience</span>
+              <span>&bull;</span>
+              <span>iPadOS Safari &amp; Print</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Developer Experience, iPad Touch &amp; Vector Print Export
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Designed from the ground up for seamless navigation on both desktop workstations and iPadOS touch displays.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="text-purple-400 font-bold text-sm flex items-center gap-2">
+                <span>📱 iPadOS Safari Touch</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                44px minimum touch targets on file items, kinetic momentum scrolling inside code boxes, and automatic virtual keyboard dismissal.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="text-sky-400 font-bold text-sm flex items-center gap-2">
+                <span>🖨️ Vector Print &amp; PDF</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Specialized CSS print media stylesheets. Pressing Cmd+P renders clean white-background monospace pages with crisp borders and zero black ink waste.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+                <span>⚡ Real-Time API Sync</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Fetches live modified scripts via <code class="text-emerald-300 font-mono">/api/python-files</code> with automatic fallback to bundled AST dataset during offline study.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+            <span class="text-xs font-bold text-white uppercase tracking-wider">Productivity Controls:</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-slate-300">
+              <span class="flex items-center gap-1.5"><span class="text-sky-400">&bull;</span> Line Wrap Toggle</span>
+              <span class="flex items-center gap-1.5"><span class="text-sky-400">&bull;</span> Line Number Click Highlighting</span>
+              <span class="flex items-center gap-1.5"><span class="text-sky-400">&bull;</span> 1-Click Code Copy</span>
+              <span class="flex items-center gap-1.5"><span class="text-sky-400">&bull;</span> Raw .py File Download</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 8: Curriculum Progress & Next Steps -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="8">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Chapter 5 Milestone</span>
+              <span>&bull;</span>
+              <span>11 of 15 Complete</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Capability 11 Complete &bull; 4 Capabilities Remaining
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              With Capability 11 verified, our Python ingestion and analytics engine is fully documented and transparently inspectable inside the app. Exactly 4 modules remain to conclude the 15-capability series.
+            </p>
+          </div>
+
+          <!-- Progress Roadmap -->
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-white">Curriculum Progression Status</span>
+              <span class="text-emerald-400 font-mono font-bold">11 / 15 Capabilities (73%)</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 h-full rounded-full" style="width: 73.3%"></div>
+            </div>
+
+            <!-- Remaining Modules List -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div class="text-xs">
+                  <span class="font-bold text-sky-400">Deck 12:</span>
+                  <span class="text-slate-200 ml-1">Safe GitHub Sync Protocol</span>
+                </div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Next Up</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div class="text-xs">
+                  <span class="font-bold text-slate-400">Deck 13:</span>
+                  <span class="text-slate-300 ml-1">iPad Safari &amp; 401 Runbook</span>
+                </div>
+                <span class="text-[10px] text-slate-500">Planned</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div class="text-xs">
+                  <span class="font-bold text-slate-400">Deck 14:</span>
+                  <span class="text-slate-300 ml-1">System Roadmap &amp; Multi-Device</span>
+                </div>
+                <span class="text-[10px] text-slate-500">Planned</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div class="text-xs">
+                  <span class="font-bold text-amber-400">Deck 15:</span>
+                  <span class="text-slate-300 ml-1">Autonomous Agent Gateway</span>
+                </div>
+                <span class="text-[10px] text-slate-500">Grand Finale</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="flex items-center gap-3">
+            <a href="/videos/11_CAPABILITY_PYTHON_CODE_VIEWER_VIDEO.html" class="flex-1 py-2 text-center text-xs font-bold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-md flex items-center justify-center gap-1.5">
+              <span>🎬 Launch Video Studio Hub 11 &rarr;</span>
+            </a>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
+              Curriculum Overview
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Controls & Progress Footer -->
+      <footer class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" onclick="prevSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          
+          <div class="text-xs font-mono text-slate-400 px-2">
+            Slide <span id="currentSlideNum" class="text-white font-bold">1</span> / <span id="totalSlidesNum">8</span>
+          </div>
+
+          <button id="nextBtn" onclick="nextSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Dot Navigation Indicators -->
+        <div class="hidden sm:flex items-center gap-1.5" id="slideDots">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Quick Shortcut Hint -->
+        <div class="text-[11px] text-slate-400 hidden lg:block">
+          Keys: <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">←</kbd> <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">→</kbd> Navigate &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">L</kbd> Listen &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">N</kbd> Notes
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Collapsible Speaker Notes Drawer -->
+  <aside id="notesDrawer" class="hidden bg-slate-900 border-t border-slate-800 px-6 py-4 fixed bottom-0 left-0 right-0 z-40 max-h-48 overflow-y-auto shadow-2xl backdrop-blur-md">
+    <div class="max-w-4xl mx-auto space-y-1.5">
+      <div class="flex items-center justify-between text-xs">
+        <span class="font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          Speaker Script (Verbatim Audio)
+        </span>
+        <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs">&times; Close</button>
+      </div>
+      <p id="speakerNotesText" class="text-xs text-slate-200 leading-relaxed font-sans"></p>
+    </div>
+  </aside>
+
+  <!-- Script Logic: Narration, Auto-Advance, Keyboard & Interactive Lab -->
+  <script>
+    // Slide Narrations (8 Slides)
+    const slideNarrations = [
+      // Slide 1
+      "Welcome to Deck 11: Python Code Viewer and Autonomous Ingestion Engine. Behind our interactive React 19 user interface lies a high-performance Python processing engine. In this module, we explore how the application inspects its own code: presenting an in-app AST parser, syntax highlighting, and deep metadata contracts for all fifteen operational backend scripts.",
+      
+      // Slide 2
+      "Our Python repository is structured into six functional domains spanning fifteen operational modules. Ingestion scripts like read channel and list playlists scrape without official API keys. Audio modules handle Whisper speech-to-text. Specialized NLP scripts generate summaries, while the shared library in lib handles YouTube network communication and path resolution.",
+      
+      // Slide 3
+      "The Python Code Viewer component in src/components/PythonCodeViewer.tsx uses a three-column architecture. On the left, a categorized, collapsible table of contents with live search. In the center, a lightweight regex-based syntax highlighter with line wrap and line highlighting. On the right, an AST metadata drawer exposing function contracts, CLI examples, and vibe coding notes.",
+      
+      // Slide 4
+      "Here in our Interactive Diagnostic Lab, you can switch between core scripts like read channel, list playlists, and lib/youtube.py. Notice how each script provides a copyable CLI execution command and live tokenized preview. This transparency allows developers to inspect and execute tools directly from the terminal without leaving the app.",
+      
+      // Slide 5
+      "How do we ingest 70 playlists and 486 clips without an official API key? We use yt-dlp's flat playlist mode. This extracts metadata in milliseconds without loading heavy video web pages. Subtitle cue parsing strips WebVTT timestamps into clean text, while idempotent caching skips videos already saved to disk.",
+      
+      // Slide 6
+      "Corporate proxies and anti-bot systems often trigger empty responses and CAPTCHA challenges. Our lib/net.py module solves this by unsetting interfering proxy variables via apply_no_proxy_env, automatically detecting code/cookies.txt, and implementing exponential backoff retries with user-agent rotation.",
+      
+      // Slide 7
+      "The Python Code Viewer is fully optimized for iPadOS Safari. It features touch-friendly 44-pixel hit targets, smooth kinetic scrolling, and clean vector print stylesheets. Pressing Command+P strips all dark backgrounds, giving you clean, ink-efficient monospace printouts for offline study and note-taking.",
+      
+      // Slide 8
+      "With Capability 11 complete, eleven of our fifteen core capabilities are now fully verified. Exactly four modules remain in the curriculum: Deck 12 on our safe GitHub sync protocol, Deck 13 on iPad Safari troubleshooting, Deck 14 on system roadmap, and Deck 15 on autonomous agent tools. Let's proceed across the bridge to Deck 12!"
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isSpeaking = false;
+    let autoAdvance = false;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
+    let voiceRate = 1.0;
+
+    // Interactive Lab Mock Files
+    const labFiles = {
+      read_channel: {
+        path: "code/read_channel.py",
+        lines: "108 lines",
+        category: "Ingestion & Playlists",
+        purpose: "Master CLI orchestration tool to ingest an entire YouTube channel or playlist, extracting video metadata, downloading audio tracks, and retrieving subtitle tracks without requiring an official API key.",
+        deps: "yt-dlp, lib.youtube, lib.net, lib.paths, lib.textutil",
+        cmd: "python code/read_channel.py --playlist-id PLsWyhklHwjExuXrXjJktcdYkCFL0PNdW7",
+        snippet: `<span class="token-str">"""Read a playlist / channel / search WITHOUT an API key."""</span><br><br><span class="token-kw">import</span> os, sys<br><span class="token-kw">from</span> lib <span class="token-kw">import</span> net, textutil, youtube<br><span class="token-kw">from</span> lib.paths <span class="token-kw">import</span> AUDIO_DIR, TRANSCRIPT_DIR<br><br><span class="token-kw">def</span> <span class="token-fn">main</span>():<br>&nbsp;&nbsp;net.<span class="token-fn">apply_no_proxy_env</span>()<br>&nbsp;&nbsp;languages = textutil.<span class="token-fn">load_languages</span>()<br>&nbsp;&nbsp;label, url = youtube.<span class="token-fn">build_url</span>(playlist_id=PLAYLIST_ID)<br>&nbsp;&nbsp;videos = youtube.<span class="token-fn">list_videos</span>(url, limit=LIMIT)<br>&nbsp;&nbsp;<span class="token-kw">for</span> vid, title <span class="token-kw">in</span> videos:<br>&nbsp;&nbsp;&nbsp;&nbsp;saved = youtube.<span class="token-fn">download_transcript</span>(vid, title, languages)`
+      },
+      list_playlists: {
+        path: "code/list_playlists.py",
+        lines: "156 lines",
+        category: "Ingestion & Playlists",
+        purpose: "Scans all public playlists of a YouTube channel without an API key, extracts their titles, IDs, and clip counts, and exports them to structured JSON and summary tables.",
+        deps: "yt-dlp, lib.youtube, lib.net, lib.paths, json",
+        cmd: "python code/list_playlists.py --channel @dragosborosgpt --save-json data/playlists.json",
+        snippet: `<span class="token-str">"""List all public playlists of a YouTube channel WITHOUT an API key."""</span><br><br><span class="token-kw">import</span> json, os<br><span class="token-kw">from</span> lib <span class="token-kw">import</span> net, youtube<br><br><span class="token-kw">def</span> <span class="token-fn">print_and_count</span>(channel=CHANNEL):<br>&nbsp;&nbsp;playlists, meta = youtube.<span class="token-fn">list_playlists</span>(channel)<br>&nbsp;&nbsp;<span class="token-kw">if</span> meta.<span class="token-fn">get</span>(<span class="token-str">"error"</span>): <span class="token-kw">return</span> []<br>&nbsp;&nbsp;playlists.<span class="token-fn">sort</span>(key=<span class="token-kw">lambda</span> p: (p[<span class="token-str">"title"</span>] <span class="token-kw">or</span> <span class="token-str">""</span>).<span class="token-fn">lower</span>())<br>&nbsp;&nbsp;<span class="token-kw">return</span> playlists`
+      },
+      youtube_lib: {
+        path: "code/lib/youtube.py",
+        lines: "340 lines",
+        category: "Core Shared Library",
+        purpose: "Encapsulates all low-level yt-dlp mechanics, flat-playlist extraction, subtitle stream parsing, and error-resilient request handling.",
+        deps: "yt-dlp, lib.net, re, json",
+        cmd: "python -c 'from lib import youtube; print(youtube.__doc__)'",
+        snippet: `<span class="token-kw">import</span> yt_dlp<br><span class="token-kw">from</span> lib <span class="token-kw">import</span> net<br><br><span class="token-kw">def</span> <span class="token-fn">list_playlists</span>(channel):<br>&nbsp;&nbsp;opts = {<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="token-str">"extract_flat"</span>: <span class="token-kw">True</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="token-str">"skip_download"</span>: <span class="token-kw">True</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="token-str">"cookiefile"</span>: net.<span class="token-fn">find_cookies</span>()<br>&nbsp;&nbsp;}<br>&nbsp;&nbsp;<span class="token-kw">with</span> yt_dlp.<span class="token-fn">YoutubeDL</span>(opts) <span class="token-kw">as</span> ydl:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="token-kw">return</span> ydl.<span class="token-fn">extract_info</span>(channel, download=<span class="token-kw">False</span>)`
+      },
+      transcribe: {
+        path: "code/transcribe_audio.py",
+        lines: "124 lines",
+        category: "Audio & Transcription",
+        purpose: "Processes downloaded MP3 files through local OpenAI Whisper models to generate word-level timestamped transcripts for AI video synchronization.",
+        deps: "whisper, torch, lib.paths, argparse",
+        cmd: "python code/transcribe_audio.py --model medium.en --audio data/audio/sample.mp3",
+        snippet: `<span class="token-kw">import</span> whisper<br><span class="token-kw">from</span> lib.paths <span class="token-kw">import</span> AUDIO_DIR, TRANSCRIPT_DIR<br><br><span class="token-kw">def</span> <span class="token-fn">transcribe</span>(audio_path, model_name=<span class="token-str">"medium.en"</span>):<br>&nbsp;&nbsp;model = whisper.<span class="token-fn">load_model</span>(model_name)<br>&nbsp;&nbsp;result = model.<span class="token-fn">transcribe</span>(audio_path, word_timestamps=<span class="token-kw">True</span>)<br>&nbsp;&nbsp;<span class="token-kw">return</span> result[<span class="token-str">"text"</span>]`
+      }
+    };
+
+    function initPresentation() {
+      // Build dot indicators
+      const dotsContainer = document.getElementById('slideDots');
+      dotsContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === 1 ? 'bg-emerald-400 w-5' : 'bg-slate-700 hover:bg-slate-500'}`;
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+      updateSlideDisplay();
+      switchLabFile('read_channel');
+    }
+
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
+      const activeEl = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (activeEl) activeEl.classList.add('active');
+
+      document.getElementById('currentSlideNum').textContent = currentSlide;
+      document.getElementById('prevBtn').disabled = currentSlide === 1;
+      document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+
+      // Update dots
+      const dots = document.getElementById('slideDots').children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i + 1 === currentSlide) {
+          dots[i].className = 'w-5 h-2 rounded-full bg-emerald-400 transition-all';
+        } else {
+          dots[i].className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all';
+        }
+      }
+
+      // Update speaker notes
+      document.getElementById('speakerNotesText').textContent = slideNarrations[currentSlide - 1];
+
+      // If speech was active, speak new slide
+      if (isSpeaking) {
+        stopSpeech();
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
+
+    // Audio & Narration System
+    function toggleSlideNarration() {
+      if (isSpeaking) {
+        stopSpeech();
+      } else {
+        speakCurrentSlide();
+      }
+    }
+
+    function speakCurrentSlide() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      stopSpeech();
+
+      const text = slideNarrations[currentSlide - 1];
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = voiceRate;
+
+      currentUtterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('playLabel').textContent = "Pause";
+        document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('waveform').classList.remove('hidden');
+        document.getElementById('waveform').classList.add('flex');
+      };
+
+      currentUtterance.onend = () => {
+        isSpeaking = false;
+        document.getElementById('playLabel').textContent = "Listen";
+        document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('waveform').classList.remove('flex');
+
+        if (autoAdvance && currentSlide < totalSlides) {
+          setTimeout(() => {
+            nextSlide();
+            speakCurrentSlide();
+          }, 800);
+        }
+      };
+
+      currentUtterance.onerror = () => {
+        stopSpeech();
+      };
+
+      speechSynth.speak(currentUtterance);
+    }
+
+    function stopSpeech() {
+      if (speechSynth.speaking) {
+        speechSynth.cancel();
+      }
+      isSpeaking = false;
+      document.getElementById('playLabel').textContent = "Listen";
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+    }
+
+    function toggleAutoAdvance(enabled) {
+      autoAdvance = enabled;
+    }
+
+    function changeVoiceRate(rate) {
+      voiceRate = parseFloat(rate);
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    // Interactive Lab Functions
+    function switchLabFile(key) {
+      const data = labFiles[key];
+      if (!data) return;
+
+      // Update button styling
+      const buttons = ['read_channel', 'list_playlists', 'youtube_lib', 'transcribe'];
+      buttons.forEach(b => {
+        const el = document.getElementById(`btn-${b}`);
+        if (b === key) {
+          el.className = 'w-full text-left p-2 rounded-lg bg-sky-950/80 border border-sky-600 text-xs text-white flex items-center justify-between transition-all';
+        } else {
+          el.className = 'w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 flex items-center justify-between transition-all';
+        }
+      });
+
+      document.getElementById('labFileName').textContent = data.path;
+      document.getElementById('labLineCount').textContent = data.lines;
+      document.getElementById('labCategory').textContent = data.category;
+      document.getElementById('labPurpose').textContent = data.purpose;
+      document.getElementById('labDeps').textContent = data.deps;
+      document.getElementById('labCliCommand').textContent = data.cmd;
+      document.getElementById('labCodeBox').innerHTML = data.snippet;
+    }
+
+    function copyLabCommand() {
+      const cmd = document.getElementById('labCliCommand').textContent.trim();
+      navigator.clipboard.writeText(cmd).then(() => {
+        const btn = document.getElementById('copyCommandBtn');
+        btn.innerHTML = '<span class="text-emerald-400 font-bold">&check; Copied</span>';
+        setTimeout(() => {
+          btn.innerHTML = '<span>Copy</span>';
+        }, 2000);
+      });
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'l' || e.key === 'L') {
+        toggleSlideNarration();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotesDrawer();
+      }
+    });
+
+    window.onload = initPresentation;
+  </script>
+</body>
+</html>

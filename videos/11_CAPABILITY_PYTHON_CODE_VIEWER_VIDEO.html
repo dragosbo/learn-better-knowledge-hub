@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 11 — Python Code Viewer &amp; Autonomous Ingestion Engine</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #064e3b 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Video Hub • Cap 11
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Python Code Viewer &amp; Ingestion Engine</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">15 Production Modules &bull; AST Inspection &bull; Zero-API-Key Ingestion</p>
+      </div>
+    </div>
+
+    <!-- Actions & Slide Deck Link -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/11_CAPABILITY_PYTHON_CODE_VIEWER.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+        </svg>
+        <span>Slide Deck 11</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Player & Simulator Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Left Column: Video & Audio Player Simulator (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Studio Screen Player Container -->
+      <div class="aspect-video w-full rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl relative overflow-hidden flex flex-col justify-between p-6 studio-bg">
+        
+        <!-- Header Tag -->
+        <div class="flex items-center justify-between z-10">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="text-xs font-mono font-bold text-rose-400 uppercase tracking-widest">RECORDING READY &bull; 1080P 60FPS</span>
+          </div>
+          <span class="text-xs font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">4m 30s Audio Script</span>
+        </div>
+
+        <!-- Center Graphic -->
+        <div class="flex flex-col items-center justify-center text-center space-y-3 z-10 py-6">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 border-2 border-emerald-500/80 flex items-center justify-center shadow-xl animate-pulse-ring">
+            <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 id="currentSceneTitle" class="text-xl font-bold text-white tracking-tight">Scene 1: The Engine Room Behind the React UI</h3>
+            <p id="currentSceneSubtitle" class="text-xs text-emerald-300 font-mono mt-1">Timecode: 0:00 - 0:45 (45s)</p>
+          </div>
+
+          <!-- Waveform Visualizer -->
+          <div id="videoWaveform" class="hidden items-center justify-center gap-1.5 h-8 pt-2">
+            <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-emerald-400 rounded-full waveform-bar"></span>
+          </div>
+        </div>
+
+        <!-- Player Controls Bar -->
+        <div class="z-10 bg-slate-950/80 backdrop-blur-md p-3 rounded-xl border border-slate-800/80 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            <button id="mainPlayBtn" onclick="togglePlayScene()" class="w-9 h-9 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center font-bold transition-all shadow-md">
+              <svg id="mainPlayIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+            <button onclick="prevScene()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <button onclick="nextScene()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+            <span class="text-xs font-mono text-slate-300 ml-2" id="sceneIndicator">Scene 1 / 5</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 text-xs text-slate-400">
+              <span>Speed:</span>
+              <select id="rateSelect" onchange="changeRate(this.value)" class="bg-slate-800 text-slate-200 text-xs rounded px-1.5 py-0.5 border border-slate-700 outline-none">
+                <option value="0.8">0.8x</option>
+                <option value="1.0" selected>1.0x</option>
+                <option value="1.25">1.25x</option>
+              </select>
+            </div>
+            <label class="flex items-center gap-1 text-xs text-slate-300 cursor-pointer">
+              <input type="checkbox" id="autoAdvanceCheck" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-emerald-500 focus:ring-0">
+              <span class="text-[11px]">Continuous</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Command Executor Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Live CLI Invocation Recipes
+          </span>
+          <span class="text-[11px] text-slate-400 font-mono">Zero API Key Required</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <span class="text-slate-300 truncate">python code/read_channel.py</span>
+            <button onclick="copySnippet('python code/read_channel.py')" class="text-emerald-400 hover:text-emerald-300 text-[10px] ml-2">Copy</button>
+          </div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <span class="text-slate-300 truncate">python code/list_playlists.py</span>
+            <button onclick="copySnippet('python code/list_playlists.py')" class="text-emerald-400 hover:text-emerald-300 text-[10px] ml-2">Copy</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Scene Teleprompter & Storyboard (5 cols) -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      
+      <!-- Teleprompter Container -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between flex-1 shadow-xl">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+              </svg>
+              <span>Verbatim Scene Teleprompter</span>
+            </h3>
+            <span id="sceneBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Scene 1 of 5</span>
+          </div>
+
+          <!-- Scene Selector Tabs -->
+          <div class="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-thin">
+            <button onclick="selectScene(0)" id="tab-0" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-500 text-slate-950 whitespace-nowrap transition-all">S1: Engine</button>
+            <button onclick="selectScene(1)" id="tab-1" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S2: 15 Files</button>
+            <button onclick="selectScene(2)" id="tab-2" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S3: AST</button>
+            <button onclick="selectScene(3)" id="tab-3" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S4: Ingest</button>
+            <button onclick="selectScene(4)" id="tab-4" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S5: iPad</button>
+          </div>
+
+          <!-- Script Box -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 min-h-[220px] max-h-[300px] overflow-y-auto scrollbar-thin space-y-3">
+            <div class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider" id="scriptActionText">
+              Camera: Direct to camera; split screen showing animated React SPA on iPad transitioning to the terminal running read_channel.py.
+            </div>
+            <p id="scriptNarrationText" class="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+              "Welcome back to the Learn Better Systems series. Today we dive into Chapter 5 with Capability 11: Python Code Viewer and Autonomous Ingestion Engine. Modern web apps often hide their backend mechanics behind black boxes. But in the Learn Better ecosystem, developer transparency is a primary architectural pillar. Behind our interactive React 19 UI is a collection of 15 battle-tested Python scripts handling YouTube ingestion, Whisper transcription, audio re-encoding, and NLP summarization."
+            </p>
+          </div>
+        </div>
+
+        <!-- Next Scene Preview Footer -->
+        <div class="pt-4 border-t border-slate-800/80 mt-4 flex items-center justify-between text-xs text-slate-400">
+          <span id="nextSceneHint">Next: 15 Operational Modules Across 6 Domains</span>
+          <button onclick="nextScene()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+            <span>Advance &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Curriculum Progress Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-white">Curriculum Series Progress</span>
+          <span class="text-emerald-400 font-mono font-bold">11 of 15 Complete (73%)</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 h-full rounded-full" style="width: 73.3%"></div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+          <span>Current: Capability 11</span>
+          <span class="text-sky-300 font-semibold">Remaining: Exactly 4 Modules</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Script Logic -->
+  <script>
+    const scenes = [
+      {
+        title: "Scene 1: The Engine Room Behind the React UI",
+        subtitle: "Timecode: 0:00 - 0:45 (45s)",
+        action: "Camera: Direct to camera; split screen showing animated React SPA on iPad transitioning to the terminal running read_channel.py.",
+        script: "Welcome back to the Learn Better Systems series. Today we dive into Chapter 5 with Capability 11: Python Code Viewer and Autonomous Ingestion Engine. Modern web apps often hide their backend mechanics behind black boxes. But in the Learn Better ecosystem, developer transparency is a primary architectural pillar. Behind our interactive React 19 UI is a collection of 15 battle-tested Python scripts handling YouTube ingestion, Whisper transcription, audio re-encoding, and NLP summarization. Capability 11 brings that entire engine room directly into the application, giving you an interactive, syntax-highlighted code inspector with full AST metadata.",
+        next: "Next: 15 Operational Modules Across 6 Domains"
+      },
+      {
+        title: "Scene 2: 15 Operational Modules Across 6 Domains",
+        subtitle: "Timecode: 0:45 - 1:35 (50s)",
+        action: "Screen: Live screencast traversing PythonCodeViewer.tsx collapsible category tree on the left column.",
+        script: "Our Python codebase is organized into six functional domains following the 'Thin Entry Point' design pattern. First, Ingestion and Playlists: read_channel.py, list_playlists.py, and read_transcript.py. Second, Audio and Transcription: transcribe_audio.py for Whisper AI models, compare_transcripts.py for diff analysis, and reencode_audio.py for high-efficiency MP3 conversion. Third, Speech and Synthesis with generate_speech.py. Fourth, NLP Summarization with make_summaries.py. Fifth, Visual Analytics with make_wordcloud.py. And sixth, our core shared library in lib/, featuring youtube.py, net.py, paths.py, and textutil.py. Each entry script stays under 150 lines, cleanly delegating low-level mechanics to reusable modules.",
+        next: "Next: React 19 AST Inspector & Regex Tokenizer"
+      },
+      {
+        title: "Scene 3: React 19 AST Inspector & Regex Tokenizer",
+        subtitle: "Timecode: 1:35 - 2:25 (50s)",
+        action: "Screen: Focus on code editor toggling line wrap, highlighting line numbers, and opening right column AST metadata drawer.",
+        script: "Let's inspect how the viewer works under the hood. In src/components/PythonCodeViewer.tsx, we implement a three-column workspace. In the center, our custom PythonSyntaxHighlighter uses regex tokenization to color Python keywords, function names, docstrings, and decorators with zero external bundle bloat. You can toggle line wrapping, click any line number to highlight critical blocks, and download the raw .py file. On the right, our AST metadata drawer automatically parses input-output contracts, dependency graphs, and exact terminal CLI recipes with a one-click copy button. It even displays 'vibe coding' refactoring notes detailing each script's engineering lineage.",
+        next: "Next: Zero-Quota Ingestion & Network Resilience"
+      },
+      {
+        title: "Scene 4: Zero-Quota Ingestion & Network Resilience",
+        subtitle: "Timecode: 2:25 - 3:15 (50s)",
+        action: "Graphic: Architectural diagram of yt-dlp flat-playlist extraction, cookie detection, and subtitle cue stripping.",
+        script: "A core strength of our Python backend is zero-API-key ingestion. Official YouTube Data API keys enforce a 10,000-unit daily quota—scraping 70 playlists would burn that in minutes. Instead, lib/youtube.py leverages yt-dlp's extract_flat mode to parse channel tabs and playlist collections in milliseconds. It extracts raw WebVTT caption streams, strips timestamps and cue headers, and saves pure, readable text transcripts. Furthermore, our lib/net.py module solves corporate proxy and anti-bot challenges. It automatically detects exported cookies, rotates user agents, and unsets conflicting system proxy environment variables with apply_no_proxy_env().",
+        next: "Next: iPad Touch, Vector Print & Bridge to Git"
+      },
+      {
+        title: "Scene 5: iPad Touch, Vector Print & Bridge to Git",
+        subtitle: "Timecode: 3:15 - 4:30 (75s)",
+        action: "Camera: iPad Pro demonstration in Safari with kinetic touch scrolling, clean white-paper Cmd+P print preview, and bridge roadmap to Deck 12.",
+        script: "Like every capability in Learn Better, the Python Code Viewer is first-class on iPadOS Safari. It features 44-pixel touch targets, kinetic momentum scrolling, and responsive layout folding. And when you need offline study sheets, pressing Command+P triggers our custom vector print stylesheet—stripping dark mode backgrounds to produce crisp, ink-efficient printouts with clean line numbers. With Capability 11 verified, eleven of our fifteen core capabilities are now complete. That leaves exactly four remaining modules in Chapter 5. Join us in our next session as we tackle Capability 12: our Safe GitHub Sync Protocol for merging multi-AI monorepo changes. See you across the bridge!",
+        next: "Curriculum Complete: 11 / 15 Finished"
+      }
+    ];
+
+    let currentSceneIdx = 0;
+    let isPlaying = false;
+    let autoAdvance = false;
+    let synth = window.speechSynthesis;
+    let utterance = null;
+    let rate = 1.0;
+
+    function selectScene(idx) {
+      if (idx < 0 || idx >= scenes.length) return;
+      currentSceneIdx = idx;
+      updateSceneDisplay();
+      if (isPlaying) {
+        stopSpeech();
+        playCurrentScene();
+      }
+    }
+
+    function updateSceneDisplay() {
+      const s = scenes[currentSceneIdx];
+      document.getElementById('currentSceneTitle').textContent = s.title;
+      document.getElementById('currentSceneSubtitle').textContent = s.subtitle;
+      document.getElementById('scriptActionText').textContent = s.action;
+      document.getElementById('scriptNarrationText').textContent = `"${s.script}"`;
+      document.getElementById('sceneIndicator').textContent = `Scene ${currentSceneIdx + 1} / ${scenes.length}`;
+      document.getElementById('sceneBadge').textContent = `Scene ${currentSceneIdx + 1} of ${scenes.length}`;
+      document.getElementById('nextSceneHint').textContent = s.next;
+
+      // Update tabs
+      for (let i = 0; i < scenes.length; i++) {
+        const tab = document.getElementById(`tab-${i}`);
+        if (i === currentSceneIdx) {
+          tab.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-emerald-500 text-slate-950 whitespace-nowrap transition-all';
+        } else {
+          tab.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all';
+        }
+      }
+    }
+
+    function nextScene() {
+      if (currentSceneIdx < scenes.length - 1) {
+        selectScene(currentSceneIdx + 1);
+      }
+    }
+
+    function prevScene() {
+      if (currentSceneIdx > 0) {
+        selectScene(currentSceneIdx - 1);
+      }
+    }
+
+    function togglePlayScene() {
+      if (isPlaying) {
+        stopSpeech();
+      } else {
+        playCurrentScene();
+      }
+    }
+
+    function playCurrentScene() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      stopSpeech();
+
+      const text = scenes[currentSceneIdx].script;
+      utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = rate;
+
+      utterance.onstart = () => {
+        isPlaying = true;
+        document.getElementById('mainPlayIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('videoWaveform').classList.remove('hidden');
+        document.getElementById('videoWaveform').classList.add('flex');
+      };
+
+      utterance.onend = () => {
+        isPlaying = false;
+        document.getElementById('mainPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('videoWaveform').classList.add('hidden');
+        document.getElementById('videoWaveform').classList.remove('flex');
+
+        if (autoAdvance && currentSceneIdx < scenes.length - 1) {
+          setTimeout(() => {
+            nextScene();
+            playCurrentScene();
+          }, 800);
+        }
+      };
+
+      utterance.onerror = () => {
+        stopSpeech();
+      };
+
+      synth.speak(utterance);
+    }
+
+    function stopSpeech() {
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      isPlaying = false;
+      document.getElementById('mainPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('videoWaveform').classList.add('hidden');
+      document.getElementById('videoWaveform').classList.remove('flex');
+    }
+
+    function changeRate(val) {
+      rate = parseFloat(val);
+      if (isPlaying) {
+        playCurrentScene();
+      }
+    }
+
+    function toggleAutoAdvance(val) {
+      autoAdvance = val;
+    }
+
+    function copySnippet(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied CLI command: " + text);
+      });
+    }
+
+    window.onload = () => {
+      updateSceneDisplay();
+    };
+  </script>
+</body>
+</html>

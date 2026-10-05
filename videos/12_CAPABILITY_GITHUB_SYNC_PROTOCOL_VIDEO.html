@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 12 — Safe GitHub Sync &amp; Multi-AI Monorepo Protocol</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #075985 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span> Video Hub • Cap 12
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Safe GitHub Sync &amp; Multi-AI Protocol</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Branch Isolation &bull; Subfolder Quarantine &bull; Multi-AI Monorepo</p>
+      </div>
+    </div>
+
+    <!-- Actions & Slide Deck Link -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/12_CAPABILITY_GITHUB_SYNC_PROTOCOL.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+        </svg>
+        <span>Slide Deck 12</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Player & Simulator Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Left Column: Video & Audio Player Simulator (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Studio Screen Player Container -->
+      <div class="aspect-video w-full rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl relative overflow-hidden flex flex-col justify-between p-6 studio-bg">
+        
+        <!-- Header Tag -->
+        <div class="flex items-center justify-between z-10">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="text-xs font-mono font-bold text-rose-400 uppercase tracking-widest">RECORDING READY &bull; 1080P 60FPS</span>
+          </div>
+          <span class="text-xs font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">4m 30s Audio Script</span>
+        </div>
+
+        <!-- Center Graphic -->
+        <div class="flex flex-col items-center justify-center text-center space-y-3 z-10 py-6">
+          <div class="w-16 h-16 rounded-2xl bg-sky-500/20 border-2 border-sky-500/80 flex items-center justify-center shadow-xl animate-pulse-ring">
+            <svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 id="currentSceneTitle" class="text-xl font-bold text-white tracking-tight">Scene 1: The Multi-AI Collaboration Dilemma</h3>
+            <p id="currentSceneSubtitle" class="text-xs text-sky-300 font-mono mt-1">Timecode: 0:00 - 0:45 (45s)</p>
+          </div>
+
+          <!-- Waveform Visualizer -->
+          <div id="videoWaveform" class="hidden items-center justify-center gap-1.5 h-8 pt-2">
+            <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          </div>
+        </div>
+
+        <!-- Player Controls Bar -->
+        <div class="z-10 bg-slate-950/80 backdrop-blur-md p-3 rounded-xl border border-slate-800/80 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            <button id="mainPlayBtn" onclick="togglePlayScene()" class="w-9 h-9 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 flex items-center justify-center font-bold transition-all shadow-md">
+              <svg id="mainPlayIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+            <button onclick="prevScene()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <button onclick="nextScene()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+            <span class="text-xs font-mono text-slate-300 ml-2" id="sceneIndicator">Scene 1 / 5</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 text-xs text-slate-400">
+              <span>Speed:</span>
+              <select id="rateSelect" onchange="changeRate(this.value)" class="bg-slate-800 text-slate-200 text-xs rounded px-1.5 py-0.5 border border-slate-700 outline-none">
+                <option value="0.8">0.8x</option>
+                <option value="1.0" selected>1.0x</option>
+                <option value="1.25">1.25x</option>
+              </select>
+            </div>
+            <label class="flex items-center gap-1 text-xs text-slate-300 cursor-pointer">
+              <input type="checkbox" id="autoAdvanceCheck" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+              <span class="text-[11px]">Continuous</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Command Executor Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span> Live Synchronization Shell Commands
+          </span>
+          <span class="text-[11px] text-slate-400 font-mono">100% Non-Destructive</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <span class="text-slate-300 truncate">./export_to_github.sh /path/to/repo</span>
+            <button onclick="copySnippet('./export_to_github.sh /path/to/repo')" class="text-sky-400 hover:text-sky-300 text-[10px] ml-2">Copy</button>
+          </div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <span class="text-slate-300 truncate">git checkout -b feature/gemini-knowledge-hub</span>
+            <button onclick="copySnippet('git checkout -b feature/gemini-knowledge-hub')" class="text-sky-400 hover:text-sky-300 text-[10px] ml-2">Copy</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Scene Teleprompter & Storyboard (5 cols) -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      
+      <!-- Teleprompter Container -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between flex-1 shadow-xl">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+              </svg>
+              <span>Verbatim Scene Teleprompter</span>
+            </h3>
+            <span id="sceneBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Scene 1 of 5</span>
+          </div>
+
+          <!-- Scene Selector Tabs -->
+          <div class="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-thin">
+            <button onclick="selectScene(0)" id="tab-0" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-sky-500 text-slate-950 whitespace-nowrap transition-all">S1: Dilemma</button>
+            <button onclick="selectScene(1)" id="tab-1" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S2: 3 Agents</button>
+            <button onclick="selectScene(2)" id="tab-2" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S3: webapp/</button>
+            <button onclick="selectScene(3)" id="tab-3" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S4: Scripts</button>
+            <button onclick="selectScene(4)" id="tab-4" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S5: Final 3</button>
+          </div>
+
+          <!-- Script Box -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 min-h-[220px] max-h-[300px] overflow-y-auto scrollbar-thin space-y-3">
+            <div class="text-[11px] font-bold text-sky-400 uppercase tracking-wider" id="scriptActionText">
+              Camera: Direct to camera; split screen showing Claude Code CLI, Kiro terminal agent, and Gemini AI Studio running simultaneously.
+            </div>
+            <p id="scriptNarrationText" class="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+              "Welcome back to the Learn Better Systems series. Today we continue Chapter 5 with Capability 12: Safe GitHub Sync and Multi-AI Monorepo Protocol. Modern development rarely involves a single programmer or even a single AI. In our project, dragosbo/learn-better, we orchestrate three distinct AI engines: Claude Code in the CLI, Kiro AI for automated workflows, and Google Gemini AI Studio for web application generation."
+            </p>
+          </div>
+        </div>
+
+        <!-- Next Scene Preview Footer -->
+        <div class="pt-4 border-t border-slate-800/80 mt-4 flex items-center justify-between text-xs text-slate-400">
+          <span id="nextSceneHint">Next: Three AI Agents, One Repository</span>
+          <button onclick="nextScene()" class="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1">
+            <span>Advance &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Curriculum Progress Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-white">Curriculum Series Progress</span>
+          <span class="text-emerald-400 font-mono font-bold">12 of 15 Complete (80%)</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 h-full rounded-full" style="width: 80.0%"></div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+          <span>Current: Capability 12</span>
+          <span class="text-emerald-400 font-semibold">Remaining: Exactly 3 Modules</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Script Logic -->
+  <script>
+    const scenes = [
+      {
+        title: "Scene 1: The Multi-AI Collaboration Dilemma",
+        subtitle: "Timecode: 0:00 - 0:45 (45s)",
+        action: "Camera: Direct to camera; split screen showing Claude Code CLI, Kiro terminal agent, and Gemini AI Studio running simultaneously.",
+        script: "Welcome back to the Learn Better Systems series. Today we continue Chapter 5 with Capability 12: Safe GitHub Sync and Multi-AI Monorepo Protocol. Modern development rarely involves a single programmer or even a single AI. In our project, dragosbo/learn-better, we orchestrate three distinct AI engines: Claude Code in the CLI, Kiro AI for automated workflows, and Google Gemini AI Studio for web application generation. If you've ever watched two different AI models commit changes to the same Git repository, you know it's a recipe for merge conflicts and corrupted working trees. Capability 12 solves this once and for all.",
+        next: "Next: Three AI Agents, One Repository"
+      },
+      {
+        title: "Scene 2: Three AI Agents, One Repository",
+        subtitle: "Timecode: 0:45 - 1:35 (50s)",
+        action: "Graphic: Comparison of the roles of Claude Code, Kiro AI, and Gemini AI Studio on the repository.",
+        script: "Let's examine why multi-AI monorepos break so easily. Claude Code is a terminal-based agent that modifies root-level Python scripts in code/ and shared modules in lib/. Kiro automates transcription runs, updating files in data/ and generating documentation. Meanwhile, Gemini AI Studio in the cloud generates complete, production-grade React 19 web applications with Vite, Tailwind CSS, and Express server routes. If Gemini blindly exports its code into the root of the repository, it overwrites the root package.json, pollutes Python working directories, and conflicts with existing git tracking. We need strict architectural isolation.",
+        next: "Next: The Safe Sync Quarantine Topology"
+      },
+      {
+        title: "Scene 3: The Safe Sync Quarantine Topology",
+        subtitle: "Timecode: 1:35 - 2:25 (50s)",
+        action: "Screen: Capture of the file hierarchy in GitHubSyncGuide.tsx highlighting webapp/ directory.",
+        script: "Our protocol establishes the Safe Sync Topology. The rule is simple: the AI Studio web application lives entirely inside a dedicated subfolder named webapp/. All existing Python scripts in code/, core libraries in lib/, and Jupyter notebooks remain one hundred percent untouched. Relative paths for data ingestion stay completely intact. Crucially, our audit logs—gemini_prompts.md and gemini_feedback.md—sit at the repository root. Anyone browsing the GitHub repository can immediately read the verbatim prompts and architectural decisions that created the app.",
+        next: "Next: Automated Shell & Batch Sync Scripts"
+      },
+      {
+        title: "Scene 4: Automated Shell & Batch Sync Scripts",
+        subtitle: "Timecode: 2:25 - 3:15 (50s)",
+        action: "Screen: Live terminal demonstration running export_to_github.sh followed by git status.",
+        script: "To prevent human error, we automate this entire workflow. We provide export_to_github.sh for macOS, Linux, and WSL, as well as export_to_github.bat for Windows. Pass the path to your local clone, and the script takes over: it validates the .git directory, checks out a clean feature/gemini-knowledge-hub branch, creates webapp/, copies all source assets, syncs the audit logs, and prints clean pull request instructions. When you run git status, exactly zero root Python files are modified. It is completely safe, auditable, and non-destructive.",
+        next: "Next: In-App GitHub REST API & The Final 3"
+      },
+      {
+        title: "Scene 5: In-App GitHub REST API & The Final 3",
+        subtitle: "Timecode: 3:15 - 4:30 (75s)",
+        action: "Screen: In-browser demonstration of githubApi.ts followed by 15-capability roadmap.",
+        script: "Synchronization is a two-way street. In addition to pushing code out, our application features an in-app GitHub REST API integration in githubApi.ts. Spanning nearly one thousand lines, it allows users to provide a GitHub Personal Access Token, monitor rate limits, and recursively import remote transcripts and playlists directly into browser state. With Capability 12 verified, eighty percent of our curriculum is complete: twelve of fifteen capabilities are now finished! That leaves exactly three modules remaining: Deck 13 on our iPad Safari Runbook, Deck 14 on our multi-device roadmap, and Deck 15 on autonomous agent gateways. Join us across the bridge for Capability 13: iPad Safari Runbook and Offline Vector Print Engine!",
+        next: "Curriculum Complete: 12 / 15 Finished"
+      }
+    ];
+
+    let currentSceneIdx = 0;
+    let isPlaying = false;
+    let autoAdvance = false;
+    let synth = window.speechSynthesis;
+    let utterance = null;
+    let rate = 1.0;
+
+    function selectScene(idx) {
+      if (idx < 0 || idx >= scenes.length) return;
+      currentSceneIdx = idx;
+      updateSceneDisplay();
+      if (isPlaying) {
+        stopSpeech();
+        playCurrentScene();
+      }
+    }
+
+    function updateSceneDisplay() {
+      const s = scenes[currentSceneIdx];
+      document.getElementById('currentSceneTitle').textContent = s.title;
+      document.getElementById('currentSceneSubtitle').textContent = s.subtitle;
+      document.getElementById('scriptActionText').textContent = s.action;
+      document.getElementById('scriptNarrationText').textContent = `"${s.script}"`;
+      document.getElementById('sceneIndicator').textContent = `Scene ${currentSceneIdx + 1} / ${scenes.length}`;
+      document.getElementById('sceneBadge').textContent = `Scene ${currentSceneIdx + 1} of ${scenes.length}`;
+      document.getElementById('nextSceneHint').textContent = s.next;
+
+      // Update tabs
+      for (let i = 0; i < scenes.length; i++) {
+        const tab = document.getElementById(`tab-${i}`);
+        if (i === currentSceneIdx) {
+          tab.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-sky-500 text-slate-950 whitespace-nowrap transition-all';
+        } else {
+          tab.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all';
+        }
+      }
+    }
+
+    function nextScene() {
+      if (currentSceneIdx < scenes.length - 1) {
+        selectScene(currentSceneIdx + 1);
+      }
+    }
+
+    function prevScene() {
+      if (currentSceneIdx > 0) {
+        selectScene(currentSceneIdx - 1);
+      }
+    }
+
+    function togglePlayScene() {
+      if (isPlaying) {
+        stopSpeech();
+      } else {
+        playCurrentScene();
+      }
+    }
+
+    function playCurrentScene() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      stopSpeech();
+
+      const text = scenes[currentSceneIdx].script;
+      utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = rate;
+
+      utterance.onstart = () => {
+        isPlaying = true;
+        document.getElementById('mainPlayIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('videoWaveform').classList.remove('hidden');
+        document.getElementById('videoWaveform').classList.add('flex');
+      };
+
+      utterance.onend = () => {
+        isPlaying = false;
+        document.getElementById('mainPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('videoWaveform').classList.add('hidden');
+        document.getElementById('videoWaveform').classList.remove('flex');
+
+        if (autoAdvance && currentSceneIdx < scenes.length - 1) {
+          setTimeout(() => {
+            nextScene();
+            playCurrentScene();
+          }, 800);
+        }
+      };
+
+      utterance.onerror = () => {
+        stopSpeech();
+      };
+
+      synth.speak(utterance);
+    }
+
+    function stopSpeech() {
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      isPlaying = false;
+      document.getElementById('mainPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('videoWaveform').classList.add('hidden');
+      document.getElementById('videoWaveform').classList.remove('flex');
+    }
+
+    function changeRate(val) {
+      rate = parseFloat(val);
+      if (isPlaying) {
+        playCurrentScene();
+      }
+    }
+
+    function toggleAutoAdvance(val) {
+      autoAdvance = val;
+    }
+
+    function copySnippet(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied shell command: " + text);
+      });
+    }
+
+    window.onload = () => {
+      updateSceneDisplay();
+    };
+  </script>
+</body>
+</html>

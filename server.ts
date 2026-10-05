@@ -366,6 +366,27 @@ app.get(['/videos/capability-4', '/videos/capability-04'], (req, res) => {
   }
 });
 
+app.get(['/videos/capability-11'], (req, res) => {
+  const target = path.join(videosDir, '11_CAPABILITY_PYTHON_CODE_VIEWER_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 11 video player not found.');
+  }
+});
+
+app.get(['/videos/capability-12'], (req, res) => {
+  const target = path.join(videosDir, '12_CAPABILITY_GITHUB_SYNC_PROTOCOL_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 12 video player not found.');
+  }
+});
 
 app.get('/api/decks/manifest', (req, res) => {
   try {

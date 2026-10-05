@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 12: Safe GitHub Sync &amp; Multi-AI Monorepo Protocol — Technical Blueprint</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-sky-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase tracking-wider">Deck 12 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Safe GitHub Sync &amp; Multi-AI Protocol</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Branch Isolation &bull; Zero Conflict Quarantine &bull; Audit Trail Lineage</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-sky-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-sky-500 hover:bg-sky-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-sky-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Link -->
+      <a href="/videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_VIDEO.html" class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-sm">
+        <span>🎬 Video</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Presentation Main Container -->
+  <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 justify-between relative studio-grid">
+    
+    <!-- Slides Card Container -->
+    <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl relative min-h-[560px] flex flex-col justify-between backdrop-blur-md">
+      
+      <!-- Slide Area -->
+      <div id="slideViewport" class="flex-1 flex flex-col justify-between">
+        
+        <!-- SLIDE 1: Executive Overview -->
+        <div class="slide active flex flex-col justify-between space-y-6" data-slide="1">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/80 border border-sky-800 text-sky-300 text-xs font-semibold">
+              <span>Capability 12 &bull; Chapter 5: Codebase &amp; DevOps</span>
+              <span>&bull;</span>
+              <span>Multi-AI Protocol</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Safe GitHub Sync &amp; Multi-AI Monorepo Protocol
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              When multiple autonomous AI tools (Claude Code, Kiro AI, Gemini AI Studio) work on the same GitHub repository (<code class="text-sky-300 font-mono">dragosbo/learn-better</code>), naive git commits result in devastating collisions. Capability 12 introduces a battle-tested protocol: isolated branch staging, non-destructive subfolder quarantine (<code class="text-sky-300 font-mono">webapp/</code>), and automated sync scripts.
+            </p>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-sky-400 font-bold text-sm flex items-center gap-2">
+                <span>🛡️ Non-Destructive Quarantine</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                The AI Studio React SPA installs exclusively into <code class="text-sky-300 font-mono">webapp/</code>, ensuring existing <code class="font-mono text-slate-200">code/</code>, <code class="font-mono text-slate-200">lib/</code>, and <code class="font-mono text-slate-200">notebooks/</code> remain 100% untouched.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+                <span>⚡ Automated Shell Scripts</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Single-command synchronization via <code class="text-emerald-300 font-mono">export_to_github.sh</code> and <code class="text-emerald-300 font-mono">export_to_github.bat</code>, managing branch creation, file copying, and PR staging.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-indigo-400 font-bold text-sm flex items-center gap-2">
+                <span>🌐 Direct GitHub REST Service</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                In-app client-side GitHub API integration (<code class="text-indigo-300 font-mono">githubApi.ts</code>, 944 lines) pulling remote trees, tokens, and rate limits with zero build dependencies.
+              </p>
+            </div>
+          </div>
+
+          <!-- Architecture Footnote -->
+          <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-4">
+            <span class="font-mono text-sky-400">Target Repository: github.com/dragosbo/learn-better</span>
+            <span>Protocols: Bash &bull; PowerShell/Batch &bull; REST API &bull; Git Worktrees</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Multi-AI Co-Development Conflict Problem -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="2">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950 border border-rose-800 text-rose-300 text-xs font-semibold">
+              <span>The Problem Space</span>
+              <span>&bull;</span>
+              <span>Multi-AI Collision Hazard</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Why Multi-AI Monorepos Fail Without Branch Quarantine
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Three autonomous AI coding agents co-developing in a single Git repository create unique, catastrophic failure modes.
+            </p>
+          </div>
+
+          <!-- 3 AI Collision Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-rose-800/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Claude Code CLI</span>
+                <span class="text-[10px] font-mono text-slate-400">Terminal Agent</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Modifies root-level Python scripts (<code class="text-rose-300 font-mono">code/</code>, <code class="text-rose-300 font-mono">lib/</code>), rewrites bash scripts, and produces Jupyter notebooks for data analysis.
+              </p>
+              <div class="p-2 bg-rose-950/30 rounded border border-rose-900/50 text-[11px] text-rose-200">
+                Risk: Overwriting root package.json or git tracking index.
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-amber-800/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Kiro AI Agent</span>
+                <span class="text-[10px] font-mono text-slate-400">Task Automator</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Refactors course structures, processes raw video audio into transcripts, and creates automated test runbooks in markdown.
+              </p>
+              <div class="p-2 bg-amber-950/30 rounded border border-amber-900/50 text-[11px] text-amber-200">
+                Risk: Uncommitted working tree state colliding during pull.
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950/70 border border-sky-800/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Gemini AI Studio</span>
+                <span class="text-[10px] font-mono text-slate-400">Cloud Web Engine</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Generates complete React 19 SPA, Tailwind UI components, Express server proxy routes, and interactive slide presentations.
+              </p>
+              <div class="p-2 bg-sky-950/30 rounded border border-sky-900/50 text-[11px] text-sky-200">
+                Risk: Flattening existing repository files upon merge.
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+            <span class="font-bold text-white">The Golden Rule:</span>
+            <span class="text-emerald-400 font-mono font-bold">Never merge directly into main from an AI Studio session. Always quarantine in a feature branch.</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Directory Topology & Subfolder Quarantine -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="3">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Architecture Solution</span>
+              <span>&bull;</span>
+              <span>Monorepo Topology</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              The Safe Sync Topology: Quarantine in <code class="text-emerald-400 font-mono">webapp/</code>
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              How the unified repository organizes Python scripts, legacy HTML tools, and the React web app without overlap.
+            </p>
+          </div>
+
+          <!-- Directory Tree Diagram -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 space-y-1 code-scroll max-h-[220px] overflow-y-auto">
+              <div class="text-emerald-400 font-bold">// Target Repository Root (dragosbo/learn-better)</div>
+              <div>├── <span class="text-amber-400">code/</span> <span class="text-slate-500"># 15 Python operational scripts (untouched)</span></div>
+              <div>│   ├── read_channel.py</div>
+              <div>│   ├── list_playlists.py</div>
+              <div>│   └── lib/ (youtube.py, net.py, paths.py)</div>
+              <div>├── <span class="text-purple-400">data/</span> <span class="text-slate-500"># Transcripts, audio, playlists.json</span></div>
+              <div>├── <span class="text-blue-400">notebooks/</span> <span class="text-slate-500"># Jupyter research notebooks</span></div>
+              <div>├── <span class="text-emerald-400 font-bold">webapp/</span> <span class="text-emerald-300"># AI Studio Web Hub Quarantine</span></div>
+              <div>│   ├── src/ (React 19 SPA, components, data)</div>
+              <div>│   ├── public/ (assets, decks, videos)</div>
+              <div>│   ├── package.json &amp; vite.config.ts</div>
+              <div>│   └── server.ts (Express proxy &amp; static)</div>
+              <div>├── <span class="text-sky-300">gemini_prompts.md</span> <span class="text-slate-500"># Complete prompt audit log</span></div>
+              <div>├── <span class="text-sky-300">gemini_feedback.md</span> <span class="text-slate-500"># Architecture feedback log</span></div>
+              <div>└── <span class="text-white font-bold">export_to_github.sh</span> <span class="text-slate-500"># Automated sync engine</span></div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3 flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block mb-2">Three Immutable Principles:</span>
+                <ul class="text-xs text-slate-300 space-y-2">
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400 font-bold">&check;</span>
+                    <span><strong>1. Zero Root Contamination:</strong> No `node_modules` or `package.json` in the root repository folder.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400 font-bold">&check;</span>
+                    <span><strong>2. Preserved Python Paths:</strong> Scripts in `code/` continue to execute with original relative paths to `data/`.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400 font-bold">&check;</span>
+                    <span><strong>3. Lineage Preservation:</strong> Audit markdown documents sit at root for immediate visibility in GitHub web view.</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="p-2 bg-slate-900 rounded border border-slate-800 text-[11px] text-slate-400">
+                Result: Zero git conflicts when pulling updates between AI Studio and local development.
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 flex items-center justify-between">
+            <span>Verified in: <code class="text-sky-300 font-mono">src/components/GitHubSyncGuide.tsx</code> &bull; 666 lines</span>
+            <span class="text-emerald-400 font-bold">100% Conflict Free</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Interactive Git Synchronization Simulator -->
+        <div class="slide flex flex-col justify-between space-y-4" data-slide="4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-300 text-xs font-semibold">
+              <span>Interactive Diagnostic Lab</span>
+              <span>&bull;</span>
+              <span>Git Command Runner</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white">
+              Interactive Git Synchronization Simulator &amp; Branch Runner
+            </h2>
+            <p class="text-xs text-slate-300">
+              Step through the 5-stage safe synchronization protocol and inspect live shell commands before running them.
+            </p>
+          </div>
+
+          <!-- Interactive Workspace -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <!-- Stage Selector (4 cols) -->
+            <div class="md:col-span-4 space-y-1.5">
+              <label class="text-[10px] font-bold uppercase text-slate-400">Select Sync Stage:</label>
+              <div class="space-y-1" id="gitStageButtons">
+                <button onclick="switchGitStage(1)" id="stage-btn-1" class="w-full text-left p-2 rounded-lg bg-sky-950/80 border border-sky-600 text-xs text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">1. Branch Checkout</div>
+                  <span class="text-[10px] font-mono text-sky-300">git branch</span>
+                </button>
+                <button onclick="switchGitStage(2)" id="stage-btn-2" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">2. Subfolder Quarantine</div>
+                  <span class="text-[10px] font-mono text-slate-400">mkdir webapp</span>
+                </button>
+                <button onclick="switchGitStage(3)" id="stage-btn-3" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">3. Audit Trail Sync</div>
+                  <span class="text-[10px] font-mono text-slate-400">cp logs</span>
+                </button>
+                <button onclick="switchGitStage(4)" id="stage-btn-4" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">4. Selective Staging</div>
+                  <span class="text-[10px] font-mono text-slate-400">git add</span>
+                </button>
+                <button onclick="switchGitStage(5)" id="stage-btn-5" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">5. Commit &amp; Push PR</div>
+                  <span class="text-[10px] font-mono text-slate-400">git push</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Terminal Output Box (8 cols) -->
+            <div class="md:col-span-8 flex flex-col space-y-2">
+              <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-t-lg border border-slate-800 text-xs">
+                <span id="gitStageTitle" class="font-mono font-bold text-sky-300">Stage 1: Clean Feature Branch Isolation</span>
+                <button onclick="copyCurrentGitCommand()" id="copyGitBtn" class="text-[10px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-semibold">
+                  <span>Copy Shell Command</span>
+                </button>
+              </div>
+
+              <!-- Terminal Shell Display -->
+              <div id="gitTerminalOutput" class="bg-slate-900/80 p-3 rounded-b-lg border-x border-b border-slate-800 font-mono text-xs text-emerald-400 overflow-y-auto max-h-[140px] code-scroll leading-relaxed">
+                <!-- Dynamically updated -->
+              </div>
+
+              <!-- Safety Guarantee Note -->
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-800 text-[11px] text-slate-300 flex items-start gap-2">
+                <span class="text-sky-400 font-bold">&bull;</span>
+                <span id="gitSafetyExplanation">
+                  Ensures you never commit directly onto main or dirty your local working tree.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 text-right">
+            Click any stage on the left to inspect the precise bash command and safety guarantees.
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Automated Shell & Batch Export Scripts -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="5">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Automation Engine</span>
+              <span>&bull;</span>
+              <span>Cross-Platform Scripts</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Automated Export Scripts: Linux, macOS &amp; Windows
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Two turn-key automation scripts handle the entire synchronization sequence in a single terminal command.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Bash Script -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-400 uppercase tracking-wider font-mono">export_to_github.sh (Bash)</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">macOS / Linux / WSL</span>
+              </div>
+              <div class="bg-slate-900 p-2.5 rounded font-mono text-xs text-slate-300 space-y-1">
+                <span class="text-emerald-400">./export_to_github.sh /path/to/learn-better</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>&bull; Validates <code class="text-sky-300 font-mono">.git</code> folder existence before touching files</li>
+                <li>&bull; Creates branch <code class="text-sky-300 font-mono">feature/gemini-knowledge-hub</code></li>
+                <li>&bull; Copies <code class="text-sky-300 font-mono">src/</code>, <code class="text-sky-300 font-mono">public/</code>, and config files into <code class="text-sky-300 font-mono">webapp/</code></li>
+                <li>&bull; Syncs <code class="text-sky-300 font-mono">gemini_prompts.md</code> audit logs to root</li>
+              </ul>
+            </div>
+
+            <!-- Batch Script -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider font-mono">export_to_github.bat (Windows)</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">Windows CMD / PowerShell</span>
+              </div>
+              <div class="bg-slate-900 p-2.5 rounded font-mono text-xs text-slate-300 space-y-1">
+                <span class="text-indigo-400">export_to_github.bat C:\repos\learn-better</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>&bull; Native Windows batch syntax with <code class="text-indigo-300 font-mono">robocopy /E</code></li>
+                <li>&bull; Preserves Windows CRLF line endings automatically</li>
+                <li>&bull; Includes safety prompt before staging files into git</li>
+                <li>&bull; Generates ready-to-run push instructions in command prompt</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+            <span class="text-slate-300">Run from your terminal or CI runner:</span>
+            <span class="font-mono text-emerald-400 font-bold">git status &rarr; 0 root conflicts guaranteed</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Direct Client-Side GitHub API Service -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950 border border-purple-800 text-purple-300 text-xs font-semibold">
+              <span>Client-Side REST Integration</span>
+              <span>&bull;</span>
+              <span>githubApi.ts</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Direct GitHub REST API Service: Ingestion &amp; Traversal
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              The application doesn't just push code to GitHub—it pulls live repository contents directly into client state via <code class="text-purple-300 font-mono">src/services/githubApi.ts</code>.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">1. PAT &amp; Rate Limits</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Stores Personal Access Tokens in localStorage, tracks API rate limit quotas (60 unauth vs 5,000 auth requests/hr), and displays live reset timers.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">2. Recursive Tree Ingestion</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Uses the Git Trees API (<code class="text-sky-300 font-mono">recursive=1</code>) to fetch the entire repository file hierarchy in a single network round-trip.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">3. UTF-8 Base64 Decoder</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Custom multi-byte UTF-8 decoder preventing garbled text when decoding markdown notes, mathematical formulas, and Romanian diacritics.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto code-scroll">
+            <span class="text-slate-500">// Live Ingestion Hook in src/services/githubApi.ts (944 lines)</span><br>
+            <span class="text-purple-400">const</span> files = <span class="text-purple-400">await</span> githubApi.<span class="text-sky-300">fetchRepositoryFolderTree</span>(<span class="text-emerald-300">'dragosbo'</span>, <span class="text-emerald-300">'learn-better'</span>, <span class="text-emerald-300">'data/transcripts'</span>);<br>
+            <span class="text-purple-400">const</span> parsedClips = githubApi.<span class="text-sky-300">transformRepoTreeToKnowledgeClips</span>(files);
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Audit Trail Lineage & Multi-AI Playbook -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="7">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950 border border-amber-800 text-amber-300 text-xs font-semibold">
+              <span>Governance &amp; History</span>
+              <span>&bull;</span>
+              <span>Vibe Coding Ledger</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Audit Trail Lineage &amp; The Multi-AI Feedback Playbook
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Code is temporary; engineering reasoning is permanent. How the sync protocol preserves full multi-AI lineage.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">gemini_prompts.md &bull; Verbatim Prompt Ledger</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Contains every exact prompt given to Gemini AI Studio across all development sessions. Enables exact prompt regression testing and ensures no architectural decisions are lost in transient chat windows.
+              </p>
+              <div class="p-2 rounded bg-slate-900 border border-slate-800 text-[11px] text-slate-400">
+                Tracked: Prompt ID, timestamp, target component, refactoring goal, and outcome status.
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider block">gemini_feedback.md &bull; Architectural Playbook</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Documents lessons learned, anti-patterns encountered (e.g. iPad WebKit 401 audio blocking, YouTube API quotas, Tailwind CSS reset collisions), and rules for future AI coding agents.
+              </p>
+              <div class="p-2 rounded bg-slate-900 border border-slate-800 text-[11px] text-slate-400">
+                Read by: Claude Code, Kiro AI, and future Gemini sessions to avoid repeating past mistakes.
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span class="font-bold text-white">In-App Access:</span>
+            <span class="text-sky-300">Accessible directly via Navbar &rarr; "Sync &amp; Prompts" tab with instant 1-click Markdown export</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 8: Curriculum Progress & Next Steps -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="8">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Chapter 5 Milestone</span>
+              <span>&bull;</span>
+              <span>12 of 15 Complete (80%)</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Capability 12 Complete &bull; Exactly 3 Capabilities Remaining!
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              With Capability 12 verified, multi-AI monorepo synchronization and branch isolation are completely documented and codified. Exactly three capabilities remain to conclude the entire 15-capability curriculum!
+            </p>
+          </div>
+
+          <!-- Progress Bar & Roadmap -->
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-white">Curriculum Progression Status</span>
+              <span class="text-emerald-400 font-mono font-bold">12 / 15 Capabilities (80.0%)</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-400 h-full rounded-full" style="width: 80.0%"></div>
+            </div>
+
+            <!-- The Final 3 Modules -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-sky-600/60 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase">Deck 13 &bull; Next Up</span>
+                  <div class="text-xs font-bold text-white mt-1">Interactive User Guide &amp; iPad Runbook</div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">iPad 401 WebKit cookie fix &amp; vector print engine.</p>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-mono text-slate-500 uppercase">Deck 14</span>
+                  <div class="text-xs font-bold text-slate-300 mt-1">System Roadmap Hub</div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">Multi-device topology &amp; persistent blob storage.</p>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-mono text-amber-500 uppercase">Deck 15</span>
+                  <div class="text-xs font-bold text-slate-300 mt-1">Autonomous Agent Gateway</div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">OpenAPI/MCP function calling &amp; live test harness.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="flex items-center gap-3">
+            <a href="/videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_VIDEO.html" class="flex-1 py-2 text-center text-xs font-bold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-md flex items-center justify-center gap-1.5">
+              <span>🎬 Launch Video Studio Hub 12 &rarr;</span>
+            </a>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
+              Curriculum Overview
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Controls & Progress Footer -->
+      <footer class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" onclick="prevSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          
+          <div class="text-xs font-mono text-slate-400 px-2">
+            Slide <span id="currentSlideNum" class="text-white font-bold">1</span> / <span id="totalSlidesNum">8</span>
+          </div>
+
+          <button id="nextBtn" onclick="nextSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Dot Navigation Indicators -->
+        <div class="hidden sm:flex items-center gap-1.5" id="slideDots">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Quick Shortcut Hint -->
+        <div class="text-[11px] text-slate-400 hidden lg:block">
+          Keys: <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">←</kbd> <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">→</kbd> Navigate &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">L</kbd> Listen &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">N</kbd> Notes
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Collapsible Speaker Notes Drawer -->
+  <aside id="notesDrawer" class="hidden bg-slate-900 border-t border-slate-800 px-6 py-4 fixed bottom-0 left-0 right-0 z-40 max-h-48 overflow-y-auto shadow-2xl backdrop-blur-md">
+    <div class="max-w-4xl mx-auto space-y-1.5">
+      <div class="flex items-center justify-between text-xs">
+        <span class="font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          Speaker Script (Verbatim Audio)
+        </span>
+        <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs">&times; Close</button>
+      </div>
+      <p id="speakerNotesText" class="text-xs text-slate-200 leading-relaxed font-sans"></p>
+    </div>
+  </aside>
+
+  <!-- Script Logic: Narration, Auto-Advance, Keyboard & Interactive Lab -->
+  <script>
+    // Slide Narrations (8 Slides)
+    const slideNarrations = [
+      // Slide 1
+      "Welcome to Deck 12: Safe GitHub Sync and Multi-AI Monorepo Protocol. In modern software engineering, multiple autonomous AI systems frequently collaborate on a single codebase. In our repository, dragosbo/learn-better, Claude Code CLI, Kiro AI, and Gemini AI Studio all contribute code. In this module, we explore how our safe branch isolation protocol and subfolder quarantine prevent collisions and guarantee 100% clean merges.",
+      
+      // Slide 2
+      "Why do multi-AI monorepos break so easily without governance? Claude Code works directly in the terminal, optimizing Python scripts and shell utilities. Kiro automates workflow tasks and course structures. Meanwhile, Gemini AI Studio builds full-stack React web applications. If all three commit directly to the root of the main branch, git index corruptions and file overwrites are inevitable.",
+      
+      // Slide 3
+      "Our solution is the Safe Sync Topology. The AI Studio web application lives entirely inside a dedicated subfolder called webapp. The root Python scripts, data directories, and Jupyter notebooks remain untouched. Audit logs like gemini_prompts.md and gemini_feedback.md sit at root for full visibility in the GitHub web interface.",
+      
+      // Slide 4
+      "Here in our Interactive Git Synchronization Simulator, you can inspect each stage of the five-step protocol. We checkout a dedicated feature branch, create the webapp folder, copy our audit logs, selectively stage only the new directories, and push a pull request. Click through the stages on the left to copy each command directly to your clipboard.",
+      
+      // Slide 5
+      "To eliminate human error, we provide cross-platform automated export scripts. export_to_github.sh for macOS, Linux, and WSL, and export_to_github.bat for Windows PowerShell. With one command, these scripts verify git repository integrity, copy only the web assets, and stage the pull request safely.",
+      
+      // Slide 6
+      "Beyond git command-line operations, our application features an in-app GitHub REST API integration in githubApi.ts spanning nearly 1,000 lines. It provides client-side token storage, live rate-limit tracking, recursive tree fetching, and a custom multi-byte UTF-8 Base64 decoder that seamlessly imports remote assets into the Knowledge Hub.",
+      
+      // Slide 7
+      "Code changes, but engineering reasoning must endure. Our protocol mandates capturing every prompt in gemini_prompts.md and architectural decisions in gemini_feedback.md. When another AI tool like Claude or Kiro inspects the repository, it reads these playbooks to understand past lessons and maintain consistent conventions.",
+      
+      // Slide 8
+      "With Capability 12 verified, eighty percent of our curriculum is complete: twelve of fifteen capabilities are ready! That leaves exactly three final modules in Chapter 5: Deck 13 on the iPad Safari runbook, Deck 14 on our ecosystem roadmap, and Deck 15 on autonomous agent gateways. Let's proceed across the bridge to Deck 13!"
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isSpeaking = false;
+    let autoAdvance = false;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
+    let voiceRate = 1.0;
+
+    // Interactive Git Simulator Data
+    const gitStages = {
+      1: {
+        title: "Stage 1: Clean Feature Branch Isolation",
+        cmd: "git checkout -b feature/gemini-knowledge-hub",
+        output: "Switched to a new branch 'feature/gemini-knowledge-hub'\nBranch is clean and tracking HEAD. Working tree intact.",
+        safety: "Guarantees you never commit directly onto main or dirty your local working tree."
+      },
+      2: {
+        title: "Stage 2: Non-Destructive Subfolder Quarantine",
+        cmd: "mkdir -p webapp && cp -r /path/to/generated/* webapp/",
+        output: "Created directory: webapp/\nCopied: src/, public/, package.json, vite.config.ts, server.ts\nExisting code/ and lib/ directories: 100% untouched.",
+        safety: "Quarantines the React web application so existing Python modules and Jupyter notebooks remain completely isolated."
+      },
+      3: {
+        title: "Stage 3: Audit Trail & Lineage Documentation Sync",
+        cmd: "cp gemini_prompts.md . && cp gemini_feedback.md . && cp USER_GUIDE.md .",
+        output: "Copied: gemini_prompts.md (29 verbatim prompts)\nCopied: gemini_feedback.md (Multi-AI architectural playbook)\nCopied: USER_GUIDE.md (Comprehensive deployment guide)",
+        safety: "Preserves the complete engineering rationale and prompt history directly in GitHub's root view."
+      },
+      4: {
+        title: "Stage 4: Selective Directory & File Staging",
+        cmd: "git add webapp/ gemini_prompts.md gemini_feedback.md USER_GUIDE.md\ngit status",
+        output: "Changes to be committed:\n  new file:   webapp/src/...\n  new file:   webapp/package.json\n  new file:   gemini_prompts.md\n  new file:   gemini_feedback.md\nUntracked root files: None.",
+        safety: "Staging only specified paths prevents accidental commits of transient IDE files or temporary logs."
+      },
+      5: {
+        title: "Stage 5: Commit & Push Remote Pull Request",
+        cmd: 'git commit -m "feat: add Learn Better Knowledge Hub webapp & multi-AI vibe coding guide"\ngit push -u origin feature/gemini-knowledge-hub',
+        output: "[feature/gemini-knowledge-hub abc1234] feat: add Learn Better Knowledge Hub webapp\n 125 files changed, 28450 insertions(+)\nTo https://github.com/dragosbo/learn-better.git\n * [new branch]      feature/gemini-knowledge-hub -> feature/gemini-knowledge-hub",
+        safety: "Pushes safely to GitHub without touching main, opening an auditable Pull Request for peer and AI review."
+      }
+    };
+
+    let currentGitStage = 1;
+
+    function initPresentation() {
+      // Build dot indicators
+      const dotsContainer = document.getElementById('slideDots');
+      dotsContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === 1 ? 'bg-sky-400 w-5' : 'bg-slate-700 hover:bg-slate-500'}`;
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+      updateSlideDisplay();
+      switchGitStage(1);
+    }
+
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
+      const activeEl = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (activeEl) activeEl.classList.add('active');
+
+      document.getElementById('currentSlideNum').textContent = currentSlide;
+      document.getElementById('prevBtn').disabled = currentSlide === 1;
+      document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+
+      // Update dots
+      const dots = document.getElementById('slideDots').children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i + 1 === currentSlide) {
+          dots[i].className = 'w-5 h-2 rounded-full bg-sky-400 transition-all';
+        } else {
+          dots[i].className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all';
+        }
+      }
+
+      // Update speaker notes
+      document.getElementById('speakerNotesText').textContent = slideNarrations[currentSlide - 1];
+
+      // If speech was active, speak new slide
+      if (isSpeaking) {
+        stopSpeech();
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
+
+    // Audio & Narration System
+    function toggleSlideNarration() {
+      if (isSpeaking) {
+        stopSpeech();
+      } else {
+        speakCurrentSlide();
+      }
+    }
+
+    function speakCurrentSlide() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      stopSpeech();
+
+      const text = slideNarrations[currentSlide - 1];
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = voiceRate;
+
+      currentUtterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('playLabel').textContent = "Pause";
+        document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('waveform').classList.remove('hidden');
+        document.getElementById('waveform').classList.add('flex');
+      };
+
+      currentUtterance.onend = () => {
+        isSpeaking = false;
+        document.getElementById('playLabel').textContent = "Listen";
+        document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('waveform').classList.remove('flex');
+
+        if (autoAdvance && currentSlide < totalSlides) {
+          setTimeout(() => {
+            nextSlide();
+            speakCurrentSlide();
+          }, 800);
+        }
+      };
+
+      currentUtterance.onerror = () => {
+        stopSpeech();
+      };
+
+      speechSynth.speak(currentUtterance);
+    }
+
+    function stopSpeech() {
+      if (speechSynth.speaking) {
+        speechSynth.cancel();
+      }
+      isSpeaking = false;
+      document.getElementById('playLabel').textContent = "Listen";
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+    }
+
+    function toggleAutoAdvance(enabled) {
+      autoAdvance = enabled;
+    }
+
+    function changeVoiceRate(rate) {
+      voiceRate = parseFloat(rate);
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    // Git Simulator Functions
+    function switchGitStage(stageNum) {
+      currentGitStage = stageNum;
+      const data = gitStages[stageNum];
+      if (!data) return;
+
+      // Update button styling
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`stage-btn-${i}`);
+        if (i === stageNum) {
+          btn.className = 'w-full text-left p-2 rounded-lg bg-sky-950/80 border border-sky-600 text-xs text-white flex items-center justify-between transition-all';
+        } else {
+          btn.className = 'w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all';
+        }
+      }
+
+      document.getElementById('gitStageTitle').textContent = data.title;
+      document.getElementById('gitTerminalOutput').innerHTML = `<span class="text-sky-400">$ ${data.cmd}</span><br><br><span class="text-slate-300">${data.output.replace(/\n/g, '<br>')}</span>`;
+      document.getElementById('gitSafetyExplanation').textContent = data.safety;
+    }
+
+    function copyCurrentGitCommand() {
+      const data = gitStages[currentGitStage];
+      if (!data) return;
+      navigator.clipboard.writeText(data.cmd).then(() => {
+        const btn = document.getElementById('copyGitBtn');
+        btn.innerHTML = '<span class="text-emerald-400 font-bold">&check; Copied</span>';
+        setTimeout(() => {
+          btn.innerHTML = '<span>Copy Shell Command</span>';
+        }, 2000);
+      });
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'l' || e.key === 'L') {
+        toggleSlideNarration();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotesDrawer();
+      }
+    });
+
+    window.onload = initPresentation;
+  </script>
+</body>
+</html>
