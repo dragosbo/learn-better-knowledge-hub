@@ -410,6 +410,17 @@ app.get(['/videos/capability-14'], (req, res) => {
   }
 });
 
+app.get(['/videos/capability-15'], (req, res) => {
+  const target = path.join(videosDir, '15_CAPABILITY_ANALYSIS_AGENT_GATEWAY_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 15 video player not found.');
+  }
+});
+
 app.get('/api/decks/manifest', (req, res) => {
   try {
     const manifestPath = path.join(videosDir, '00_SERIES_VIDEO_PLAYLIST.json');
