@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 14: Ecosystem Roadmap Hub &amp; Multi-Device Architecture — Technical Blueprint</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 uppercase tracking-wider">Deck 14 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Ecosystem Roadmap &amp; Multi-Device Hub</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Hardware Triad &bull; GitHub Releases Blobs &bull; Monorepo Governance</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-amber-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Link -->
+      <a href="/videos/14_CAPABILITY_ROADMAP_HUB_VIDEO.html" class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-sm">
+        <span>🎬 Video</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Presentation Main Container -->
+  <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 justify-between relative studio-grid">
+    
+    <!-- Slides Card Container -->
+    <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl relative min-h-[560px] flex flex-col justify-between backdrop-blur-md">
+      
+      <!-- Slide Area -->
+      <div id="slideViewport" class="flex-1 flex flex-col justify-between">
+        
+        <!-- SLIDE 1: Executive Overview -->
+        <div class="slide active flex flex-col justify-between space-y-6" data-slide="1">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/80 border border-amber-800 text-amber-300 text-xs font-semibold">
+              <span>Capability 14 &bull; Chapter 5: Codebase &amp; DevOps</span>
+              <span>&bull;</span>
+              <span>Architectural Horizons</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Ecosystem Roadmap Hub &amp; Multi-Device Topology
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              Real-world engineering occurs across diverse physical devices and multiple AI model ecosystems. Capability 14 delivers our strategic governance hub: harmonizing the triad hardware topology (iPad touch, Windows Desktop heavy execution, iPhone voice), solving large media blob storage without git repo bloat, and standardizing multi-AI monorepo collaboration.
+            </p>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-amber-400 font-bold text-sm flex items-center gap-2">
+                <span>📱 Triad Hardware Topology</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Asymmetric device allocation: iPhone for voice/memos, Windows for OBS/Python CTranslate2, and iPad for tactile web synthesis and review.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-sky-400 font-bold text-sm flex items-center gap-2">
+                <span>📦 GitHub Releases CDN</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Hosting up to 2GB MP3s (NotebookLM audio) and MP4s (OBS screen captures) outside the Git tree, preserving rapid 30MB repository clone speeds.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+                <span>🎯 Central Monorepo Playbook</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                A unified monorepo with segregated subfolders for Claude, Kiro, and Gemini, preventing multi-repo fragmentation and token sprawl.
+              </p>
+            </div>
+          </div>
+
+          <!-- Architecture Footnote -->
+          <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-4">
+            <span class="font-mono text-amber-400">Data Source: src/data/roadmapData.ts &bull; Component: RoadmapHub.tsx</span>
+            <span>Strategic Horizons: 8 Tracked Initiatives &bull; 4 Architectural Playbooks</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Triad Hardware Topology: iPhone, iPad & Windows -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="2">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-300 text-xs font-semibold">
+              <span>Hardware Orchestration</span>
+              <span>&bull;</span>
+              <span>Asymmetric Specialization</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              The Triad Hardware Topology: Three Devices, Three Superpowers
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Rather than forcing one device to do everything, our architecture assigns each physical machine to its highest-leverage role.
+            </p>
+          </div>
+
+          <!-- 3 Hardware Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-sky-800/60 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. iPhone Mobility</span>
+                <span class="text-[10px] font-mono text-slate-400">Voice &amp; Commute</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Natural-cadence ideation via ChatGPT Advanced Voice Mode, 2-host NotebookLM podcast generation, and hands-free AirPods reflection playback.
+              </p>
+              <div class="p-2 bg-sky-950/40 rounded border border-sky-900/60 text-[11px] text-sky-200">
+                Primary Artifact: Raw audio memos &amp; voice summaries.
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-purple-800/60 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">2. iPad Tactile Canvas</span>
+                <span class="text-[10px] font-mono text-slate-400">Visual Thinking</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Visualizing word clouds, cluster restructuring matrices, inspecting slide decks, testing Web Speech synthesis, and reviewing PRs from the couch.
+              </p>
+              <div class="p-2 bg-purple-950/40 rounded border border-purple-900/60 text-[11px] text-purple-200">
+                Primary Artifact: Curriculum curation &amp; UI validation.
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-emerald-800/60 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">3. Windows Desktop</span>
+                <span class="text-[10px] font-mono text-slate-400">Heavy Execution</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                High-bitrate OBS recording, CTranslate2 Whisper int8 model batch inference, multi-file Claude Code refactoring, and git push to GitHub.
+              </p>
+              <div class="p-2 bg-emerald-950/40 rounded border border-emerald-900/60 text-[11px] text-emerald-200">
+                Primary Artifact: Heavy compute, media encoding &amp; git HEAD.
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+            <span class="font-bold text-white">The Contract:</span>
+            <span class="text-amber-400 font-mono font-bold">All 3 devices communicate through the master Git repository and GitHub Releases CDN.</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Multi-AI Model Specialization Matrix -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="3">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950 border border-indigo-800 text-indigo-300 text-xs font-semibold">
+              <span>Cognitive Architecture</span>
+              <span>&bull;</span>
+              <span>Multi-Model Allocation</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Multi-AI Model Specialization: 5 Models, Zero Lock-In
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Each AI engine operates in its proven architectural sweet spot without redundant competition.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="flex justify-between items-center">
+                <strong class="text-amber-400 text-sm">Google Gemini 3.8 Flash</strong>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono">1M+ Tokens</span>
+              </div>
+              <p class="text-slate-300">Full-stack web application generation, multimodal visual analysis, structured JSON quiz distillation, and live server-side AST analysis.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="flex justify-between items-center">
+                <strong class="text-sky-400 text-sm">Anthropic Claude Code</strong>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 font-mono">Terminal Agent</span>
+              </div>
+              <p class="text-slate-300">Local terminal pair-programming, multi-file Python architecture refactoring, and strict type-system enforcement.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="flex justify-between items-center">
+                <strong class="text-emerald-400 text-sm">OpenAI ChatGPT Voice</strong>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">Real-Time Audio</span>
+              </div>
+              <p class="text-slate-300">Ultra-natural human cadence brainstorming, hands-free technical debates on mobile, and instantaneous question breakdown.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div class="flex justify-between items-center">
+                <strong class="text-purple-400 text-sm">Google NotebookLM</strong>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-mono">Audio Overviews</span>
+              </div>
+              <p class="text-slate-300">2-host synthetic podcast generation synthesizing sprawling playlist clusters into engaging audio deep dives for commute study.</p>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span class="font-bold text-white">Intake Standard:</span>
+            <span>Uniform intake schema: <code class="text-amber-300 font-mono">{ model, prompt, response, timestamp, audioUrl }</code></span>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Interactive Architecture Decision Matrix -->
+        <div class="slide flex flex-col justify-between space-y-4" data-slide="4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950 border border-amber-800 text-amber-300 text-xs font-semibold">
+              <span>Interactive Diagnostic Lab</span>
+              <span>&bull;</span>
+              <span>Decision Matrix</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white">
+              Interactive Architectural Decision Matrix &amp; Playbook
+            </h2>
+            <p class="text-xs text-slate-300">
+              Explore the four core architectural dilemmas resolved in our multi-device ecosystem.
+            </p>
+          </div>
+
+          <!-- Interactive Workspace -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <!-- Topic Selector (4 cols) -->
+            <div class="md:col-span-4 space-y-1.5">
+              <label class="text-[10px] font-bold uppercase text-slate-400">Select Architecture Topic:</label>
+              <div class="space-y-1" id="topicButtons">
+                <button onclick="switchTopic('repo')" id="t-btn-repo" class="w-full text-left p-2 rounded-lg bg-amber-950/80 border border-amber-600 text-xs text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">1. Monorepo vs Multi-Repo</div>
+                  <span class="text-[10px] font-mono text-amber-300">Central</span>
+                </button>
+                <button onclick="switchTopic('blobs')" id="t-btn-blobs" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">2. Large Blobs (MP3/OBS)</div>
+                  <span class="text-[10px] font-mono text-slate-400">Releases</span>
+                </button>
+                <button onclick="switchTopic('drive')" id="t-btn-drive" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">3. Google Drive Role</div>
+                  <span class="text-[10px] font-mono text-slate-400">Scratchpad</span>
+                </button>
+                <button onclick="switchTopic('specialization')" id="t-btn-specialization" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">4. Device Specialization</div>
+                  <span class="text-[10px] font-mono text-slate-400">Triad</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Decision Details (8 cols) -->
+            <div class="md:col-span-8 flex flex-col space-y-2">
+              <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-t-lg border border-slate-800 text-xs">
+                <span id="topicTitle" class="font-mono font-bold text-amber-300">Single Monorepo vs. Multi-Repo</span>
+                <span id="topicBadge" class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-semibold">Architectural Verdict</span>
+              </div>
+
+              <!-- Topic Details Box -->
+              <div id="topicDetailsBox" class="bg-slate-900/80 p-3 rounded-b-lg border-x border-b border-slate-800 text-xs text-slate-200 overflow-y-auto max-h-[145px] code-scroll leading-relaxed space-y-2">
+                <!-- Dynamically populated -->
+              </div>
+
+              <!-- Actionable Rule Callout -->
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-800 text-[11px] text-slate-300 flex items-start gap-2">
+                <span class="text-amber-400 font-bold">&check;</span>
+                <span id="topicRuleText">
+                  Verdict: Maintain ONE central monorepo with segregated subfolders. Avoid one repo per model.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 text-right">
+            Click any topic on the left to review the technical tradeoffs, pros/cons, and concrete code patterns.
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Large Media Blobs: GitHub Releases CDN -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="5">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950 border border-rose-800 text-rose-300 text-xs font-semibold">
+              <span>Storage Engineering</span>
+              <span>&bull;</span>
+              <span>Zero Git Bloat</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Large Media Blobs: GitHub Releases vs. Git Tree Bloat
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Why committing MP3s and MP4s directly to Git destroys repositories, and how GitHub Releases solves it.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Wrong Way -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
+              <span class="text-xs font-bold text-rose-400 uppercase tracking-wider block">❌ The Anti-Pattern: Raw Blobs in Git</span>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>&bull; A few 200MB OBS recordings balloon git clone size to 5GB+</li>
+                <li>&bull; GitHub completely blocks pushes containing files over 100MB</li>
+                <li>&bull; AI Studio cloud containers take minutes to clone or run out of memory</li>
+                <li>&bull; Git LFS incurs unexpected bandwidth limits and billing friction</li>
+              </ul>
+            </div>
+
+            <!-- Right Way -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">✅ The Solution: GitHub Releases Assets</span>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>&bull; Supports files up to 2GB per asset with zero git history impact</li>
+                <li>&bull; Permanent direct CDN URLs streamable by HTML5 <code class="text-emerald-300 font-mono">&lt;audio&gt;</code> tags</li>
+                <li>&bull; Keeps the active Git repository ultra-lean (under 30MB)</li>
+                <li>&bull; Compatible with iPad/iPhone mobile uploads via web browser</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 flex items-center justify-between">
+            <span class="text-sky-300">URL: https://github.com/{user}/{repo}/releases/download/media-assets/notebooklm_ep01.mp3</span>
+            <span class="text-emerald-400 font-bold">Direct Streaming CDN</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Google Drive as Interim Mobile Scratchpad -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950 border border-blue-800 text-blue-300 text-xs font-semibold">
+              <span>Mobile Ergonomics</span>
+              <span>&bull;</span>
+              <span>Interim Staging</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Google Drive: Interim Mobile Scratchpad, Not Database
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Leveraging Google Drive and iCloud Drive for frictionless iOS file capture without database coupling.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. Two-Tap Mobile Save</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                When ChatGPT Voice or NotebookLM generates an audio file on iPhone, saving to Google Drive via iOS Share Sheet takes two taps with zero terminal friction.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">2. Desktop Staging Bridge</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                When seated at Windows Desktop, drag media from <code class="text-amber-300 font-mono">LearnBetter_Staging/</code> into GitHub Releases and sync markdown into the monorepo.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">3. Why Not Live Database?</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Using Drive as a live backend requires complex OAuth consent screens, token refresh daemons, and hits cross-origin audio streaming blocks.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span class="font-bold text-white">Golden Rule:</span>
+            <span>Drive is for mobile transit; Git &amp; GitHub Releases are for permanent architecture.</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Single Central Monorepo Governance -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="7">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Repository Governance</span>
+              <span>&bull;</span>
+              <span>Zero Fragmentation</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Single Central Monorepo: The Anti-Fragmentation Standard
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Why creating one repository per AI model fractures mental models and destroys AI Studio's global context window.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <span class="text-xs font-bold text-rose-400 uppercase tracking-wider block">Fractured Multi-Repo Nightmare</span>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>&bull; AI Studio cannot read across repositories without configuring multiple GitHub tokens.</li>
+                <li>&bull; Gemini cannot cross-reference lessons written by Claude or Kiro.</li>
+                <li>&bull; Managing four git branches on an iPad touch interface is error-prone.</li>
+                <li>&bull; Knowledge is scattered across multiple repositories with separate issue trackers.</li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">Unified Monorepo Architecture</span>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>&bull; Gemini in AI Studio inspects all 15 Python tools, Claude lessons, and Kiro guides in one turn.</li>
+                <li>&bull; Atomic commits: one PR updates Python code, tests, and documentation synchronously.</li>
+                <li>&bull; Single deployable web container with zero git submodule overhead.</li>
+                <li>&bull; Uniform full-text search across all AI assistant contributions.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span class="font-bold text-white">Result:</span>
+            <span class="text-emerald-400 font-bold">1 Repository &bull; 1 Knowledge Base &bull; 0 Submodule Friction</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 8: Curriculum Progress & Grand Finale Preview -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="8">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Curriculum Milestone</span>
+              <span>&bull;</span>
+              <span>14 of 15 Complete (93.3%)</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Capability 14 Complete &bull; The Grand Finale Awaits!
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              Fourteen of fifteen capabilities are now verified. Our multi-device topology, media blob pipeline, and monorepo governance are fully codified. Exactly ONE capability remains to conclude the entire series: our Autonomous Agent Tools Gateway!
+            </p>
+          </div>
+
+          <!-- Progress Bar & Finale Callout -->
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-white">Curriculum Progression Status</span>
+              <span class="text-emerald-400 font-mono font-bold">14 / 15 Capabilities (93.3%)</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-sky-500 via-amber-500 to-emerald-400 h-full rounded-full" style="width: 93.3%"></div>
+            </div>
+
+            <!-- The Final Module -->
+            <div class="p-3.5 rounded-lg bg-gradient-to-r from-amber-950/60 to-slate-900 border border-amber-600/80 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-900 text-amber-200 border border-amber-700 uppercase">Grand Finale &bull; Capability 15</span>
+                <div class="text-sm font-bold text-white mt-1">Dual-Audience Autonomous Agent Gateway</div>
+                <p class="text-xs text-slate-300 mt-0.5">Machine-readable OpenAPI JSON Schemas, standardized Function Calling definitions for Gemini/Claude/OpenAI, and live sandbox execution.</p>
+              </div>
+              <span class="text-xs font-bold text-amber-400 font-mono px-3 py-1 rounded bg-amber-950 border border-amber-800 whitespace-nowrap ml-4">The Crown Jewel</span>
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="flex items-center gap-3">
+            <a href="/videos/14_CAPABILITY_ROADMAP_HUB_VIDEO.html" class="flex-1 py-2 text-center text-xs font-bold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-md flex items-center justify-center gap-1.5">
+              <span>🎬 Launch Video Studio Hub 14 &rarr;</span>
+            </a>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
+              Curriculum Overview
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Controls & Progress Footer -->
+      <footer class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" onclick="prevSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          
+          <div class="text-xs font-mono text-slate-400 px-2">
+            Slide <span id="currentSlideNum" class="text-white font-bold">1</span> / <span id="totalSlidesNum">8</span>
+          </div>
+
+          <button id="nextBtn" onclick="nextSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Dot Navigation Indicators -->
+        <div class="hidden sm:flex items-center gap-1.5" id="slideDots">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Quick Shortcut Hint -->
+        <div class="text-[11px] text-slate-400 hidden lg:block">
+          Keys: <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">←</kbd> <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">→</kbd> Navigate &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">L</kbd> Listen &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">N</kbd> Notes
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Collapsible Speaker Notes Drawer -->
+  <aside id="notesDrawer" class="hidden bg-slate-900 border-t border-slate-800 px-6 py-4 fixed bottom-0 left-0 right-0 z-40 max-h-48 overflow-y-auto shadow-2xl backdrop-blur-md">
+    <div class="max-w-4xl mx-auto space-y-1.5">
+      <div class="flex items-center justify-between text-xs">
+        <span class="font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          Speaker Script (Verbatim Audio)
+        </span>
+        <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs">&times; Close</button>
+      </div>
+      <p id="speakerNotesText" class="text-xs text-slate-200 leading-relaxed font-sans"></p>
+    </div>
+  </aside>
+
+  <!-- Script Logic: Narration, Auto-Advance, Keyboard & Interactive Lab -->
+  <script>
+    // Slide Narrations (8 Slides)
+    const slideNarrations = [
+      // Slide 1
+      "Welcome to Deck 14: Ecosystem Roadmap Hub and Multi-Device Architecture. Modern technical learning and software engineering rarely take place on a single screen. In Capability 14, we unveil our strategic governance framework: harmonizing our triad hardware topology across iPhone, iPad, and Windows desktop, hosting large audio blobs on GitHub Releases with zero git bloat, and standardizing multi-AI monorepo collaboration.",
+      
+      // Slide 2
+      "Our system embraces asymmetric device specialization. The iPhone is our mobility and voice engine, capturing ChatGPT natural voice discussions and NotebookLM podcast overviews. The iPad is our tactile visual canvas, perfect for restructuring playlists, testing audio playback, and studying from the couch. The Windows desktop handles heavy compute: OBS recording, CTranslate2 Whisper transcription, and terminal git workflows.",
+      
+      // Slide 3
+      "Similarly, we allocate five specialized AI models to their natural strengths. Gemini 3.8 Flash handles massive one-million token context and full-stack web generation. Claude Code operates in the terminal for deep Python refactoring. ChatGPT Voice provides human-cadence voice brainstorming. And NotebookLM generates two-host podcast deep dives for commute listening.",
+      
+      // Slide 4
+      "Here in our Interactive Decision Matrix, you can explore the technical debates resolved in our architecture. Notice how we evaluated monorepo versus multi-repo, large blob hosting on GitHub Releases versus Git LFS, and Google Drive as an interim scratchpad. Click through the topics on the left to inspect our concrete code examples and step-by-step playbooks.",
+      
+      // Slide 5
+      "One of our most critical rules is avoiding git repository bloat. Committing raw MP3 and MP4 files directly to git quickly inflates clone sizes to several gigabytes and triggers GitHub's one-hundred megabyte file reject limit. Instead, our GitHub Releases Asset pipeline hosts files up to two gigabytes for free, providing direct permanent CDN streaming links.",
+      
+      // Slide 6
+      "What is the proper role for Google Drive? We recommend using Google Drive strictly as an interim mobile scratchpad. When ChatGPT or NotebookLM exports audio on an iPhone, saving to Drive takes just two taps. Later, on desktop, files are moved to GitHub Releases. This avoids complex Google OAuth consent daemons and CORS audio streaming blocks.",
+      
+      // Slide 7
+      "Our governance firmly mandates a Single Central Monorepo with segregated subfolders. Fracturing into multiple repositories creates severe context fragmentation: AI Studio cannot read across repos without multiple tokens, and Gemini cannot cross-reference Claude's lessons. In our monorepo, all code and documentation remain searchable in one unified window.",
+      
+      // Slide 8
+      "With Capability 14 complete, ninety-three point three percent of our curriculum is finished: fourteen of fifteen capabilities are ready! Exactly one capability remains to conclude our journey: Capability 15, the Dual-Audience Autonomous Agent Tools Gateway! Let's proceed across the bridge to the Grand Finale!"
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isSpeaking = false;
+    let autoAdvance = false;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
+    let voiceRate = 1.0;
+
+    // Interactive Topic Data
+    const topics = {
+      repo: {
+        title: "Single Central Monorepo vs. Multi-Repo",
+        badge: "Core Architecture",
+        body: "<strong>Verdict: Maintain ONE Central Monorepo</strong> with dedicated subdirectories (<code>/lessons_Claude/</code>, <code>/lessons_Kiro/</code>, <code>/external_models/chatgpt/</code>, <code>/webapp/</code>).<br><br>&bull; <em>Pros:</em> AI Studio inspects all models simultaneously in one context; zero git submodule friction; atomic commits.<br>&bull; <em>Cons:</em> Can grow large if media blobs are mismanaged (prevented via GitHub Releases).",
+        rule: "Verdict: Maintain ONE central monorepo with segregated subfolders. Avoid one repo per model."
+      },
+      blobs: {
+        title: "Large Media Blobs: GitHub Releases vs. Git Tree",
+        badge: "Storage Engine",
+        body: "<strong>Verdict: Use GitHub Releases CDN</strong> for all .mp3, .m4a, and .mp4 files.<br><br>&bull; <em>Pros:</em> Up to 2GB per asset; completely free; permanent direct CDN streaming URLs; preserves sub-30MB clone times.<br>&bull; <em>Cons:</em> Must be attached to a git tag/release (e.g., tag 'media-assets').",
+        rule: "Verdict: Never commit large audio/video blobs to git. Use GitHub Releases CDN streaming links."
+      },
+      drive: {
+        title: "Google Drive: Mobile Staging vs. App Database",
+        badge: "Mobile Staging",
+        body: "<strong>Verdict: Use Google Drive as an interim mobile staging buffer</strong>, but never as a live database.<br><br>&bull; <em>Pros:</em> Two-tap saving from iPhone iOS Share Sheet into <code>LearnBetter_Staging/</code> without terminal access.<br>&bull; <em>Cons:</em> Live app database usage causes OAuth consent friction, token refresh bugs, and CORS audio playback failures.",
+        rule: "Verdict: Drive is for frictionless mobile transit; GitHub & Releases are for permanent architecture."
+      },
+      specialization: {
+        title: "Triad Hardware Specialization",
+        badge: "Hardware Triad",
+        body: "<strong>Verdict: Asymmetric Hardware Specialization.</strong><br><br>&bull; <em>iPhone:</em> Natural-cadence ChatGPT voice brainstorming and audio memos on commute.<br>&bull; <em>iPad:</em> Visual cluster restructuring, word clouds, code reviews from the couch.<br>&bull; <em>Windows Desktop:</em> Heavy OBS capture, local Whisper ML runs, and git pushes.",
+        rule: "Verdict: Assign each device to its highest-leverage physical superpower."
+      }
+    };
+
+    function initPresentation() {
+      // Build dot indicators
+      const dotsContainer = document.getElementById('slideDots');
+      dotsContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === 1 ? 'bg-amber-400 w-5' : 'bg-slate-700 hover:bg-slate-500'}`;
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+      updateSlideDisplay();
+      switchTopic('repo');
+    }
+
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
+      const activeEl = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (activeEl) activeEl.classList.add('active');
+
+      document.getElementById('currentSlideNum').textContent = currentSlide;
+      document.getElementById('prevBtn').disabled = currentSlide === 1;
+      document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+
+      // Update dots
+      const dots = document.getElementById('slideDots').children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i + 1 === currentSlide) {
+          dots[i].className = 'w-5 h-2 rounded-full bg-amber-400 transition-all';
+        } else {
+          dots[i].className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all';
+        }
+      }
+
+      // Update speaker notes
+      document.getElementById('speakerNotesText').textContent = slideNarrations[currentSlide - 1];
+
+      // If speech was active, speak new slide
+      if (isSpeaking) {
+        stopSpeech();
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
+
+    // Audio & Narration System
+    function toggleSlideNarration() {
+      if (isSpeaking) {
+        stopSpeech();
+      } else {
+        speakCurrentSlide();
+      }
+    }
+
+    function speakCurrentSlide() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      stopSpeech();
+
+      const text = slideNarrations[currentSlide - 1];
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = voiceRate;
+
+      currentUtterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('playLabel').textContent = "Pause";
+        document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('waveform').classList.remove('hidden');
+        document.getElementById('waveform').classList.add('flex');
+      };
+
+      currentUtterance.onend = () => {
+        isSpeaking = false;
+        document.getElementById('playLabel').textContent = "Listen";
+        document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('waveform').classList.remove('flex');
+
+        if (autoAdvance && currentSlide < totalSlides) {
+          setTimeout(() => {
+            nextSlide();
+            speakCurrentSlide();
+          }, 800);
+        }
+      };
+
+      currentUtterance.onerror = () => {
+        stopSpeech();
+      };
+
+      speechSynth.speak(currentUtterance);
+    }
+
+    function stopSpeech() {
+      if (speechSynth.speaking) {
+        speechSynth.cancel();
+      }
+      isSpeaking = false;
+      document.getElementById('playLabel').textContent = "Listen";
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+    }
+
+    function toggleAutoAdvance(enabled) {
+      autoAdvance = enabled;
+    }
+
+    function changeVoiceRate(rate) {
+      voiceRate = parseFloat(rate);
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    // Interactive Lab Functions
+    function switchTopic(key) {
+      const data = topics[key];
+      if (!data) return;
+
+      const keys = ['repo', 'blobs', 'drive', 'specialization'];
+      keys.forEach(k => {
+        const btn = document.getElementById(`t-btn-${k}`);
+        if (k === key) {
+          btn.className = 'w-full text-left p-2 rounded-lg bg-amber-950/80 border border-amber-600 text-xs text-white flex items-center justify-between transition-all';
+        } else {
+          btn.className = 'w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all';
+        }
+      });
+
+      document.getElementById('topicTitle').textContent = data.title;
+      document.getElementById('topicBadge').textContent = data.badge;
+      document.getElementById('topicDetailsBox').innerHTML = data.body;
+      document.getElementById('topicRuleText').textContent = data.rule;
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'l' || e.key === 'L') {
+        toggleSlideNarration();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotesDrawer();
+      }
+    });
+
+    window.onload = initPresentation;
+  </script>
+</body>
+</html>

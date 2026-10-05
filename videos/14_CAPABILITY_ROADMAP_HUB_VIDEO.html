@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Hub: Capability 14 — Ecosystem Roadmap Hub &amp; Multi-Device Architecture</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s infinite ease-in-out;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.15s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.3s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.45s; }
+    .waveform-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .studio-bg {
+      background: radial-gradient(circle at center, #78350f 0%, #0f172a 70%, #020617 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Curriculum Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Curriculum</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 uppercase tracking-wider flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Video Hub • Cap 14
+          </span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">Ecosystem Roadmap &amp; Multi-Device Hub</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Hardware Triad &bull; GitHub Releases Blobs &bull; Monorepo Governance</p>
+      </div>
+    </div>
+
+    <!-- Actions & Slide Deck Link -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="/decks/14_CAPABILITY_ROADMAP_HUB.html" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all shadow-sm">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+        </svg>
+        <span>Slide Deck 14</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Player & Simulator Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Left Column: Video & Audio Player Simulator (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Studio Screen Player Container -->
+      <div class="aspect-video w-full rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl relative overflow-hidden flex flex-col justify-between p-6 studio-bg">
+        
+        <!-- Header Tag -->
+        <div class="flex items-center justify-between z-10">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="text-xs font-mono font-bold text-rose-400 uppercase tracking-widest">RECORDING READY &bull; 1080P 60FPS</span>
+          </div>
+          <span class="text-xs font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">4m 30s Audio Script</span>
+        </div>
+
+        <!-- Center Graphic -->
+        <div class="flex flex-col items-center justify-center text-center space-y-3 z-10 py-6">
+          <div class="w-16 h-16 rounded-2xl bg-amber-500/20 border-2 border-amber-500/80 flex items-center justify-center shadow-xl animate-pulse-ring">
+            <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 id="currentSceneTitle" class="text-xl font-bold text-white tracking-tight">Scene 1: The Real-World Engineering Reality</h3>
+            <p id="currentSceneSubtitle" class="text-xs text-amber-300 font-mono mt-1">Timecode: 0:00 - 0:45 (45s)</p>
+          </div>
+
+          <!-- Waveform Visualizer -->
+          <div id="videoWaveform" class="hidden items-center justify-center gap-1.5 h-8 pt-2">
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+            <span class="w-1 bg-amber-400 rounded-full waveform-bar"></span>
+          </div>
+        </div>
+
+        <!-- Player Controls Bar -->
+        <div class="z-10 bg-slate-950/80 backdrop-blur-md p-3 rounded-xl border border-slate-800/80 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            <button id="mainPlayBtn" onclick="togglePlayScene()" class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center font-bold transition-all shadow-md">
+              <svg id="mainPlayIcon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+            <button onclick="prevScene()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <button onclick="nextScene()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+            <span class="text-xs font-mono text-slate-300 ml-2" id="sceneIndicator">Scene 1 / 5</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 text-xs text-slate-400">
+              <span>Speed:</span>
+              <select id="rateSelect" onchange="changeRate(this.value)" class="bg-slate-800 text-slate-200 text-xs rounded px-1.5 py-0.5 border border-slate-700 outline-none">
+                <option value="0.8">0.8x</option>
+                <option value="1.0" selected>1.0x</option>
+                <option value="1.25">1.25x</option>
+              </select>
+            </div>
+            <label class="flex items-center gap-1 text-xs text-slate-300 cursor-pointer">
+              <input type="checkbox" id="autoAdvanceCheck" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-amber-500 focus:ring-0">
+              <span class="text-[11px]">Continuous</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Architectural Topology Summary Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span> Triad Hardware Specialization Matrix
+          </span>
+          <span class="text-[11px] text-amber-400 font-mono">3 Devices &bull; Zero Conflict</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex flex-col justify-between">
+            <span class="text-sky-400 font-bold">1. iPhone</span>
+            <span class="text-slate-300 text-[10px] mt-1">ChatGPT Voice &bull; AirPods</span>
+          </div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex flex-col justify-between">
+            <span class="text-purple-400 font-bold">2. iPad Pro</span>
+            <span class="text-slate-300 text-[10px] mt-1">Tactile Review &bull; Speech</span>
+          </div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex flex-col justify-between">
+            <span class="text-emerald-400 font-bold">3. Windows Desktop</span>
+            <span class="text-slate-300 text-[10px] mt-1">OBS Capture &bull; int8 Whisper</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Scene Teleprompter & Storyboard (5 cols) -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      
+      <!-- Teleprompter Container -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between flex-1 shadow-xl">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+              </svg>
+              <span>Verbatim Scene Teleprompter</span>
+            </h3>
+            <span id="sceneBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">Scene 1 of 5</span>
+          </div>
+
+          <!-- Scene Selector Tabs -->
+          <div class="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-thin">
+            <button onclick="selectScene(0)" id="tab-0" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 whitespace-nowrap transition-all">S1: Reality</button>
+            <button onclick="selectScene(1)" id="tab-1" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S2: Triad</button>
+            <button onclick="selectScene(2)" id="tab-2" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S3: Releases CDN</button>
+            <button onclick="selectScene(3)" id="tab-3" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S4: Monorepo</button>
+            <button onclick="selectScene(4)" id="tab-4" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all">S5: Grand Finale</button>
+          </div>
+
+          <!-- Script Box -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 min-h-[220px] max-h-[300px] overflow-y-auto scrollbar-thin space-y-3">
+            <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider" id="scriptActionText">
+              Camera: Direct to camera; split-screen overlay displaying the three physical hardware devices (iPhone, iPad, Windows desktop).
+            </div>
+            <p id="scriptNarrationText" class="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+              "Welcome back to the Learn Better Systems series. Today we cross a momentous boundary into Capability 14: our Ecosystem Roadmap Hub and Multi-Device Hardware Topology. Real-world engineering never takes place on an idealized single machine. Our cognitive work is spread across mobile phones, tablet touchscreens, and desktop workstations."
+            </p>
+          </div>
+        </div>
+
+        <!-- Next Scene Preview Footer -->
+        <div class="pt-4 border-t border-slate-800/80 mt-4 flex items-center justify-between text-xs text-slate-400">
+          <span id="nextSceneHint">Next: The Triad Hardware Topology</span>
+          <button onclick="nextScene()" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
+            <span>Advance &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Curriculum Progress Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-white">Curriculum Series Progress</span>
+          <span class="text-emerald-400 font-mono font-bold">14 of 15 Complete (93.3%)</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div class="bg-gradient-to-r from-sky-500 via-amber-500 to-emerald-400 h-full rounded-full" style="width: 93.3%"></div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+          <span>Current: Capability 14</span>
+          <span class="text-amber-300 font-semibold">Remaining: Exactly 1 Module (Cap 15 Finale)</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Script Logic -->
+  <script>
+    const scenes = [
+      {
+        title: "Scene 1: The Real-World Engineering Reality",
+        subtitle: "Timecode: 0:00 - 0:45 (45s)",
+        action: "Camera: Direct to camera; split-screen overlay displaying the three physical hardware devices (iPhone, iPad, Windows desktop).",
+        script: "Welcome back to the Learn Better Systems series. Today we cross a momentous boundary into Capability 14: our Ecosystem Roadmap Hub and Multi-Device Hardware Topology. Real-world engineering never takes place on an idealized single machine. In reality, our cognitive work is spread across mobile phones during commutes, tablet touchscreens on the couch, and high-powered desktop workstations in the office. Furthermore, we coordinate multiple frontier AI engines—Gemini, Claude, ChatGPT, and NotebookLM. Capability 14 provides the definitive blueprints and interactive tools to govern this entire ecosystem.",
+        next: "Next: The Triad Hardware Topology"
+      },
+      {
+        title: "Scene 2: The Triad Hardware Topology",
+        subtitle: "Timecode: 0:45 - 1:35 (50s)",
+        action: "Camera: Screencast showing the hardware specialization matrix: iPhone voice ideation, iPad touch canvas, and Windows OBS & int8 Whisper execution.",
+        script: "Our architecture rests on the Triad Hardware Topology: three physical devices, each specialized for its highest-leverage capability. Device one is the iPhone: mobile intake, voice dictation, and listening to NotebookLM podcasts on AirPods while walking. Device two is the iPad Pro: with its tactile touch display and Web Speech synthesis, it is the premier platform for deep reading, cluster restructuring, and inspecting slide decks. Device three is the Windows Desktop: equipped with discrete compute, it handles OBS video capture, local Whisper transcription using int8 quantization, and large-scale terminal agent execution. None of them compete. Every artifact produced by one flows into the common pipeline.",
+        next: "Next: Large Media Blobs: GitHub Releases vs Git Bloat"
+      },
+      {
+        title: "Scene 3: Large Media Blobs: GitHub Releases vs Git Bloat",
+        subtitle: "Timecode: 1:35 - 2:30 (55s)",
+        action: "Camera: Dynamic animation contrasting repository clone degradation (5GB+ repo) against our zero-bloat GitHub Releases CDN streaming strategy.",
+        script: "One of the most dangerous traps in multi-media projects is committing audio and video files directly into Git. A dozen 100-megabyte OBS recordings quickly bloat your repository past multiple gigabytes. Pushes get rejected, Git LFS incurs complex setup friction, and cloud containers in Google AI Studio take minutes to clone before timing out. Our solution is simple and battle-tested: GitHub Releases Assets. We publish all generated audio podcasts and video captures as tagged release assets. GitHub provides a world-class global CDN capable of streaming up to two-gigabyte files directly to HTML5 media tags, while keeping our core codebase under thirty megabytes. Clones remain near-instantaneous on any device.",
+        next: "Next: Monorepo Governance & Multi-AI Synergy"
+      },
+      {
+        title: "Scene 4: Monorepo Governance & Multi-AI Synergy",
+        subtitle: "Timecode: 2:30 - 3:20 (50s)",
+        action: "Camera: Interactive exploration of Slide 4 diagnostic matrix and the single monorepo file tree containing segregated Gemini, Claude, and Kiro workspaces.",
+        script: "A frequent question we face is: 'Should we have a separate GitHub repository for Gemini experiments, another for Claude, and another for Kiro?' Our architectural verdict is unequivocally NO. Splitting into multiple repositories creates cognitive fragmentation and destroys AI model effectiveness. In a single central monorepo, Google Gemini inside AI Studio can read all fifteen Python tools, review Claude refactoring decisions, and cross-reference documentation within a single 1-million-token context window. Every modification is atomic, auditable, and tracked under one commit hash.",
+        next: "Next: Strategic Roadmap & The Grand Finale (Cap 15)"
+      },
+      {
+        title: "Scene 5: Strategic Roadmap & The Grand Finale",
+        subtitle: "Timecode: 3:20 - 4:30 (70s)",
+        action: "Camera: Screencast traversing RoadmapHub.tsx tracking completed milestones, then unveiling the progress bar at 14 of 15 capabilities complete (93.3%).",
+        script: "In our application's Roadmap Hub tab, users can interactively track our eight strategic milestones and inspect the exact code patterns driving our multi-device pipeline. With Capability 14 fully delivered, fourteen of our fifteen capabilities are complete. That is ninety-three point three percent of the entire curriculum verified and operational in production! Only ONE final capability remains: Capability 15, the Dual-Audience Autonomous Agent Tools Gateway. Join us for the grand finale, where we transform our entire 15-capability platform into machine-readable OpenAPI schemas and function calling endpoints for autonomous AI agents!",
+        next: "End of Capability 14 Script (Next: Grand Finale Cap 15)"
+      }
+    ];
+
+    let currentSceneIndex = 0;
+    let isPlaying = false;
+    let autoAdvance = false;
+    let speechRate = 1.0;
+    let synth = window.speechSynthesis;
+    let currentUtterance = null;
+
+    function renderScene(index) {
+      currentSceneIndex = index;
+      const s = scenes[index];
+
+      document.getElementById('currentSceneTitle').textContent = s.title;
+      document.getElementById('currentSceneSubtitle').textContent = s.subtitle;
+      document.getElementById('sceneIndicator').textContent = `Scene ${index + 1} / ${scenes.length}`;
+      document.getElementById('sceneBadge').textContent = `Scene ${index + 1} of ${scenes.length}`;
+      document.getElementById('scriptActionText').textContent = s.action;
+      document.getElementById('scriptNarrationText').textContent = s.script;
+      document.getElementById('nextSceneHint').textContent = s.next;
+
+      // Update Tab Styles
+      for (let i = 0; i < scenes.length; i++) {
+        const tab = document.getElementById(`tab-${i}`);
+        if (i === index) {
+          tab.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 whitespace-nowrap transition-all";
+        } else {
+          tab.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white whitespace-nowrap transition-all";
+        }
+      }
+    }
+
+    function selectScene(index) {
+      stopAudio();
+      renderScene(index);
+    }
+
+    function prevScene() {
+      if (currentSceneIndex > 0) {
+        selectScene(currentSceneIndex - 1);
+      }
+    }
+
+    function nextScene() {
+      if (currentSceneIndex < scenes.length - 1) {
+        selectScene(currentSceneIndex + 1);
+      } else {
+        stopAudio();
+      }
+    }
+
+    function togglePlayScene() {
+      if (isPlaying) {
+        stopAudio();
+      } else {
+        playCurrentScene();
+      }
+    }
+
+    function playCurrentScene() {
+      if (!('speechSynthesis' in window)) {
+        alert('Web Speech API is not supported in this browser.');
+        return;
+      }
+
+      synth.cancel();
+      const s = scenes[currentSceneIndex];
+      currentUtterance = new SpeechSynthesisUtterance(s.script);
+      currentUtterance.rate = speechRate;
+
+      currentUtterance.onstart = () => {
+        isPlaying = true;
+        document.getElementById('videoWaveform').classList.remove('hidden');
+        document.getElementById('videoWaveform').classList.add('flex');
+        document.getElementById('mainPlayIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      };
+
+      currentUtterance.onend = () => {
+        stopAudio();
+        if (autoAdvance && currentSceneIndex < scenes.length - 1) {
+          nextScene();
+          setTimeout(() => playCurrentScene(), 400);
+        }
+      };
+
+      currentUtterance.onerror = () => {
+        stopAudio();
+      };
+
+      synth.speak(currentUtterance);
+    }
+
+    function stopAudio() {
+      if (synth) synth.cancel();
+      isPlaying = false;
+      document.getElementById('videoWaveform').classList.remove('flex');
+      document.getElementById('videoWaveform').classList.add('hidden');
+      document.getElementById('mainPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+    }
+
+    function changeRate(val) {
+      speechRate = parseFloat(val);
+      if (isPlaying) {
+        playCurrentScene();
+      }
+    }
+
+    function toggleAutoAdvance(checked) {
+      autoAdvance = checked;
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      if (e.key === ' ' || e.key === 'k') {
+        e.preventDefault();
+        togglePlayScene();
+      } else if (e.key === 'ArrowRight' || e.key === 'l') {
+        e.preventDefault();
+        nextScene();
+      } else if (e.key === 'ArrowLeft' || e.key === 'j') {
+        e.preventDefault();
+        prevScene();
+      }
+    });
+
+    window.onload = () => {
+      renderScene(0);
+    };
+  </script>
+</body>
+</html>
