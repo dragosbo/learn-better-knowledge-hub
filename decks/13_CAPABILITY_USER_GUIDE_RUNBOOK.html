@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck 13: Interactive User Guide &amp; iPad Safari Runbook — Technical Blueprint</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .studio-grid {
+      background-image: radial-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .code-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+    }
+    .waveform-bar {
+      animation: wave 1.2s infinite ease-in-out;
+    }
+    .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+    .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+    .waveform-bar:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+    .slide {
+      display: none;
+    }
+    .slide.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-slate-950">
+
+  <!-- Header & Audio Narration Bar -->
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-md flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700" title="Return to Master Overview">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="hidden sm:inline">Overview</span>
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 uppercase tracking-wider">Deck 13 • Blueprint</span>
+          <h1 class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">User Guide &amp; iPad Safari Runbook</h1>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">Operational Manual &bull; iPadOS 401 WebKit Fix &bull; Level 1-10 Matrix</p>
+      </div>
+    </div>
+
+    <!-- Audio Player, Auto-Advance & Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Auto-Advance Toggle -->
+      <label class="hidden md:flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 hover:border-slate-700" title="Automatically advance to the next slide when narration finishes">
+        <input type="checkbox" id="autoAdvanceToggle" onchange="toggleAutoAdvance(this.checked)" class="rounded bg-slate-800 border-slate-700 text-purple-500 focus:ring-0">
+        <span class="text-[11px]">Auto-Advance</span>
+      </label>
+
+      <!-- Speech Narration Control -->
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1">
+        <button id="playNarrationBtn" onclick="toggleSlideNarration()" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded bg-purple-500 hover:bg-purple-400 text-slate-950 transition-all shadow-sm">
+          <svg id="playIcon" class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playLabel">Listen</span>
+        </button>
+
+        <!-- Waveform indicator -->
+        <div id="waveform" class="hidden items-center gap-0.5 px-1.5 h-4">
+          <span class="w-1 bg-purple-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-purple-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-purple-400 rounded-full waveform-bar"></span>
+          <span class="w-1 bg-purple-400 rounded-full waveform-bar"></span>
+        </div>
+
+        <!-- Voice speed selector -->
+        <select id="voiceRateSelect" onchange="changeVoiceRate(this.value)" class="bg-slate-800 text-[11px] text-slate-200 rounded px-1.5 py-1 border border-slate-700 outline-none">
+          <option value="0.8">0.8x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <!-- Speaker Notes Drawer Button -->
+      <button id="notesToggleBtn" onclick="toggleNotesDrawer()" class="p-1.5 text-xs rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors" title="Toggle Speaker Script (N)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </button>
+
+      <!-- Video Hub Link -->
+      <a href="/videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_VIDEO.html" class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-sm">
+        <span>🎬 Video</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Presentation Main Container -->
+  <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 justify-between relative studio-grid">
+    
+    <!-- Slides Card Container -->
+    <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-2xl relative min-h-[560px] flex flex-col justify-between backdrop-blur-md">
+      
+      <!-- Slide Area -->
+      <div id="slideViewport" class="flex-1 flex flex-col justify-between">
+        
+        <!-- SLIDE 1: Executive Overview -->
+        <div class="slide active flex flex-col justify-between space-y-6" data-slide="1">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/80 border border-purple-800 text-purple-300 text-xs font-semibold">
+              <span>Capability 13 &bull; Chapter 5: Codebase &amp; DevOps</span>
+              <span>&bull;</span>
+              <span>Operational Resilience</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Interactive User Guide &amp; iPad Safari Operational Runbook
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              Software documentation must be as reliable as code. Capability 13 delivers a multi-modal documentation system: a downloadable and playable in-app manual (<code class="text-purple-300 font-mono">USER_GUIDE.md</code>), an ink-efficient vector print engine, a 10-tier codebase prerequisites matrix (<code class="text-purple-300 font-mono">PREREQUISITES.md</code>), and the canonical field runbook resolving iPadOS WebKit 401 cross-site authorization failures.
+            </p>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-purple-400 font-bold text-sm flex items-center gap-2">
+                <span>📖 Complete Manual</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Step-by-step guidance across all 5 app tabs, AirPods stem controls, Markdown/Obsidian export, and Gemini prompt templates.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-rose-400 font-bold text-sm flex items-center gap-2">
+                <span>🛡️ iPadOS 401 Field Runbook</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Diagnostic breakdown of WebKit Intelligent Tracking Prevention (ITP) cookie blocking in Cloud Run iframes with 5-step fix.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+                <span>🎯 L1 to L10 Prerequisites</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Calibrated difficulty spectrum across all 10 repository languages from novice scripter to principal distributed architect.
+              </p>
+            </div>
+          </div>
+
+          <!-- Architecture Footnote -->
+          <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-4">
+            <span class="font-mono text-purple-400">Components: UserGuideViewer.tsx &bull; PrerequisitesModal.tsx &bull; guideHtmlFormatter.ts</span>
+            <span>Runtimes: iPadOS Safari &bull; Brave &bull; Chrome &bull; PWA Engine</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Core Learning Workflow & 5 Primary Modules -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="2">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-300 text-xs font-semibold">
+              <span>User Journey</span>
+              <span>&bull;</span>
+              <span>Compound Technical Learning</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              The 4-Step Compound Technical Learning Cycle
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              The user guide codifies how passive video consumption transitions into compound engineering knowledge.
+            </p>
+          </div>
+
+          <!-- 4 Pillars Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 font-bold text-xs flex items-center justify-center border border-sky-500/30">1</span>
+              <h4 class="text-xs font-bold text-white uppercase">Curate &amp; Track</h4>
+              <p class="text-xs text-slate-300">
+                Organize YouTube playlists by tech stack, difficulty, and study status (<span class="text-sky-300 font-mono">To Watch &rarr; In Progress &rarr; Mastered</span>).
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs flex items-center justify-center border border-indigo-500/30">2</span>
+              <h4 class="text-xs font-bold text-white uppercase">Deep Synthesis</h4>
+              <p class="text-xs text-slate-300">
+                In Knowledge Hub, review concise summaries, write Markdown notes, log doubts, and export Cornell notes to Obsidian vaults.
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xs flex items-center justify-center border border-purple-500/30">3</span>
+              <h4 class="text-xs font-bold text-white uppercase">AirPods Audio</h4>
+              <p class="text-xs text-slate-300">
+                Listen on-demand to summaries, prompt logs, and guides with stem squeeze gestures and MediaSession lockscreen controls.
+              </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/30">4</span>
+              <h4 class="text-xs font-bold text-white uppercase">Vibe Coding</h4>
+              <p class="text-xs text-slate-300">
+                Study Claude &amp; Kiro lessons, generate token-hardened prompts via Gemini Studio, and prevent prompt regression.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span class="font-bold text-white">Audio Support:</span>
+            <span>Every single section in the manual features an embedded <code class="text-purple-300 font-mono">AudioLessonPlayer</code> for eyes-free listening.</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: The iPadOS 401 WebKit Crisis & ITP Root Cause -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="3">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950 border border-rose-800 text-rose-300 text-xs font-semibold">
+              <span>Incident Postmortem</span>
+              <span>&bull;</span>
+              <span>WebKit ITP Breakdown</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              The iPadOS 401 WebKit Crisis: Why All Browsers Failed
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Following an iPadOS update, preview frames returned <code class="text-rose-400 font-mono">HTTP 401 Unauthorized</code> across Safari, Chrome, and Brave.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
+              <span class="text-xs font-bold text-rose-400 uppercase tracking-wider block">1. Universal WebKit Engine Mandate</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                On iOS and iPadOS, Apple mandates that every browser—whether Chrome, Brave, Edge, or Safari—must use the operating system's internal WebKit framework. A security policy change at the OS level impacts all browsers identically.
+              </p>
+              <div class="p-2 rounded bg-rose-950/30 border border-rose-900/50 text-[11px] text-rose-200">
+                Switching from Safari to Chrome or Brave does not bypass WebKit rules.
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">2. ITP Drops Cross-Origin Iframe Cookies</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                AI Studio embeds preview applets inside an <code class="text-amber-300 font-mono">&lt;iframe&gt;</code> under a Cloud Run domain (<code class="font-mono text-slate-300">*.run.app</code>). iPadOS's <em>"Prevent Cross-Site Tracking"</em> flagged the Google authentication session cookies as third-party tracking cookies and dropped them.
+              </p>
+              <div class="p-2 rounded bg-amber-950/30 border border-amber-900/50 text-[11px] text-amber-200">
+                Cloud Run ingress received requests without credentials &rarr; rejected with 401.
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span class="font-bold text-white">The Insight:</span>
+            <span class="text-sky-300">The 401 was NOT an application bug—it was an operating system third-party cookie quarantine.</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Interactive iPad 401 Troubleshooting Runbook -->
+        <div class="slide flex flex-col justify-between space-y-4" data-slide="4">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950 border border-rose-800 text-rose-300 text-xs font-semibold">
+              <span>Interactive Diagnostic Lab</span>
+              <span>&bull;</span>
+              <span>Runbook Simulator</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white">
+              Interactive iPadOS 401 Resolution Runbook Simulator
+            </h2>
+            <p class="text-xs text-slate-300">
+              Select your browser and toggle settings to test the diagnostic resolution flow.
+            </p>
+          </div>
+
+          <!-- Interactive Workspace -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <!-- Step Selector (4 cols) -->
+            <div class="md:col-span-4 space-y-1.5">
+              <label class="text-[10px] font-bold uppercase text-slate-400">Resolution Steps:</label>
+              <div class="space-y-1" id="runbookStepButtons">
+                <button onclick="switchRunbookStep(1)" id="rb-btn-1" class="w-full text-left p-2 rounded-lg bg-purple-950/80 border border-purple-600 text-xs text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">Step 1: Settings App</div>
+                  <span class="text-[10px] font-mono text-purple-300">Open OS</span>
+                </button>
+                <button onclick="switchRunbookStep(2)" id="rb-btn-2" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">Step 2: Safari / WebKit</div>
+                  <span class="text-[10px] font-mono text-slate-400">ITP Off</span>
+                </button>
+                <button onclick="switchRunbookStep(3)" id="rb-btn-3" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">Step 3: Brave / Chrome</div>
+                  <span class="text-[10px] font-mono text-slate-400">Tracking ON</span>
+                </button>
+                <button onclick="switchRunbookStep(4)" id="rb-btn-4" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">Step 4: Re-Authenticate</div>
+                  <span class="text-[10px] font-mono text-slate-400">Google Auth</span>
+                </button>
+                <button onclick="switchRunbookStep(5)" id="rb-btn-5" class="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all">
+                  <div class="font-bold">Step 5: Pop-Out Tab</div>
+                  <span class="text-[10px] font-mono text-slate-400">Workaround</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Details Box (8 cols) -->
+            <div class="md:col-span-8 flex flex-col space-y-2">
+              <div class="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-t-lg border border-slate-800 text-xs">
+                <span id="runbookStepTitle" class="font-mono font-bold text-purple-300">Step 1: Open iPad Settings App</span>
+                <span id="runbookStepStatus" class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Verified Fix</span>
+              </div>
+
+              <!-- Terminal Details Display -->
+              <div id="runbookStepBody" class="bg-slate-900/80 p-3 rounded-b-lg border-x border-b border-slate-800 text-xs text-slate-200 overflow-y-auto max-h-[140px] code-scroll leading-relaxed space-y-2">
+                <!-- Dynamically populated -->
+              </div>
+
+              <!-- Verification Callout -->
+              <div class="p-2 bg-slate-900/60 rounded border border-slate-800 text-[11px] text-slate-300 flex items-start gap-2">
+                <span class="text-purple-400 font-bold">&check;</span>
+                <span id="runbookOutcomeText">
+                  Confirmed: Disabling "Prevent Cross-Site Tracking" restores iframe token delivery on iPadOS.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 text-right">
+            Click any step above to inspect the exact iPadOS Settings navigation path.
+          </div>
+        </div>
+
+        <!-- SLIDE 5: iPad Fullscreen & Immersive PWA Mode -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="5">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950 border border-indigo-800 text-indigo-300 text-xs font-semibold">
+              <span>UX Engineering</span>
+              <span>&bull;</span>
+              <span>Fullscreen &amp; PWA</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              iPad Fullscreen Engineering: Defeating WebKit Limitations
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Apple disables native <code class="text-indigo-300 font-mono">requestFullscreen()</code> inside WebKit iframe embeds. Here is how we bypass it.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Method 1: CSS Viewport</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                The in-app <code class="text-sky-300 font-mono">[ ⛶ ]</code> button triggers a CSS fallback: <code class="font-mono text-[11px] text-slate-300">fixed inset-0 z-50 w-screen h-screen</code>, expanding the container over surrounding UI.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Method 2: Brave Auto-Collapse</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Enabling <em>"Hide Toolbar on Scroll"</em> in Brave settings slides the address bar and tab strips off-screen whenever you scroll through clips or transcripts.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Method 3: Standalone PWA</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Tapping <em>"Add to Home Screen"</em> in Safari/Brave launches the webapp via Apple's WebApp runtime with 100% zero browser UI and true edge-to-edge canvas.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 flex items-center justify-between">
+            <span class="text-purple-300">manifest.json &bull; display: "standalone" &bull; apple-mobile-web-app-capable</span>
+            <span class="text-slate-400 text-[11px]">100% Distraction Free Study</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Codebase Prerequisites: L1 to L10 Matrix -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Competency Spectrum</span>
+              <span>&bull;</span>
+              <span>PREREQUISITES.md</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Codebase Prerequisites: The Level 1 to Level 10 Matrix
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Evaluates the exact engineering competencies needed to audit, understand, and modify each subsystem.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Language Rankings -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block mb-1">Calibrated Language Difficulties:</span>
+              <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div class="p-1.5 rounded bg-slate-900 flex justify-between"><span>TypeScript</span><span class="text-rose-400 font-bold">Level 8</span></div>
+                <div class="p-1.5 rounded bg-slate-900 flex justify-between"><span>Python 3.12</span><span class="text-amber-400 font-bold">Level 7</span></div>
+                <div class="p-1.5 rounded bg-slate-900 flex justify-between"><span>JavaScript</span><span class="text-amber-400 font-bold">Level 6</span></div>
+                <div class="p-1.5 rounded bg-slate-900 flex justify-between"><span>CSS / Tailwind</span><span class="text-sky-400 font-bold">Level 5</span></div>
+                <div class="p-1.5 rounded bg-slate-900 flex justify-between"><span>Dockerfile</span><span class="text-sky-400 font-bold">Level 5</span></div>
+                <div class="p-1.5 rounded bg-slate-900 flex justify-between"><span>Bash / Batch</span><span class="text-emerald-400 font-bold">Level 3</span></div>
+              </div>
+            </div>
+
+            <!-- Highest Complexity Evidence -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-purple-400 uppercase tracking-wider block mb-1">Highest Complexity Code Evidence:</span>
+              <ul class="text-xs text-slate-300 space-y-1.5">
+                <li>&bull; <strong class="text-white">Euler Physics:</strong> Differential gravitational &amp; repulsive forces in 60 FPS Canvas.</li>
+                <li>&bull; <strong class="text-white">Applied ML ASR:</strong> CTranslate2 int8 quantization, VAD thresholds, WER diffs.</li>
+                <li>&bull; <strong class="text-white">Vector Math:</strong> Millimeter-to-point transformations for 7.5mm ruled Cornell notes.</li>
+                <li>&bull; <strong class="text-white">API Cascade:</strong> 3-tier heuristic recovery surviving 503 gateway timeouts.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+            <span>In-App Access:</span>
+            <span class="text-emerald-400 font-bold">Click "Prerequisites" in top navbar or modal toolbar to inspect interactive matrix</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Offline Vector Print & PDF Engine -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="7">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-300 text-xs font-semibold">
+              <span>Offline Study</span>
+              <span>&bull;</span>
+              <span>Vector Print Engine</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+              Offline Vector Print &amp; PDF Engine: Zero Ink Waste
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Transforming digital markdown into pristine academic physical study sheets via <code class="text-sky-300 font-mono">guideHtmlFormatter.ts</code>.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. Pure White Background</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Automatically strips all dark slate backgrounds, shadows, and glowing borders upon print trigger, ensuring zero black ink cartridge waste.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">2. Monospace &amp; Typography</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Applies serif body text for human readability with crisp monospace code callouts, line numbers, and standardized table borders.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">3. Standalone HTML Export</span>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Packages complete document CSS and content into a single self-contained HTML file that opens instantly in any browser offline.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 flex items-center justify-between">
+            <span class="text-sky-300">@media print { body { background: #fff !important; color: #000 !important; } }</span>
+            <span class="text-slate-400 text-[11px]">Cmd+P &bull; iPad AirPrint Ready</span>
+          </div>
+        </div>
+
+        <!-- SLIDE 8: Curriculum Progress & The Final 2 Capabilities -->
+        <div class="slide flex flex-col justify-between space-y-6" data-slide="8">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
+              <span>Curriculum Milestone</span>
+              <span>&bull;</span>
+              <span>13 of 15 Complete (86.7%)</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Capability 13 Complete &bull; Exactly 2 Capabilities Remain!
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+              With Capability 13 verified, our comprehensive user guide, iPad WebKit runbook, and codebase prerequisites are fully in place. We now stand at the final threshold: exactly two modules remain to finish the 15-capability series.
+            </p>
+          </div>
+
+          <!-- Progress Bar & Roadmap -->
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-white">Curriculum Progression Status</span>
+              <span class="text-emerald-400 font-mono font-bold">13 / 15 Capabilities (86.7%)</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-sky-500 via-purple-500 to-emerald-400 h-full rounded-full" style="width: 86.7%"></div>
+            </div>
+
+            <!-- The Final 2 Modules -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div class="p-3 rounded-lg bg-slate-900 border border-sky-600/70 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 uppercase">Deck 14 &bull; Next Up</span>
+                  <div class="text-xs font-bold text-white mt-1">Ecosystem Roadmap Hub</div>
+                </div>
+                <p class="text-[11px] text-slate-300 mt-1">Multi-device topology (iPad/Windows/iPhone), cross-device sync, and persistent blob storage architecture.</p>
+              </div>
+
+              <div class="p-3 rounded-lg bg-slate-900 border border-amber-600/70 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 uppercase">Deck 15 &bull; Grand Finale</span>
+                  <div class="text-xs font-bold text-white mt-1">Autonomous Agent Tools Gateway</div>
+                </div>
+                <p class="text-[11px] text-slate-300 mt-1">Dual-audience introspection, OpenAPI/MCP function calling schemas, and live agent sandbox.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="flex items-center gap-3">
+            <a href="/videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_VIDEO.html" class="flex-1 py-2 text-center text-xs font-bold rounded-lg bg-rose-600 hover:bg-rose-500 text-white transition-all shadow-md flex items-center justify-center gap-1.5">
+              <span>🎬 Launch Video Studio Hub 13 &rarr;</span>
+            </a>
+            <a href="/decks/00_SERIES_OVERVIEW_PLAYLIST.html" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
+              Curriculum Overview
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Controls & Progress Footer -->
+      <footer class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" onclick="prevSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          
+          <div class="text-xs font-mono text-slate-400 px-2">
+            Slide <span id="currentSlideNum" class="text-white font-bold">1</span> / <span id="totalSlidesNum">8</span>
+          </div>
+
+          <button id="nextBtn" onclick="nextSlide()" class="p-2 text-xs rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Dot Navigation Indicators -->
+        <div class="hidden sm:flex items-center gap-1.5" id="slideDots">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Quick Shortcut Hint -->
+        <div class="text-[11px] text-slate-400 hidden lg:block">
+          Keys: <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">←</kbd> <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">→</kbd> Navigate &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">L</kbd> Listen &bull; <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono">N</kbd> Notes
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Collapsible Speaker Notes Drawer -->
+  <aside id="notesDrawer" class="hidden bg-slate-900 border-t border-slate-800 px-6 py-4 fixed bottom-0 left-0 right-0 z-40 max-h-48 overflow-y-auto shadow-2xl backdrop-blur-md">
+    <div class="max-w-4xl mx-auto space-y-1.5">
+      <div class="flex items-center justify-between text-xs">
+        <span class="font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          Speaker Script (Verbatim Audio)
+        </span>
+        <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white text-xs">&times; Close</button>
+      </div>
+      <p id="speakerNotesText" class="text-xs text-slate-200 leading-relaxed font-sans"></p>
+    </div>
+  </aside>
+
+  <!-- Script Logic: Narration, Auto-Advance, Keyboard & Interactive Lab -->
+  <script>
+    // Slide Narrations (8 Slides)
+    const slideNarrations = [
+      // Slide 1
+      "Welcome to Deck 13: Interactive User Guide, Print Engine, and iPad Safari Operational Runbook. Great systems require resilient documentation. In Capability 13, we explore our multi-modal manual: a playable audio user guide, an ink-efficient vector print generator, our Level 1 through 10 codebase prerequisites matrix, and the critical field runbook resolving iPadOS WebKit 401 cross-site authorization errors.",
+      
+      // Slide 2
+      "The User Guide codifies our four-step compound learning cycle. Users start by curating playlists by tech stack and study status. In the Knowledge Hub, they synthesize video takeaways and export Cornell notes to Obsidian. Next, they listen on-demand using AirPods stem squeeze controls. Finally, they study AI coding lessons and craft hardened prompts in Gemini Studio.",
+      
+      // Slide 3
+      "During early deployment, a critical incident occurred: following an iPadOS update, all preview frames failed with HTTP 401 Unauthorized errors across Safari, Chrome, and Brave. The root cause was twofold: first, Apple mandates the WebKit engine across all iOS browsers. Second, WebKit's Intelligent Tracking Prevention treated Google authentication cookies inside Cloud Run iframes as third-party tracking cookies and dropped them.",
+      
+      // Slide 4
+      "Here in our Interactive Diagnostic Lab, you can walk through the exact five-step resolution runbook. In iPad Settings, users toggle off Prevent Cross-Site Tracking and disable Advanced Tracking Protection. In Brave, toggling Allow Cross-Website Tracking to ON immediately resolves the 401. Alternatively, popping the app out into a standalone tab bypasses the iframe entirely.",
+      
+      // Slide 5
+      "Apple also restricts native HTML5 requestFullscreen inside embedded iframes. To overcome this on iPadOS, our application implements three complementary modes: an in-app CSS viewport expansion button, Brave's automatic toolbar collapse on scroll, and true edge-to-edge fullscreen execution via Apple's standalone PWA Add to Home Screen engine.",
+      
+      // Slide 6
+      "Our prerequisites documentation in PREREQUISITES.md breaks down engineering competencies on a calibrated scale from Level 1 to Level 10. While an absolute beginner at Level 1 can use the app, modifying the Euler physics simulation or Gemini 503 fallback cascades requires Level 8 systems expertise across TypeScript and Python 3.12.",
+      
+      // Slide 7
+      "For offline study, our vector print engine in guideHtmlFormatter.ts ensures zero black-ink cartridge waste. Pressing Command+P strips all dark backgrounds, replacing them with crisp white paper formatting, serif body typography, and high-contrast table borders for clean physical binders.",
+      
+      // Slide 8
+      "With Capability 13 complete, eighty-six point seven percent of our curriculum is now verified: thirteen of fifteen capabilities are ready! That leaves exactly two final modules to conclude Chapter 5 and the entire series: Deck 14 on our ecosystem roadmap, and Deck 15 on autonomous agent gateways. Let's proceed across the bridge to Deck 14!"
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isSpeaking = false;
+    let autoAdvance = false;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
+    let voiceRate = 1.0;
+
+    // Interactive Runbook Data
+    const runbookSteps = {
+      1: {
+        title: "Step 1: Open iPad Settings App",
+        status: "OS System Config",
+        body: "Swipe down on your iPad Home Screen and search for 'Settings', or tap the grey gear icon. All WebKit security controls reside in system settings rather than inside browser menus.",
+        outcome: "Settings app opened. Navigate to the left-hand application sidebar."
+      },
+      2: {
+        title: "Step 2: Configure System Safari & WebKit Settings",
+        status: "WebKit Global Fix",
+        body: "In iPad Settings, scroll to <strong>Safari</strong> (or <strong>Apps > Safari</strong> on iPadOS 18+). Under <em>Privacy & Security</em>:<br>&bull; Toggle <strong>'Prevent Cross-Site Tracking'</strong> to <strong>OFF</strong>.<br>&bull; Ensure <strong>'Block All Cookies'</strong> is <strong>OFF</strong>.<br>&bull; Under <em>Advanced > Advanced Tracking and Fingerprinting Protection</em>, set to <strong>'Off'</strong>.",
+        outcome: "Restores cross-origin authentication cookie transmission into Cloud Run iframes across all WebKit browsers."
+      },
+      3: {
+        title: "Step 3: Configure Third-Party Browsers (Brave / Chrome)",
+        status: "Brave Primary Fix",
+        body: "In iPad Settings sidebar, tap <strong>Brave</strong> or <strong>Chrome</strong> (or <strong>Apps > Brave</strong> on iPadOS 18+).<br>&bull; Toggle <strong>'Allow Cross-Website Tracking'</strong> to <strong>ON (green)</strong>.<br><em>Note: This is the exact primary toggle that instantly resolves 401 errors in Brave on iPad.</em>",
+        outcome: "Brave receives permission from iPadOS to forward Google auth tokens into the AI Studio iframe."
+      },
+      4: {
+        title: "Step 4: Re-Authenticate Google Account",
+        status: "Session Refresh",
+        body: "Open a top-level tab to <code>https://accounts.google.com</code>. Verify that your Google session is active. Then return to Google AI Studio and hard-refresh the page.",
+        outcome: "A fresh session ticket is generated and passed successfully past Cloud Run ingress."
+      },
+      5: {
+        title: "Step 5: Instant Workaround (Standalone URL)",
+        status: "100% Guaranteed",
+        body: "If device settings cannot be modified (e.g., managed MDM iPad), tap the <strong>'Open in new window'</strong> pop-out icon in AI Studio to launch the standalone Cloud Run URL.<br>Running as a top-level tab makes all cookies first-party, completely bypassing ITP restrictions.",
+        outcome: "Zero settings changes required. App loads immediately with full authentication."
+      }
+    };
+
+    function initPresentation() {
+      // Build dot indicators
+      const dotsContainer = document.getElementById('slideDots');
+      dotsContainer.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === 1 ? 'bg-purple-400 w-5' : 'bg-slate-700 hover:bg-slate-500'}`;
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+      updateSlideDisplay();
+      switchRunbookStep(1);
+    }
+
+    function updateSlideDisplay() {
+      document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
+      const activeEl = document.querySelector(`.slide[data-slide="${currentSlide}"]`);
+      if (activeEl) activeEl.classList.add('active');
+
+      document.getElementById('currentSlideNum').textContent = currentSlide;
+      document.getElementById('prevBtn').disabled = currentSlide === 1;
+      document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+
+      // Update dots
+      const dots = document.getElementById('slideDots').children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i + 1 === currentSlide) {
+          dots[i].className = 'w-5 h-2 rounded-full bg-purple-400 transition-all';
+        } else {
+          dots[i].className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all';
+        }
+      }
+
+      // Update speaker notes
+      document.getElementById('speakerNotesText').textContent = slideNarrations[currentSlide - 1];
+
+      // If speech was active, speak new slide
+      if (isSpeaking) {
+        stopSpeech();
+        speakCurrentSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideDisplay();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideDisplay();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlideDisplay();
+      }
+    }
+
+    // Audio & Narration System
+    function toggleSlideNarration() {
+      if (isSpeaking) {
+        stopSpeech();
+      } else {
+        speakCurrentSlide();
+      }
+    }
+
+    function speakCurrentSlide() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      stopSpeech();
+
+      const text = slideNarrations[currentSlide - 1];
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = voiceRate;
+
+      currentUtterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('playLabel').textContent = "Pause";
+        document.getElementById('playIcon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('waveform').classList.remove('hidden');
+        document.getElementById('waveform').classList.add('flex');
+      };
+
+      currentUtterance.onend = () => {
+        isSpeaking = false;
+        document.getElementById('playLabel').textContent = "Listen";
+        document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('waveform').classList.add('hidden');
+        document.getElementById('waveform').classList.remove('flex');
+
+        if (autoAdvance && currentSlide < totalSlides) {
+          setTimeout(() => {
+            nextSlide();
+            speakCurrentSlide();
+          }, 800);
+        }
+      };
+
+      currentUtterance.onerror = () => {
+        stopSpeech();
+      };
+
+      speechSynth.speak(currentUtterance);
+    }
+
+    function stopSpeech() {
+      if (speechSynth.speaking) {
+        speechSynth.cancel();
+      }
+      isSpeaking = false;
+      document.getElementById('playLabel').textContent = "Listen";
+      document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      document.getElementById('waveform').classList.add('hidden');
+      document.getElementById('waveform').classList.remove('flex');
+    }
+
+    function toggleAutoAdvance(enabled) {
+      autoAdvance = enabled;
+    }
+
+    function changeVoiceRate(rate) {
+      voiceRate = parseFloat(rate);
+      if (isSpeaking) {
+        speakCurrentSlide();
+      }
+    }
+
+    function toggleNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    // Runbook Simulator Functions
+    function switchRunbookStep(stepNum) {
+      const data = runbookSteps[stepNum];
+      if (!data) return;
+
+      // Update button styles
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`rb-btn-${i}`);
+        if (i === stepNum) {
+          btn.className = 'w-full text-left p-2 rounded-lg bg-purple-950/80 border border-purple-600 text-xs text-white flex items-center justify-between transition-all';
+        } else {
+          btn.className = 'w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-white flex items-center justify-between transition-all';
+        }
+      }
+
+      document.getElementById('runbookStepTitle').textContent = data.title;
+      document.getElementById('runbookStepStatus').textContent = data.status;
+      document.getElementById('runbookStepBody').innerHTML = data.body;
+      document.getElementById('runbookOutcomeText').innerHTML = data.outcome;
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'l' || e.key === 'L') {
+        toggleSlideNarration();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotesDrawer();
+      }
+    });
+
+    window.onload = initPresentation;
+  </script>
+</body>
+</html>

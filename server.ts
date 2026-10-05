@@ -388,6 +388,17 @@ app.get(['/videos/capability-12'], (req, res) => {
   }
 });
 
+app.get(['/videos/capability-13'], (req, res) => {
+  const target = path.join(videosDir, '13_CAPABILITY_USER_GUIDE_RUNBOOK_VIDEO.html');
+  if (fs.existsSync(target)) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.sendFile(target);
+  } else {
+    res.status(404).send('Capability 13 video player not found.');
+  }
+});
+
 app.get('/api/decks/manifest', (req, res) => {
   try {
     const manifestPath = path.join(videosDir, '00_SERIES_VIDEO_PLAYLIST.json');

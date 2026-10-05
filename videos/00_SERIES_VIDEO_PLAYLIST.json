@@ -4,10 +4,10 @@
   "generatedDate": "2026-09-30",
   "author": "AI Studio Senior Engineering Engine",
   "totalCapabilities": 15,
-  "completedCapabilities": 12,
+  "completedCapabilities": 13,
   "inProgressCapabilities": 0,
   "pacingStrategy": "Multi-Day Token-Preserving Cadence (2-3 modules per session)",
-  "continuityProtocol": "Hemingway Bridge #12 (Session 12 -> Session 13)",
+  "continuityProtocol": "Hemingway Bridge #13 (Session 13 -> Session 14)",
   "chapters": [
     {
       "chapterNumber": 1,
@@ -217,12 +217,13 @@
       "number": 13,
       "title": "Interactive User Guide & iPad Runbook",
       "chapter": 5,
-      "status": "planned",
+      "status": "ready",
       "deckFile": "decks/13_CAPABILITY_USER_GUIDE_RUNBOOK.html",
       "storyboardFile": "videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_STORYBOARD.md",
-      "slideCount": 7,
-      "estimatedDurationSec": 250,
-      "summary": "Comprehensive user guide, print/PDF export, and the iPadOS 401 WebKit cross-site tracking runbook."
+      "videoPlayerUrl": "/videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_VIDEO.html",
+      "slideCount": 8,
+      "estimatedDurationSec": 270,
+      "summary": "Comprehensive in-app manual, zero-ink vector print engine, Level 1-10 prerequisites matrix, and canonical iPadOS WebKit 401 field runbook."
     },
     {
       "id": "cap-14",
@@ -250,11 +251,11 @@
     }
   ],
   "hemingwayBridge": {
-    "currentSession": 12,
-    "lastCompletedModule": "12_CAPABILITY_GITHUB_SYNC_PROTOCOL",
-    "nextModuleToBuild": "13_CAPABILITY_USER_GUIDE_RUNBOOK",
-    "primerStatus": "Capability 12 completed (Safe GitHub Sync Protocol). Exactly 3 capabilities remaining (Decks 13, 14, 15). Ready for Day 13 (Cap 13 User Guide & iPad Runbook).",
-    "continuationPrompt": "Proceed with Day 13 of the Capability Series: Build Deck 13 (Interactive User Guide & iPad Runbook) and its Video Hub.",
-    "overnightDecision": "Should Deck 13 focus on iPadOS WebKit cross-site audio cookie bypass or the browser vector print layout engine?"
+    "currentSession": 13,
+    "lastCompletedModule": "13_CAPABILITY_USER_GUIDE_RUNBOOK",
+    "nextModuleToBuild": "14_CAPABILITY_ROADMAP_HUB",
+    "primerStatus": "Capability 13 completed (User Guide & iPad Runbook). Exactly 2 capabilities remaining (Decks 14, 15). Ready for Day 14 (Cap 14 Ecosystem Roadmap Hub).",
+    "continuationPrompt": "Proceed with Day 14 of the Capability Series: Build Deck 14 (Ecosystem Roadmap Hub) and its Video Hub.",
+    "overnightDecision": "Should Deck 14 focus on multi-device cross-tab synchronization or the serverless object blob storage migration pipeline?"
   }
 }
