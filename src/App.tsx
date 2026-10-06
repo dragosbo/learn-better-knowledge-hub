@@ -20,8 +20,28 @@ import { AnalysisHub } from './components/AnalysisHub';
 import { PrerequisitesModal } from './components/PrerequisitesModal';
 import { IpadVsCloudAnalysisModal } from './components/IpadVsCloudAnalysisModal';
 import { buildRestructuredPlaylists } from './data/playlistRestructureData';
+import { SimpleLightApp } from './components/SimpleLightApp';
 
 export default function App() {
+  const [uiMode, setUiMode] = useState<'classic' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('learn_better_ui_mode');
+      return saved === 'light' ? 'light' : 'classic';
+    } catch {
+      return 'classic';
+    }
+  });
+
+  const handleToggleUiMode = () => {
+    setUiMode((prev) => {
+      const next = prev === 'classic' ? 'light' : 'classic';
+      try {
+        localStorage.setItem('learn_better_ui_mode', next);
+      } catch {}
+      return next;
+    });
+  };
+
   const [activeTab, setActiveTab] = useState<ActiveTab>('playlists');
   const [isSyncingPlaylists, setIsSyncingPlaylists] = useState<boolean>(false);
   const [isRestructuredActive, setIsRestructuredActive] = useState<boolean>(() => {
@@ -574,6 +594,43 @@ export default function App() {
     }
   };
 
+  if (uiMode === 'light') {
+    return (
+      <>
+        <SimpleLightApp
+          playlists={playlists}
+          summaries={summaries}
+          claudeLessons={claudeLessons}
+          kiroLessons={kiroLessons}
+          selectedClip={selectedClip}
+          onSelectClip={(clip) => setSelectedClip(clip)}
+          onUpdateClipNotes={handleUpdateClipNotes}
+          onUpdateClipStatus={handleUpdateClipStatus}
+          hasGeminiKey={hasGeminiKey}
+          onToggleUiMode={handleToggleUiMode}
+          onOpenPrerequisites={() => setIsPrerequisitesOpen(true)}
+          onOpenIpadAnalysis={() => setIsIpadAnalysisOpen(true)}
+          userGuideLog={userGuideLog}
+          onApplyInsightsToClip={handleApplyInsightsToClip}
+        />
+
+        {/* Prerequisites & Technical Evaluation Modal */}
+        <PrerequisitesModal
+          isOpen={isPrerequisitesOpen}
+          onClose={() => setIsPrerequisitesOpen(false)}
+          markdownContent={prerequisitesContent}
+        />
+
+        {/* iPad Client vs Cloud Processing Modal */}
+        <IpadVsCloudAnalysisModal
+          isOpen={isIpadAnalysisOpen}
+          onClose={() => setIsIpadAnalysisOpen(false)}
+          markdownContent={ipadAnalysisContent}
+        />
+      </>
+    );
+  }
+
   return (
     <div className={`min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white ${isFullscreen ? 'fixed inset-0 z-50 overflow-y-auto w-screen h-screen' : ''}`}>
       {/* Top Navigation */}
@@ -587,6 +644,7 @@ export default function App() {
         onToggleFullscreen={toggleFullscreen}
         onOpenPrerequisites={() => setIsPrerequisitesOpen(true)}
         onOpenIpadAnalysis={() => setIsIpadAnalysisOpen(true)}
+        onToggleUiMode={handleToggleUiMode}
       />
 
       {/* Main Tab Views */}
@@ -793,6 +851,15 @@ export default function App() {
               >
                 <span>📖 Complete User Guide</span>
               </button>
+              <span className="text-slate-600 hidden sm:inline">&bull;</span>
+              <button
+                id="footer-light-mode-toggle"
+                onClick={handleToggleUiMode}
+                className="text-emerald-400 hover:text-emerald-300 font-bold underline cursor-pointer flex items-center gap-1"
+                title="Switch to the cleaner, simpler interface with less elements and calm light theme"
+              >
+                <span>🌿 Switch to Light &amp; Simple View</span>
+              </button>
               <span className="text-slate-600 hidden md:inline">&bull;</span>
               <span className="hidden md:inline">
                 All new files safely isolated in dedicated web modules
@@ -801,6 +868,19 @@ export default function App() {
           </div>
         </footer>
       )}
+
+      {/* Floating Toggle Button to Switch to Light & Simple View */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          id="floating-light-mode-toggle"
+          onClick={handleToggleUiMode}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-bold text-xs shadow-xl shadow-emerald-950/60 border border-emerald-300 transition-all hover:scale-105 cursor-pointer ring-2 ring-emerald-400/40"
+          title="Switch to the cleaner, simpler interface with less elements and calm light theme"
+        >
+          <span className="w-2 h-2 rounded-full bg-slate-950 animate-pulse"></span>
+          <span>🌿 Switch to Light &amp; Simple View</span>
+        </button>
+      </div>
     </div>
   );
 }

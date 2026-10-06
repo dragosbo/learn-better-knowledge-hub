@@ -20,7 +20,8 @@ import {
   Minimize2,
   Presentation,
   BookOpen,
-  Cpu
+  Cpu,
+  Sun
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
@@ -34,6 +35,7 @@ interface NavbarProps {
   onToggleFullscreen?: () => void;
   onOpenPrerequisites?: () => void;
   onOpenIpadAnalysis?: () => void;
+  onToggleUiMode?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -46,6 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleFullscreen,
   onOpenPrerequisites,
   onOpenIpadAnalysis,
+  onToggleUiMode,
 }) => {
   const navItems: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     {
@@ -158,6 +161,22 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Actions & Status */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Mode Switch Button: Switch to Light & Simple View */}
+            {onToggleUiMode && (
+              <button
+                id="header-toggle-light-mode-btn"
+                onClick={onToggleUiMode}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 border-emerald-300 hover:from-emerald-300 hover:to-teal-300 shadow-md shadow-emerald-950/40 transition-all hover:scale-105 cursor-pointer ring-2 ring-emerald-400/40"
+                title="Switch from this heavy design to a lighter, simpler interface with less elements and clean pages"
+              >
+                <Sun className="w-3.5 h-3.5 text-slate-950 fill-current" />
+                <span>Light &amp; Simple View</span>
+                <span className="text-[10px] px-1.5 py-0.2 bg-slate-950/80 text-emerald-300 rounded font-semibold">
+                  New
+                </span>
+              </button>
+            )}
+
             {/* iPad vs Cloud Processing Analysis Button */}
             {onOpenIpadAnalysis && (
               <button
