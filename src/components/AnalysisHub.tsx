@@ -275,6 +275,32 @@ const CAPABILITIES_LEDGER: CapabilityDetail[] = [
     humanExperience: 'Visual milestone cards, technical guides, and multi-AI handoff protocols.',
     agentContract: 'Machine-parsable milestone identifiers and implementation roadmaps.',
     reliability: 'High'
+  },
+  {
+    id: '15',
+    title: 'Analysis Hub & Autonomous Agent Tools Gateway',
+    badge: 'Agent Protocol',
+    category: 'DevOps & Docs',
+    audience: 'both',
+    summary: 'Dual-audience introspection, 4-phase system architecture, OpenAPI function calling schemas for Gemini/Claude/ChatGPT, and live execution sandbox.',
+    primaryComponent: 'src/components/AnalysisHub.tsx',
+    componentLines: '~1,600 lines',
+    dataFiles: [
+      'analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md',
+      'analysis/02_CAPABILITY_FILE_MATRIX.md',
+      'analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md',
+      'analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md'
+    ],
+    endpoints: [
+      'GET /api/agent/capabilities',
+      'GET /api/agent/schema',
+      'GET /api/agent/tools',
+      'POST /api/agent/execute-tool'
+    ],
+    supportingTools: ['lucide-react', 'react-markdown', '@google/genai'],
+    humanExperience: 'Interactive 4-phase architecture explorer, Markdown/HTML specs, live tool invocation sandbox, and iPad vs Cloud compute benchmarks.',
+    agentContract: 'RFC 8259 strict JSON schemas, OpenAPI specifications, and standardized Gemini/Claude/OpenAI tool calling declarations.',
+    reliability: 'High'
   }
 ];
 
@@ -624,7 +650,7 @@ export const AnalysisHub: React.FC = () => {
               <Layers className="w-3.5 h-3.5" />
               <span>
                 {selectedPhase === 1 && 'Architecture Overview'}
-                {selectedPhase === 2 && 'Capability & File Matrix (14)'}
+                {selectedPhase === 2 && 'Capability & File Matrix (15)'}
                 {selectedPhase === 3 && 'Agent API Endpoints & Schemas'}
                 {selectedPhase === 4 && 'iPad vs. Cloud Split & Metrics'}
               </span>
@@ -1129,7 +1155,7 @@ export const AnalysisHub: React.FC = () => {
                       <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold">GET</span>
                       <span className="text-white font-bold">/api/agent/capabilities</span>
                     </div>
-                    <span className="text-slate-400 font-sans text-xs">Returns machine-readable manifest of all 14 capabilities</span>
+                    <span className="text-slate-400 font-sans text-xs">Returns machine-readable manifest of all 15 capabilities</span>
                   </div>
 
                   <div className="py-3 flex flex-wrap items-center justify-between gap-2">

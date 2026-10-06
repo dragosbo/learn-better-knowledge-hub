@@ -251,16 +251,34 @@ This document provides an exhaustive, code-level traceability matrix mapping **a
 
 ---
 
+### Capability 15: Analysis Hub & Autonomous Agent Tools Gateway
+- **Role:** Dual-audience introspection, 4-phase system architecture, OpenAPI function calling schemas for Gemini/Claude/ChatGPT, and live execution sandbox.
+- **Files Delivering It:**
+  1. `src/components/AnalysisHub.tsx` (1,600 lines):
+     - 4-phase analytical dashboard, capability ledger, live tool invocation sandbox, and iPad vs. Cloud FLOPs audit.
+  2. `analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md` & `.html`:
+     - Phase 1 high-level system topology and layer abstractions.
+  3. `analysis/02_CAPABILITY_FILE_MATRIX.md` & `.html`:
+     - Phase 2 code-level delivery traceability for all 15 capabilities.
+  4. `analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md` & `.html`:
+     - Phase 3 agent tool-calling protocol, JSON schemas, and function calling declarations.
+  5. `analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md` & `.html`:
+     - Phase 4 empirical compute allocation benchmarks (95% Cloud dev vs. 68% iPad runtime).
+  6. `server.ts` (Agent Routes):
+     - Headless `/api/agent/capabilities`, `/api/agent/schema`, `/api/agent/tools`, and `/api/agent/execute-tool`.
+
+---
+
 ## 4. Cross-Cutting Infrastructure Files
 
-These foundational files support all 14 capabilities simultaneously:
+These foundational files support all 15 capabilities simultaneously:
 
 1. **`server.ts` (Backend Gateway)**:
-   - Sets up Express, static file serving (`/analysis`, `/legacy`, `/gemini_chat`), Vite middleware, and the Gemini AI client.
+   - Sets up Express, static file serving (`/analysis`, `/legacy`, `/gemini_chat`, `/decks`, `/videos`), Vite middleware, and the Gemini AI client.
 2. **`src/App.tsx` (Root State Orchestrator)**:
-   - Coordinates navigation across all 14 tabs, manages global playlist state, handles clip selection bridges between tabs, and synchronizes to `localStorage`.
+   - Coordinates navigation across tabs, manages global playlist state, handles clip selection bridges between tabs, and synchronizes to `localStorage`.
 3. **`src/components/Navbar.tsx` (Primary Navigation)**:
-   - Sticky header with category badges, 14 tab buttons, YouTube sync button, restructured toggle, and health indicator.
+   - Sticky header with category badges, tab buttons, YouTube sync button, restructured toggle, and health indicator.
 4. **`src/components/ErrorBoundary.tsx` (Fault Resilience)**:
    - Protects the React application from runtime component crashes; provides one-click cache reset and page reload.
 5. **`src/services/api.ts` (API Client Gateway)**:

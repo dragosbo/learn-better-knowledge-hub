@@ -1548,6 +1548,251 @@ Add this analysis to the app as a markdown and add button to access it.`,
 />`
       }
     ]
+  },
+  {
+    id: 'prompt-31',
+    number: 31,
+    session: 11,
+    sessionDate: '2026-10-05',
+    sessionTitle: 'Session 11: Python Code Viewer & Ingestion Engine (11/15 Delivered)',
+    timestamp: '2026-10-05 03:50',
+    userPromptVerbatim: `Proceed with next deck`,
+    assistantResponseMarkdown: `### Capability 11 Delivered: Python Code Viewer & Ingestion Engine
+
+1. **Slide Deck 11**: \`decks/11_CAPABILITY_PYTHON_CODE_VIEWER.html\` with 8 slides, interactive code inspector, AST metadata extraction, and zero-API-key scraper architecture.
+2. **Video Storyboard & Hub**: \`videos/11_CAPABILITY_PYTHON_CODE_VIEWER_STORYBOARD.md\` and \`videos/11_CAPABILITY_PYTHON_CODE_VIEWER_VIDEO.html\` with on-device speech narration.
+3. **Server Routes**: Registered \`/videos/capability-11\` in \`server.ts\`.
+4. **Registry**: Updated playlist to 11 of 15 capabilities complete (4 remaining).`,
+    capabilityPercent: 7,
+    cumulativePercent: 100,
+    capabilitySummary: 'Built Deck 11, Storyboard 11, Video Hub 11, and integrated AST Python code inspection into Chapter 5.',
+    featuresIntroduced: [
+      'Built decks/11_CAPABILITY_PYTHON_CODE_VIEWER.html with interactive code inspector lab.',
+      'Created videos/11_CAPABILITY_PYTHON_CODE_VIEWER_STORYBOARD.md and video player hub.',
+      'Documented 15 operational backend modules with line counts and dependencies.',
+      'Registered /videos/capability-11 server route.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 1,
+      estimatedTokens: '~14,200 tokens',
+      quotaStatus: 'safe',
+      note: 'Capability 11 complete delivery.'
+    },
+    codeBlocks: [
+      {
+        language: 'python',
+        caption: 'Zero-API-Key YouTube Ingestion Pattern',
+        code: `def fetch_youtube_metadata(video_id: str) -> dict:
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urllib.request.urlopen(req) as resp:
+        html = resp.read().decode('utf-8')
+    return extract_yt_initial_player_response(html)`
+      }
+    ]
+  },
+  {
+    id: 'prompt-32',
+    number: 32,
+    session: 12,
+    sessionDate: '2026-10-05',
+    sessionTitle: 'Session 12: Safe GitHub Sync & Multi-AI Monorepo Protocol (12/15 Delivered)',
+    timestamp: '2026-10-05 03:55',
+    userPromptVerbatim: `Proceed with next deck`,
+    assistantResponseMarkdown: `### Capability 12 Delivered: Safe GitHub Sync & Multi-AI Monorepo Protocol
+
+1. **Slide Deck 12**: \`decks/12_CAPABILITY_GITHUB_SYNC_PROTOCOL.html\` with 8 slides, interactive git conflict simulator, branch isolation protocol, and \`webapp/\` quarantine.
+2. **Video Storyboard & Hub**: \`videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_STORYBOARD.md\` and \`videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_VIDEO.html\`.
+3. **Server Routes**: Added \`/videos/capability-12\` route in \`server.ts\`.
+4. **Registry**: Updated playlist to 12 of 15 capabilities complete (3 remaining).`,
+    capabilityPercent: 7,
+    cumulativePercent: 100,
+    capabilitySummary: 'Built Deck 12, Storyboard 12, Video Hub 12, and codified multi-AI branch isolation protocols.',
+    featuresIntroduced: [
+      'Built decks/12_CAPABILITY_GITHUB_SYNC_PROTOCOL.html with interactive conflict sandbox.',
+      'Created videos/12_CAPABILITY_GITHUB_SYNC_PROTOCOL_STORYBOARD.md and video simulator.',
+      'Codified non-destructive webapp/ quarantine for merging multi-AI changes.',
+      'Registered /videos/capability-12 server route.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 2,
+      estimatedTokens: '~13,800 tokens',
+      quotaStatus: 'safe',
+      note: 'Capability 12 complete delivery.'
+    },
+    codeBlocks: [
+      {
+        language: 'bash',
+        caption: 'Safe Multi-AI Sync Script Pattern',
+        code: `#!/usr/bin/env bash
+set -e
+git fetch origin main
+git checkout -b ai-studio-sync-$(date +%Y%m%d-%H%M)
+rsync -av --exclude 'node_modules' --exclude '.git' ./ webapp/
+git add webapp/
+git commit -m "chore: isolate AI Studio artifacts into webapp/"`
+      }
+    ]
+  },
+  {
+    id: 'prompt-33',
+    number: 33,
+    session: 13,
+    sessionDate: '2026-10-05',
+    sessionTitle: 'Session 13: Interactive User Guide & iPad Safari Runbook (13/15 Delivered)',
+    timestamp: '2026-10-05 04:10',
+    userPromptVerbatim: `Proceed with next deck`,
+    assistantResponseMarkdown: `### Capability 13 Delivered: Interactive User Guide & iPad Safari Runbook
+
+1. **Slide Deck 13**: \`decks/13_CAPABILITY_USER_GUIDE_RUNBOOK.html\` with 8 slides, interactive iPadOS WebKit 401 resolution lab, zero-ink vector print engine, and Level 1-10 matrix.
+2. **Video Storyboard & Hub**: \`videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_STORYBOARD.md\` and \`videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_VIDEO.html\`.
+3. **Server Routes**: Added \`/videos/capability-13\` in \`server.ts\`.
+4. **Registry**: Updated playlist to 13 of 15 capabilities complete (2 remaining).`,
+    capabilityPercent: 7,
+    cumulativePercent: 100,
+    capabilitySummary: 'Built Deck 13, Storyboard 13, Video Hub 13, and codified iPadOS WebKit ITP troubleshooting runbook.',
+    featuresIntroduced: [
+      'Built decks/13_CAPABILITY_USER_GUIDE_RUNBOOK.html with interactive 401 diagnosis lab.',
+      'Created videos/13_CAPABILITY_USER_GUIDE_RUNBOOK_STORYBOARD.md and video simulator.',
+      'Codified 5-step iPad Safari and Brave Cross-Site Tracking resolution runbook.',
+      'Registered /videos/capability-13 server route.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 3,
+      estimatedTokens: '~14,600 tokens',
+      quotaStatus: 'safe',
+      note: 'Capability 13 complete delivery.'
+    },
+    codeBlocks: [
+      {
+        language: 'text',
+        caption: 'iPadOS WebKit 401 Quick Resolution Runbook',
+        code: `Fix 1: Settings > Safari > Advanced > Toggle OFF "Prevent Cross-Site Tracking"
+Fix 2: Settings > Brave > Toggle ON "Allow Cross-Website Tracking"
+Fix 3: Click "Open in Standalone Window" (top-right) to make all authentication first-party.`
+      }
+    ]
+  },
+  {
+    id: 'prompt-34',
+    number: 34,
+    session: 14,
+    sessionDate: '2026-10-05',
+    sessionTitle: 'Session 14: Ecosystem Roadmap Hub & Multi-Device Topology (14/15 Delivered)',
+    timestamp: '2026-10-05 04:16',
+    userPromptVerbatim: `Proceed with next deck`,
+    assistantResponseMarkdown: `### Capability 14 Delivered: Ecosystem Roadmap Hub & Multi-Device Topology
+
+1. **Slide Deck 14**: \`decks/14_CAPABILITY_ROADMAP_HUB.html\` with 8 slides, Web Speech narration, Triad Hardware Topology, GitHub Releases CDN pipeline, and monorepo governance.
+2. **Video Storyboard & Hub**: \`videos/14_CAPABILITY_ROADMAP_HUB_STORYBOARD.md\` and \`videos/14_CAPABILITY_ROADMAP_HUB_VIDEO.html\`.
+3. **Server Routes**: Added \`/videos/capability-14\` in \`server.ts\`.
+4. **Registry**: Updated playlist to 14 of 15 capabilities complete (1 remaining: The Grand Finale!).`,
+    capabilityPercent: 7,
+    cumulativePercent: 100,
+    capabilitySummary: 'Built Deck 14, Storyboard 14, Video Hub 14, and established Triad Hardware and GitHub Releases CDN architecture.',
+    featuresIntroduced: [
+      'Built decks/14_CAPABILITY_ROADMAP_HUB.html with interactive architecture decision matrix.',
+      'Created videos/14_CAPABILITY_ROADMAP_HUB_STORYBOARD.md and video simulator.',
+      'Codified Triad Hardware Topology across iPhone, iPad Pro, and Windows Workstation.',
+      'Registered /videos/capability-14 server route.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 4,
+      estimatedTokens: '~14,100 tokens',
+      quotaStatus: 'safe',
+      note: 'Capability 14 complete delivery.'
+    },
+    codeBlocks: [
+      {
+        language: 'text',
+        caption: 'Triad Hardware Topology Allocation',
+        code: `1. iPhone Mobility: Voice dictation, ChatGPT Advanced Voice, AirPods commute playback.
+2. iPad Tactile Canvas: Visual reading, mind maps, Web Speech synthesis, PR reviews.
+3. Windows Desktop: OBS Studio 60fps recording, local CTranslate2 int8 Whisper, Git HEAD.`
+      }
+    ]
+  },
+  {
+    id: 'prompt-35',
+    number: 35,
+    session: 15,
+    sessionDate: '2026-10-05',
+    sessionTitle: 'Session 15: Grand Finale — Analysis Hub & Autonomous Agent Tools Gateway (15/15 Delivered)',
+    timestamp: '2026-10-05 04:30',
+    userPromptVerbatim: `Proceed with next deck`,
+    assistantResponseMarkdown: `### Capability 15 Delivered: Grand Finale — Analysis Hub & Autonomous Agent Tools Gateway (100% Complete!)
+
+1. **Slide Deck 15**: \`decks/15_CAPABILITY_ANALYSIS_AGENT_GATEWAY.html\` with 8 slides, Dual-Audience Paradigm, 4-phase system matrix, live agent tool sandbox, and 100% completion celebration.
+2. **Video Storyboard & Hub**: \`videos/15_CAPABILITY_ANALYSIS_AGENT_GATEWAY_STORYBOARD.md\` and \`videos/15_CAPABILITY_ANALYSIS_AGENT_GATEWAY_VIDEO.html\`.
+3. **Server Routes**: Added \`/videos/capability-15\` in \`server.ts\`.
+4. **Registry**: Updated playlist to **15 of 15 capabilities complete (100.0%)** across all 5 chapters!`,
+    capabilityPercent: 7,
+    cumulativePercent: 100,
+    capabilitySummary: 'Built Deck 15, Storyboard 15, Video Hub 15, and celebrated 100% curriculum completion across all 15 capabilities.',
+    featuresIntroduced: [
+      'Built decks/15_CAPABILITY_ANALYSIS_AGENT_GATEWAY.html with interactive tool invocation sandbox.',
+      'Created videos/15_CAPABILITY_ANALYSIS_AGENT_GATEWAY_STORYBOARD.md and video simulator.',
+      'Standardized OpenAPI Function Calling declarations for Gemini, Claude, and OpenAI.',
+      'Registered /videos/capability-15 server route and achieved 100% series mastery.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 5,
+      estimatedTokens: '~15,200 tokens',
+      quotaStatus: 'safe',
+      note: 'Grand Finale complete delivery (100% series completed).'
+    },
+    codeBlocks: [
+      {
+        language: 'json',
+        caption: 'Universal OpenAPI Function Calling Schema',
+        code: `{
+  "name": "search_playlists",
+  "description": "Searches catalog of 71 YouTube playlists by query and status.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": { "type": "string" },
+      "limit": { "type": "integer", "default": 5 }
+    },
+    "required": ["query"]
+  }
+}`
+      }
+    ]
+  },
+  {
+    id: 'prompt-36',
+    number: 36,
+    session: 16,
+    sessionDate: '2026-10-05',
+    sessionTitle: 'Session 16: Final Review, Cross-System Synchronization & History Audit',
+    timestamp: '2026-10-05 04:37',
+    userPromptVerbatim: `Ok do I final review and see if everything is in synch and there are no contradictions. Propose fixes if needed. Update the history of prompts and our discussion`,
+    assistantResponseMarkdown: `### Full Synchronization Audit & Conversation History Update
+
+1. **System Synchronization & Contradiction Fixes**:
+   - Fixed missing Capability 15 in \`server.ts\` (\`CANONICAL_CAPABILITIES\`), ensuring \`GET /api/agent/capabilities\` outputs \`totalCapabilities: 15\`.
+   - Added Capability 15 to \`CAPABILITIES_LEDGER\` in \`src/components/AnalysisHub.tsx\` and updated Phase 2 tab badge from \`(14)\` to \`(15)\`.
+   - Updated \`analysis/02_CAPABILITY_FILE_MATRIX.md\` and \`analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md\` to formally catalog Capability 15.
+2. **Audit History Updated**:
+   - Appended Prompts 46 through 51 to \`gemini_prompts.md\`.
+   - Appended Prompts 31 through 36 to \`src/data/geminiChatData.ts\`.
+   - Added Section 18 to \`gemini_feedback.md\` with architectural conclusions.`,
+    capabilityPercent: 0,
+    cumulativePercent: 100,
+    capabilitySummary: 'Audited entire platform for sync, resolved Capability 15 ledger registration across server and frontend, and updated all chat history logs.',
+    featuresIntroduced: [
+      'Synchronized CANONICAL_CAPABILITIES in server.ts with Capability 15.',
+      'Synchronized CAPABILITIES_LEDGER in AnalysisHub.tsx with Capability 15.',
+      'Updated analysis/02_CAPABILITY_FILE_MATRIX.md and 03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md.',
+      'Refreshed all prompt logs and conversational audit records across the repo.'
+    ],
+    quotaSignal: {
+      requestIndexInDay: 6,
+      estimatedTokens: '~12,500 tokens',
+      quotaStatus: 'safe',
+      note: 'Final system audit and prompt history synchronization.'
+    }
   }
 ];
 

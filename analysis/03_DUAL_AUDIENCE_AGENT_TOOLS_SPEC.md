@@ -59,13 +59,13 @@
 The server provides a dedicated suite of zero-friction, headless endpoints under `/api/agent/*`.
 
 ### 3.1 `GET /api/agent/capabilities`
-Returns the complete machine-readable manifest of all 14 platform capabilities.
+Returns the complete machine-readable manifest of all 15 platform capabilities.
 
 **Response Schema (`application/json`):**
 ```json
 {
   "success": true,
-  "totalCapabilities": 14,
+  "totalCapabilities": 15,
   "capabilities": [
     {
       "id": "01",

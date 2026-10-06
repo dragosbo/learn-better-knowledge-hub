@@ -697,6 +697,30 @@ const CANONICAL_CAPABILITIES = [
     endpoints: ['Declarative data models in roadmapData.ts'],
     summary: 'Milestone tracking, technical complexity estimates, and architectural RFCs for multi-device sync and agent collaboration.',
     agentContract: 'RoadmapMilestoneSchema'
+  },
+  {
+    id: '15',
+    title: 'Analysis Hub & Autonomous Agent Tools Gateway',
+    badge: 'Agent Protocol',
+    category: 'DevOps & Docs',
+    audience: 'both',
+    reliability: 'High',
+    files: [
+      'src/components/AnalysisHub.tsx',
+      'analysis/01_HIGH_LEVEL_SYSTEM_ARCHITECTURE.md',
+      'analysis/02_CAPABILITY_FILE_MATRIX.md',
+      'analysis/03_DUAL_AUDIENCE_AGENT_TOOLS_SPEC.md',
+      'analysis/04_IPAD_VS_CLOUD_PROCESSING_ANALYSIS.md',
+      'server.ts'
+    ],
+    endpoints: [
+      'GET /api/agent/capabilities',
+      'GET /api/agent/schema',
+      'GET /api/agent/tools',
+      'POST /api/agent/execute-tool'
+    ],
+    summary: 'Dual-audience protocol bridging human UX and autonomous agents with 4-phase system introspection, OpenAPI schemas, and live sandbox execution.',
+    agentContract: 'OpenAPIToolDeclarationSchema & RFC8259'
   }
 ];
 
