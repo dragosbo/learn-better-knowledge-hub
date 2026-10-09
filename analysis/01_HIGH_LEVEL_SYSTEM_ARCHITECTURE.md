@@ -170,7 +170,7 @@ An honest engineering appraisal reveals several fragile patterns resulting from 
 =============================================================================================
   PHASE 1: INTROSPECTION & AUDIT (CURRENT)
   - Create /analysis/ documentation in Markdown (agent) & HTML (human).
-  - Map all 14 capabilities, file dependencies, and data flow topologies.
+  - Map all 15 capabilities, file dependencies, and data flow topologies.
   - Implement zero-mutation in-app "Analysis" review dashboard.
 =============================================================================================
                                       │

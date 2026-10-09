@@ -4862,6 +4862,102 @@ Fix 3: Click &quot;Open in Standalone Window&quot; (top-right) to make all authe
       </div>
     </article>
   
+    <article class="chat-card" id="prompt-37" data-number="37" data-session="17">
+      <!-- Card Header / Meta -->
+      <div class="card-meta-bar">
+        <div class="meta-left">
+          <span class="prompt-number-pill">Prompt #37</span>
+          <span class="meta-session">Session 17 &bull; 2026-10-06</span>
+          <span class="meta-timestamp">2026-10-06 00:23</span>
+        </div>
+        <div class="meta-right">
+          <span class="quota-pill status-safe" title="Dual Interface and Light Mode implementation.">
+            Quota: SAFE (~13,100 tokens)
+          </span>
+          <span class="capability-pill" title="Web App Capability Attribution">
+            🎯 +0% Impact (100% Total)
+          </span>
+        </div>
+      </div>
+
+      <!-- Capability Summary Banner -->
+      <div class="capability-summary-box">
+        <div class="summary-title">
+          <strong>Key Deliverable:</strong> Implemented dual interface toggle between heavy Studio Mode and clean Light Mode with configurable items-per-page pagination and 5 streamlined pages.
+        </div>
+        <ul class="features-list">
+          <li>Built src/components/SimpleLightApp.tsx with clean light aesthetic and zero button clutter.</li>
+          <li>Added instant two-way toggle buttons in top navbars and floating badges with localStorage persistence.</li>
+          <li>Implemented configurable items-per-page pagination (4, 6, 8, 12 per page) with previous/next controls.</li>
+          <li>Organized workflows into 5 dedicated pages: Study Focus, Playlists &amp; Library, AI Assistant, Coding Lessons, and Guides.</li>
+        </ul>
+      </div>
+
+      <!-- User Verbatim Prompt Section (Collapsible) -->
+      <div class="dialogue-block user-prompt-block">
+        <div class="dialogue-header" onclick="toggleSection(this)">
+          <div class="dialogue-identity">
+            <span class="avatar-pill user-avatar">👤 User</span>
+            <span class="dialogue-title">Verbatim Prompt</span>
+          </div>
+          <div class="dialogue-toggle">
+            <span class="toggle-text">Collapse</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+        </div>
+        <div class="dialogue-content">
+          <div class="prompt-text-verbatim">Ok it looks ok. Nevertheless the main app although working has a very heavy design with lots of buttons that is difficult to use. Create the possibility to switch from this design to a lighter one with elements per page And yes there might be a need to have more pages. Practically I want to be able to;switch from the current design to a lighter one, less packed with feature and more easy to understand and navigate and maybe featuring a lighter theme. Once again the current design should remain available and fully operational but create also the possibility to switch to a lighter simper interface that has less elements on the page. Just create a button to allow to,toggle between these two interfaces</div>
+        </div>
+      </div>
+
+      <!-- Assistant Sidebar Exact Answer Section (Collapsible) -->
+      <div class="dialogue-block assistant-answer-block">
+        <div class="dialogue-header" onclick="toggleSection(this)">
+          <div class="dialogue-identity">
+            <span class="avatar-pill assistant-avatar">✨ Gemini</span>
+            <span class="dialogue-title">Exact Sidebar Response</span>
+          </div>
+          <div class="dialogue-toggle">
+            <span class="toggle-text">Collapse</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+        </div>
+        <div class="dialogue-content">
+          <div class="markdown-body">
+            <h3>Dual Interface Architecture &amp; Simple Light Mode Implemented</h3>
+<ol>
+<li><strong>Dual Interface Architecture</strong>:
+  <ul>
+    <li>Built <code>SimpleLightApp.tsx</code> featuring a clean, airy light theme (<code>bg-slate-50</code>, crisp cards <code>bg-white border-slate-200</code>, calming typography, soft shadows, high readability).</li>
+    <li>Preserved 100% of the existing heavy Pro/Studio design with all 14 tabs and toolbars completely operational.</li>
+    <li>Instant Two-Way Toggle: Prominent <code>[🌿 Light &amp; Simple View]</code> toggle in Classic navbar/footer and <code>[⚡ Switch to Studio Mode]</code> toggle in Light View. Saved in <code>localStorage</code>.</li>
+  </ul>
+</li>
+<li><strong>Elements-Per-Page Pagination &amp; Focused Pages</strong>:
+  <ul>
+    <li>Streamlined cognitive load from 14 crowded tabs down to 5 clear, focused pages: <strong>Study Focus</strong>, <strong>Playlists &amp; Library</strong> (with 4, 6, 8, 12 per page selector and Prev/Next pagination), <strong>AI Assistant</strong>, <strong>Coding Lessons</strong>, and <strong>Guides &amp; Decks</strong>.</li>
+  </ul>
+</li>
+</ol>
+
+    <div class="code-block-wrapper lang-ts">
+      <div class="code-header">
+        <span class="code-badge">TS Mode State and Persistent Toggle Pattern</span>
+        <button class="copy-code-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre><code>const [uiMode, setUiMode] = useState&lt;'classic' | 'light'&gt;(() =&gt; {
+  try {
+    return localStorage.getItem('learn_better_ui_mode') === 'light' ? 'light' : 'classic';
+  } catch {
+    return 'classic';
+  }
+});</code></pre>
+    </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
       </div>
     </section>
   

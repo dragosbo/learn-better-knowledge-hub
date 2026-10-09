@@ -456,7 +456,7 @@ app.get('/api/analysis/data', (req, res) => {
         phase: 2,
         id: 'phase2',
         title: 'Capability-to-File Delivery Matrix',
-        description: 'Traceability registry mapping all 14 capabilities to components, datasets, endpoints, line counts, and contracts.',
+        description: 'Traceability registry mapping all 15 capabilities to components, datasets, endpoints, line counts, and contracts.',
         markdownFile: '02_CAPABILITY_FILE_MATRIX.md',
         htmlFile: '02_capability_file_matrix.html',
         htmlUrl: '/analysis/02_capability_file_matrix.html',

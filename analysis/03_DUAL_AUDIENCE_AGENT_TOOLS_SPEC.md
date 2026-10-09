@@ -116,8 +116,8 @@ Returns production-ready tool/function declarations formatted for **OpenAI Funct
    - **Purpose:** Search playlists and video clips by keyword, channel name, category tag, or watch status.
    - **Parameters:** `query` (string, optional), `channel` (string, optional), `status` (enum: `to-watch`, `in-progress`, `synthesized`, `mastered`, `all`), `limit` (integer, default 20).
 2. `get_capability_matrix`
-   - **Purpose:** Retrieve the full delivery file map, line ranges, and architectural role for any of the 14 capabilities.
-   - **Parameters:** `capabilityId` (string, optional: e.g. "01", "07"), `category` (string, optional).
+   - **Purpose:** Retrieve the full delivery file map, line ranges, and architectural role for any of the 15 capabilities.
+   - **Parameters:** `capabilityId` (string, optional: e.g. "01", "07", "15"), `category` (string, optional).
 3. `query_video_cosmos`
    - **Purpose:** Inspect semantic cluster nodes, connections, and coordinates from the 2D celestial knowledge graph.
    - **Parameters:** `clusterName` (string, optional), `limit` (integer, default 25).
